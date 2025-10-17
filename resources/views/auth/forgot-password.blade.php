@@ -1,33 +1,34 @@
 <x-layouts.auth :title="__('Passwort vergessen')">
-    <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-6">
-            <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Passwort vergessen') }}</h1>
-                <p class="text-gray-600 dark:text-gray-400 mt-1">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-8 sm:p-10">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">{{ __('Passwort vergessen') }}</h1>
+                <p class="text-gray-600 mt-2">
                     {{ __('Geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen des Passworts zu erhalten') }}</p>
             </div>
 
             @if (session('status'))
-                <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                    {{ session('status') }}
+                <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200">
+                    <p class="text-sm text-green-800 font-medium">
+                        {{ session('status') }}
+                    </p>
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('password.email') }}">
+            <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
                 @csrf
-                <div class="mb-4">
+                <div>
                     <x-forms.input name="email" type="email" label="E-Mail" placeholder="ihre@email.com" />
                 </div>
 
-                <x-button type="primary" buttonType="submit" class="w-full">
+                <x-button type="primary" buttonType="submit" class="w-full py-3 text-lg font-semibold">
                     {{ __('Link zum Zurücksetzen des Passworts senden') }}
                 </x-button>
             </form>
 
-            <div class="text-center mt-6">
+            <div class="text-center mt-8 pt-6 border-t border-gray-200">
                 <a href="{{ route('login') }}"
-                   class="text-blue-600 dark:text-blue-400 hover:underline font-medium">{{ __('Zurück zur Anmeldung') }}</a>
+                   class="text-blue-600 hover:text-blue-700 hover:underline font-semibold">{{ __('Zurück zur Anmeldung') }}</a>
             </div>
         </div>
     </div>

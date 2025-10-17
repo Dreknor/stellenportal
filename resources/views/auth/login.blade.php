@@ -1,12 +1,12 @@
 <x-layouts.auth :title="__('Anmelden')">
-    <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-6">
-            <div class="mb-3">
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Melden Sie sich bei Ihrem Konto an') }}</h1>
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-8 sm:p-10">
+            <div class="mb-8 text-center">
+                <h1 class="text-3xl font-bold text-gray-900">{{ __('Willkommen zurück') }}</h1>
+                <p class="mt-2 text-gray-600">{{ __('Melden Sie sich bei Ihrem Konto an') }}</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-3">
+            <form method="POST" action="{{ route('login') }}" class="space-y-5">
                 @csrf
                 <div>
                     <x-forms.input label="E-Mail" name="email" type="email" placeholder="ihre@email.com" autofocus />
@@ -15,24 +15,24 @@
                 <div>
                     <x-forms.input label="Passwort" name="password" type="password" placeholder="••••••••" />
 
-                    <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center justify-between mt-3">
+                        <x-forms.checkbox label="Angemeldet bleiben" name="remember" />
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                               class="text-xs text-blue-600 dark:text-blue-400 hover:underline">{{ __('Passwort vergessen?') }}</a>
+                               class="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium">{{ __('Passwort vergessen?') }}</a>
                         @endif
-                        <x-forms.checkbox label="Angemeldet bleiben" name="remember" />
                     </div>
                 </div>
 
-                <x-button type="primary" class="w-full">{{ __('Anmelden') }}</x-button>
+                <x-button type="primary" class="w-full py-3 text-lg font-semibold">{{ __('Anmelden') }}</x-button>
             </form>
 
             @if (Route::has('register'))
-                <div class="text-center mt-6">
-                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                <div class="text-center mt-8 pt-6 border-t border-gray-200">
+                    <p class="text-gray-600">
                         {{ __('Sie haben noch kein Konto?') }}
                         <a href="{{ route('register') }}"
-                           class="text-blue-600 dark:text-blue-400 hover:underline font-medium">{{ __('Registrieren') }}</a>
+                           class="text-blue-600 hover:text-blue-700 hover:underline font-semibold ml-1">{{ __('Jetzt registrieren') }}</a>
                     </p>
                 </div>
             @endif

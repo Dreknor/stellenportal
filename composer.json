@@ -12,6 +12,7 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
         "blade-ui-kit/blade-icons": "^1.8",
+        "buzz/laravel-google-captcha": "^2.3",
         "danielme85/laravel-log-to-db": "^4.1",
         "dantsu/php-osm-static-api": "^0.6.4",
         "laravel/framework": "^12.0",
