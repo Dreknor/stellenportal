@@ -53,7 +53,9 @@ class RoleController extends Controller
         $role = Role::create(['name' => $validated['name']]);
 
         if (isset($validated['permissions'])) {
-            $role->syncPermissions($validated['permissions']);
+            // Convert permission IDs to integers to ensure proper type handling
+            $permissionIds = array_map('intval', $validated['permissions']);
+            $role->syncPermissions($permissionIds);
         }
 
         return redirect()->route('roles.index')
@@ -103,7 +105,12 @@ class RoleController extends Controller
 
         $role->update(['name' => $validated['name']]);
 
-        $role->syncPermissions($validated['permissions'] ?? []);
+        // Convert permission IDs to integers to ensure proper type handling
+        $permissionIds = isset($validated['permissions'])
+            ? array_map('intval', $validated['permissions'])
+            : [];
+
+        $role->syncPermissions($permissionIds);
 
         return redirect()->route('roles.index')
             ->with('success', 'Rolle wurde erfolgreich aktualisiert.');
@@ -126,4 +133,3 @@ class RoleController extends Controller
             ->with('success', 'Rolle wurde erfolgreich gelöscht.');
     }
 }
-
