@@ -9,13 +9,33 @@
     <!-- Search and Filter -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
         <form method="GET" action="{{ route('public.jobs.index') }}">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suchbegriff') }}</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Stichwort, Berufsgruppe...') }}"
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Stichwort, Berufsgruppe, Einrichtung...') }}"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname') }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Ort / PLZ') }}</label>
+                    <input type="text" name="location" value="{{ request('location') }}" placeholder="{{ __('z.B. Berlin oder 10115') }}"
                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Umkreis (km)') }}</label>
+                    <select name="radius" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                        <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>10 km</option>
+                        <option value="25" {{ request('radius') == '25' ? 'selected' : '' }}>25 km</option>
+                        <option value="50" {{ request('radius', '50') == '50' ? 'selected' : '' }}>50 km</option>
+                        <option value="100" {{ request('radius') == '100' ? 'selected' : '' }}>100 km</option>
+                        <option value="200" {{ request('radius') == '200' ? 'selected' : '' }}>200 km</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Beschäftigungsart') }}</label>
                     <select name="employment_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
@@ -28,19 +48,47 @@
                     </select>
                 </div>
 
-                <div class="flex items-end">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                <div class="flex items-end gap-2 md:col-span-1 lg:col-span-3">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                         {{ __('Suchen') }}
                     </button>
+                    @if(request()->hasAny(['search', 'location', 'employment_type']))
+                        <a href="{{ route('public.jobs.index') }}" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-md transition-colors">
+                            {{ __('Zurücksetzen') }}
+                        </a>
+                    @endif
                 </div>
             </div>
+
+            @if(isset($searchLocation) && isset($searchCoordinates))
+                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-blue-800 dark:text-blue-300">
+                                <strong>{{ __('Umkreissuche aktiv:') }}</strong> {{ request('radius', 50) }} km um {{ $searchCoordinates['display_name'] ?? $searchLocation }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </form>
     </div>
 
     <!-- Results Count -->
     <div class="mb-6">
         <p class="text-gray-600 dark:text-gray-400">
-            {{ $jobPostings->total() }} {{ __('Stellenangebote gefunden') }}
+            @if(request()->hasAny(['search', 'location', 'employment_type']))
+                <strong>{{ $jobPostings->total() }}</strong> {{ __('Stellenangebote gefunden') }}
+            @else
+                <strong>{{ $jobPostings->total() }}</strong> {{ __('aktive Stellenangebote') }}
+            @endif
         </p>
     </div>
 

@@ -21,38 +21,51 @@ class PublicJobPostingController extends Controller
         $query = JobPosting::active()
             ->with(['facility.address', 'facility.organization']);
 
-        // Search by keyword
-        if ($request->has('search')) {
+        // Full-text search across all relevant fields
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('job_category', 'like', "%{$search}%");
+                    ->orWhere('job_category', 'like', "%{$search}%")
+                    ->orWhere('requirements', 'like', "%{$search}%")
+                    ->orWhere('benefits', 'like', "%{$search}%")
+                    ->orWhereHas('facility', function ($fq) use ($search) {
+                        $fq->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Filter by employment type
-        if ($request->has('employment_type')) {
+        if ($request->filled('employment_type')) {
             $query->where('employment_type', $request->employment_type);
         }
 
-        // Filter by job category
-        if ($request->has('job_category')) {
-            $query->where('job_category', 'like', "%{$request->job_category}%");
-        }
-
-        // Location-based search
-        if ($request->has('latitude') && $request->has('longitude')) {
+        // Location-based search with radius
+        if ($request->filled('location')) {
+            $location = $request->location;
             $radius = $request->get('radius', 50); // Default 50km
 
-            $jobPostings = $this->jobPostingService->searchByRadius(
-                $request->latitude,
-                $request->longitude,
-                $radius
-            );
-        } else {
-            $jobPostings = $query->orderBy('published_at', 'desc')->paginate(20);
+            // Geocode the location
+            $coordinates = $this->jobPostingService->geocodeLocation($location);
+
+            if ($coordinates) {
+                $jobPostings = $this->jobPostingService->searchByRadius(
+                    $query,
+                    $coordinates['latitude'],
+                    $coordinates['longitude'],
+                    $radius
+                );
+
+                return view('public.job-postings.index', [
+                    'jobPostings' => $jobPostings,
+                    'searchLocation' => $location,
+                    'searchCoordinates' => $coordinates,
+                ]);
+            }
         }
+
+        $jobPostings = $query->orderBy('published_at', 'desc')->paginate(20);
 
         return view('public.job-postings.index', compact('jobPostings'));
     }

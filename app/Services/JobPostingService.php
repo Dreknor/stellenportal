@@ -6,6 +6,7 @@ use App\Models\JobPosting;
 use App\Models\Facility;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class JobPostingService
@@ -135,30 +136,75 @@ class JobPostingService
     }
 
     /**
+     * Geocode a location string to latitude and longitude
+     */
+    public function geocodeLocation(string $location): ?array
+    {
+        try {
+            $url = config('geocode.geocode_url');
+            $key = config('geocode.geocode_key');
+
+            if (!$url || !$key) {
+                return null;
+            }
+
+            $client = new \GuzzleHttp\Client();
+            $requestUrl = $url . urlencode($location) . '&api_key=' . $key;
+
+            $response = $client->get($requestUrl);
+            $data = json_decode($response->getBody(), true);
+
+            if (!empty($data) && isset($data[0]['lat']) && isset($data[0]['lon'])) {
+                return [
+                    'latitude' => (float) $data[0]['lat'],
+                    'longitude' => (float) $data[0]['lon'],
+                    'display_name' => $data[0]['display_name'] ?? $location,
+                ];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Geocoding failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Search job postings within radius
      */
-    public function searchByRadius(float $latitude, float $longitude, float $radiusKm = 50)
+    public function searchByRadius($query, float $latitude, float $longitude, float $radiusKm = 50)
     {
         // Using Haversine formula
         $earthRadiusKm = 6371;
 
-        return JobPosting::active()
-            ->with(['facility.address'])
-            ->whereHas('facility.address', function ($query) use ($latitude, $longitude, $radiusKm, $earthRadiusKm) {
-                $query->selectRaw(
-                    "*, (
-                        {$earthRadiusKm} * acos(
-                            cos(radians(?))
-                            * cos(radians(latitude))
-                            * cos(radians(longitude) - radians(?))
-                            + sin(radians(?))
-                            * sin(radians(latitude))
-                        )
-                    ) AS distance",
-                    [$latitude, $longitude, $latitude]
-                )->having('distance', '<=', $radiusKm);
+        // Build the query with JOIN to properly calculate distance
+        $jobPostings = $query
+            ->join('facilities', 'job_postings.facility_id', '=', 'facilities.id')
+            ->join('addresses', function ($join) {
+                $join->on('facilities.id', '=', 'addresses.addressable_id')
+                    ->where('addresses.addressable_type', '=', 'App\Models\Facility');
             })
-            ->get();
+            ->whereNotNull('addresses.latitude')
+            ->whereNotNull('addresses.longitude')
+            ->selectRaw(
+                "job_postings.*,
+                ( {$earthRadiusKm} * acos(
+                    cos(radians(?))
+                    * cos(radians(addresses.latitude))
+                    * cos(radians(addresses.longitude) - radians(?))
+                    + sin(radians(?))
+                    * sin(radians(addresses.latitude))
+                ) ) AS distance",
+                [$latitude, $longitude, $latitude]
+            )
+            ->having('distance', '<=', $radiusKm)
+            ->with(['facility.address', 'facility.organization'])
+            ->orderBy('distance', 'asc')
+            ->orderBy('published_at', 'desc')
+            ->paginate(20)
+            ->appends(request()->query());
+
+        return $jobPostings;
     }
 }
 
