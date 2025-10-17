@@ -15,32 +15,30 @@
                             <x-layouts.sidebar-link href="{{ route('facilities.index') }}" icon="fas-school"
                                 :active="request()->routeIs('facilities*')">Einrichtungen</x-layouts.sidebar-link>
 
+                            <!-- Stellenausschreibungen -->
+                            <x-layouts.sidebar-link href="{{ route('job-postings.index') }}" icon='fas-briefcase'
+                                :active="request()->routeIs('job-postings*')">Stellenausschreibungen</x-layouts.sidebar-link>
+
                             <!-- Guthaben-System -->
                             @can('manage credit packages')
                             <x-layouts.sidebar-link href="{{ route('credits.packages.index') }}" icon='fas-coins'
                                 :active="request()->routeIs('credits.packages*')">Guthaben-Pakete</x-layouts.sidebar-link>
                             @endcan
 
-                            <!-- Example two level -->
-                            <x-layouts.sidebar-two-level-link-parent title="Example two level" icon="fas-house"
-                                :active="request()->routeIs('two-level*')">
-                                <x-layouts.sidebar-two-level-link href="#" icon='fas-house'
-                                    :active="request()->routeIs('two-level*')">Child</x-layouts.sidebar-two-level-link>
+                            <!-- Rollen & Berechtigungen -->
+                            @can('view roles')
+                            <x-layouts.sidebar-two-level-link-parent title="Berechtigungen" icon="fas-shield-halved"
+                                :active="request()->routeIs('roles*') || request()->routeIs('permissions*')">
+                                @can('view roles')
+                                <x-layouts.sidebar-two-level-link href="{{ route('roles.index') }}" icon='fas-user-tag'
+                                    :active="request()->routeIs('roles*')">Rollen</x-layouts.sidebar-two-level-link>
+                                @endcan
+                                @can('view permissions')
+                                <x-layouts.sidebar-two-level-link href="{{ route('permissions.index') }}" icon='fas-key'
+                                    :active="request()->routeIs('permissions*')">Rechte</x-layouts.sidebar-two-level-link>
+                                @endcan
                             </x-layouts.sidebar-two-level-link-parent>
-
-                            <!-- Example three level -->
-                            <x-layouts.sidebar-two-level-link-parent title="Example three level" icon="fas-house"
-                                :active="request()->routeIs('three-level*')">
-                                <x-layouts.sidebar-two-level-link href="#" icon='fas-house'
-                                    :active="request()->routeIs('three-level*')">Single Link</x-layouts.sidebar-two-level-link>
-
-                                <x-layouts.sidebar-three-level-parent title="Third Level" icon="fas-house"
-                                    :active="request()->routeIs('three-level*')">
-                                    <x-layouts.sidebar-three-level-link href="#" :active="request()->routeIs('three-level*')">
-                                        Third Level Link
-                                    </x-layouts.sidebar-three-level-link>
-                                </x-layouts.sidebar-three-level-parent>
-                            </x-layouts.sidebar-two-level-link-parent>
+                            @endcan
                         </ul>
                     </nav>
                 </div>

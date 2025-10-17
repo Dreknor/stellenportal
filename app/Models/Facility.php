@@ -23,6 +23,13 @@ class Facility extends Model implements HasMedia
         'slug',
     ];
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('header_image')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']);
+    }
+
     public function address()
     {
         return $this->morphOne(Address::class, 'addressable');
@@ -36,6 +43,11 @@ class Facility extends Model implements HasMedia
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function jobPostings()
+    {
+        return $this->hasMany(JobPosting::class);
     }
 
     /**

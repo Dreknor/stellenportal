@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditPackageController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Settings;
 use App\Http\Middleware\PasswordExpired as PasswordExpiredAlias;
 use Illuminate\Support\Facades\Route;
@@ -56,7 +58,15 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
     });
 
     // Guthaben-Pakete verwalten (nur mit Permission "manage credit packages")
-    Route::resource('credits/packages', CreditPackageController::class);
+    Route::resource('credits/packages', CreditPackageController::class)->names([
+        'index' => 'credits.packages.index',
+        'create' => 'credits.packages.create',
+        'store' => 'credits.packages.store',
+        'show' => 'credits.packages.show',
+        'edit' => 'credits.packages.edit',
+        'update' => 'credits.packages.update',
+        'destroy' => 'credits.packages.destroy',
+    ]);
 
     // Guthaben für Einrichtungen
     Route::get('facilities/{facility}/credits/purchase', [CreditController::class, 'showFacilityPurchase'])
@@ -79,6 +89,34 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         ->name('credits.organization.transfer');
     Route::post('organizations/{organization}/credits/transfer', [CreditController::class, 'transfer'])
         ->name('credits.organization.transfer.store');
+
+    // Role and Permission management
+    Route::resource('roles', RoleController::class);
+    Route::resource('permissions', PermissionController::class);
+
+    // Job Postings
+    Route::prefix('job-postings')->name('job-postings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\JobPostingController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\JobPostingController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\JobPostingController::class, 'store'])->name('store');
+        Route::get('/{jobPosting}', [\App\Http\Controllers\JobPostingController::class, 'show'])->name('show');
+        Route::get('/{jobPosting}/edit', [\App\Http\Controllers\JobPostingController::class, 'edit'])->name('edit');
+        Route::put('/{jobPosting}', [\App\Http\Controllers\JobPostingController::class, 'update'])->name('update');
+        Route::delete('/{jobPosting}', [\App\Http\Controllers\JobPostingController::class, 'destroy'])->name('destroy');
+
+        // Actions
+        Route::post('/{jobPosting}/publish', [\App\Http\Controllers\JobPostingController::class, 'publish'])->name('publish');
+        Route::post('/{jobPosting}/extend', [\App\Http\Controllers\JobPostingController::class, 'extend'])->name('extend');
+        Route::post('/{jobPosting}/pause', [\App\Http\Controllers\JobPostingController::class, 'pause'])->name('pause');
+        Route::post('/{jobPosting}/resume', [\App\Http\Controllers\JobPostingController::class, 'resume'])->name('resume');
+    });
+});
+
+// Public job postings (no auth required)
+Route::prefix('jobs')->name('public.jobs.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');
+    Route::get('/{jobPosting}', [\App\Http\Controllers\PublicJobPostingController::class, 'show'])->name('show');
+    Route::get('/{jobPosting}/pdf', [\App\Http\Controllers\PublicJobPostingController::class, 'exportPdf'])->name('pdf');
 });
 
 require __DIR__.'/auth.php';

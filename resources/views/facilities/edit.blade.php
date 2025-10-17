@@ -14,7 +14,7 @@
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
-            <form class="max-w-3xl" action="{{ route('facilities.update', $facility) }}" method="POST">
+            <form class="max-w-3xl" action="{{ route('facilities.update', $facility) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -91,6 +91,8 @@
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <x-forms.header-image-upload :model="$facility" />
 
                 <div class="flex gap-4">
                     <x-button type="primary">{{ __('Speichern') }}</x-button>

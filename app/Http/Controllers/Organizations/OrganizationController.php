@@ -135,6 +135,8 @@ class OrganizationController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+            'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'remove_header_image' => 'nullable|boolean',
         ]);
 
         $organization->update($request->only([
@@ -149,6 +151,17 @@ class OrganizationController extends Controller
             $organization->address()->create($request->only([
                 'street', 'number', 'city', 'zip_code'
             ]));
+        }
+
+        // Handle header image removal
+        if ($request->input('remove_header_image')) {
+            $organization->clearMediaCollection('header_image');
+        }
+
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $organization->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
         }
 
         return redirect()->route('organizations.edit', $organization)

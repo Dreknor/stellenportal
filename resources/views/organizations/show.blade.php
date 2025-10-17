@@ -17,6 +17,49 @@
             <x-organization.card :organization="$organization" :showActions="true" :editUrl="true" />
         </div>
 
+        <!-- Credits Overview -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden h-fit">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                        {{ __('Guthaben') }}
+                    </h2>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-6 mb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('Aktueller Kontostand') }}</p>
+                            <p class="text-4xl font-bold text-green-600 dark:text-green-400">
+                                {{ number_format($organization->getCurrentCreditBalance(), 0, ',', '.') }}
+                            </p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('Guthaben') }}</p>
+                        </div>
+                        <div class="text-green-600 dark:text-green-400">
+                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2">
+                    <x-button type="success" tag="a" :href="route('credits.organization.purchase', $organization)" size="sm" class="w-full justify-center">
+                        <x-fas-plus class="w-4 h-4 mr-2" />
+                        {{ __('Guthaben aufladen') }}
+                    </x-button>
+                    <x-button type="primary" tag="a" :href="route('credits.organization.transfer', $organization)" size="sm" class="w-full justify-center">
+                        <x-fas-exchange-alt class="w-4 h-4 mr-2" />
+                        {{ __('Guthaben umbuchen') }}
+                    </x-button>
+                    <x-button type="secondary" tag="a" :href="route('credits.organization.transactions', $organization)" size="sm" class="w-full justify-center">
+                        <x-fas-list class="w-4 h-4 mr-2" />
+                        {{ __('Transaktionshistorie') }}
+                    </x-button>
+                </div>
+            </div>
+        </div>
+
         <!-- Users Overview -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden h-fit">
             <div class="p-6">

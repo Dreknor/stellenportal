@@ -25,6 +25,13 @@ class Organization extends Model implements HasMedia
         'approved_at',
     ];
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('header_image')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']);
+    }
+
     public function address()
     {
         return $this->morphOne(Address::class, 'addressable');

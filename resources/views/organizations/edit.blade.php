@@ -14,7 +14,7 @@
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
-            <form class="max-w-3xl" action="{{ route('organizations.update', $organization) }}" method="POST">
+            <form class="max-w-3xl" action="{{ route('organizations.update', $organization) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -68,6 +68,8 @@
                     >{{ old('description', $organization->description) }}</textarea>
                 </div>
 
+                <x-forms.header-image-upload :model="$organization" />
+
                 <div class="flex gap-4">
                     <x-button type="primary">{{ __('Speichern') }}</x-button>
                     <x-button type="secondary" tag="a" :href="route('organizations.show', $organization)">
@@ -78,4 +80,3 @@
         </div>
     </div>
 </x-layouts.app>
-

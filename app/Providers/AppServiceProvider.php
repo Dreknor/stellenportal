@@ -3,10 +3,16 @@
 namespace App\Providers;
 
 use App\Models\CreditPackage;
+use App\Models\JobPosting;
 use App\Policies\CreditPackagePolicy;
 use App\Policies\CreditPolicy;
+use App\Policies\RolePolicy;
+use App\Policies\PermissionPolicy;
+use App\Policies\JobPostingPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,5 +36,12 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('purchaseCredits', [CreditPolicy::class, 'purchaseCredits']);
         Gate::define('transferCredits', [CreditPolicy::class, 'transferCredits']);
         Gate::define('viewTransactions', [CreditPolicy::class, 'viewTransactions']);
+
+        // Register Role and Permission Policies
+        Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Permission::class, PermissionPolicy::class);
+
+        // Register Job Posting Policy
+        Gate::policy(JobPosting::class, JobPostingPolicy::class);
     }
 }

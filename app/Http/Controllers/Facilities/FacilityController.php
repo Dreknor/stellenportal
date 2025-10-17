@@ -149,6 +149,7 @@ class FacilityController extends Controller
                 ->with('error', 'Kein Zugriff auf diese Einrichtung.');
         }
 
+
         $request->validate([
             'organization_id' => 'required|exists:organizations,id',
             'name' => 'required|string|max:255',
@@ -160,6 +161,8 @@ class FacilityController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+            'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'remove_header_image' => 'nullable|boolean',
         ]);
 
         $facility->update($request->only([
@@ -174,6 +177,17 @@ class FacilityController extends Controller
             $facility->address()->create($request->only([
                 'street', 'number', 'city', 'zip_code'
             ]));
+        }
+
+        // Handle header image removal
+        if ($request->input('remove_header_image')) {
+            $facility->clearMediaCollection('header_image');
+        }
+
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $facility->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
         }
 
         return redirect()->route('facilities.edit', $facility)
