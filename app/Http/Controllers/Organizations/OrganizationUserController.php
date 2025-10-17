@@ -43,7 +43,7 @@ class OrganizationUserController extends Controller
                 $user->organizations()->attach($organization->id);
 
                 // Send email to inform user about organization assignment
-                Mail::to($user->email)->queue(new UserAssignedToOrganizationMail($user, $organization));
+                Mail::to($user->email)->send(new UserAssignedToOrganizationMail($user, $organization));
 
                 return redirect()->route('organizations.users.index', $organization)
                     ->with('success', 'Bestehender Benutzer wurde der Organisation zugewiesen und per E-Mail benachrichtigt.');
