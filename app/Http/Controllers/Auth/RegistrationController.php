@@ -31,6 +31,8 @@ class RegistrationController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
 
+        $validated['change_password'] = false;
+
         event(new Registered(($user = User::create($validated))));
 
         Auth::login($user);

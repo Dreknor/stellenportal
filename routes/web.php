@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Settings;
+use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\PasswordExpired as PasswordExpiredAlias;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ Route::get('/', function () {
 
     return view('welcome', ['latestJobs' => $latestJobs]);
 })->name('home');
+
+// Sitemap für SEO
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', PasswordExpiredAlias::class])

@@ -1,2 +1,15 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /password
+Disallow: /api
+Disallow: /storage
+
+# Sitemaps
+Sitemap: https://stellenportal.local/sitemap.xml
+
+# Crawl-delay für ressourcenschonende Indizierung
+Crawl-delay: 1
