@@ -34,11 +34,6 @@
                         placeholder="••••••••" />
                 </div>
 
-                @if(App::environment('production'))
-                    <div>
-                        {!! app('captcha')->display() !!}
-                    </div>
-                @endif
 
                 <!-- Register Button -->
                 <x-button type="primary" class="w-full py-3 text-lg font-semibold">{{ __('Account anlegen') }}</x-button>
