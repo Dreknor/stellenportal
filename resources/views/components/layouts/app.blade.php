@@ -71,7 +71,13 @@
             <x-layouts.app.sidebar />
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 content-transition">
+            <main class="flex-1 overflow-auto content-transition bg-gray-100 dark:bg-gray-900"
+                  style="background-image: var(--bg-image, url('{{ asset('img/HG-blau-soft.jpg') }}')); background-size: cover; background-position: center; background-attachment: fixed;">
+                <style>
+                    .dark main {
+                        --bg-image: url('{{ asset('img/bg-dark.png') }}');
+                    }
+                </style>
                 <div class="p-6">
                     @session('status')
                         <x-alerts.alert status="status"/>

@@ -39,6 +39,55 @@
                                 @endcan
                             </x-layouts.sidebar-two-level-link-parent>
                             @endcan
+
+                            <!-- Admin Bereich -->
+                            @canany(['admin view users', 'admin view organizations', 'admin view facilities', 'admin view job postings', 'admin view credits', 'admin view logs'])
+                            <li class="pt-4 pb-2">
+                                <div x-show="sidebarOpen" class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Administration
+                                </div>
+                                <div x-show="!sidebarOpen" class="border-t border-gray-300 dark:border-gray-600 mx-2"></div>
+                            </li>
+
+                            @can('admin view users')
+                            <x-layouts.sidebar-link href="{{ route('admin.dashboard') }}" icon='fas-gauge-high'
+                                :active="request()->routeIs('admin.dashboard')">Admin Dashboard</x-layouts.sidebar-link>
+                            @endcan
+
+                            <x-layouts.sidebar-two-level-link-parent title="Admin" icon="fas-user-shield"
+                                :active="request()->routeIs('admin.users*') || request()->routeIs('admin.organizations*') || request()->routeIs('admin.facilities*') || request()->routeIs('admin.job-postings*') || request()->routeIs('admin.credits*') || request()->routeIs('admin.audits*')">
+
+                                @can('admin view users')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.users.index') }}" icon='fas-users'
+                                    :active="request()->routeIs('admin.users*')">Benutzer</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view organizations')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.organizations.index') }}" icon='fas-building'
+                                    :active="request()->routeIs('admin.organizations*')">Organisationen</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view facilities')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.facilities.index') }}" icon='fas-school'
+                                    :active="request()->routeIs('admin.facilities*')">Einrichtungen</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view job postings')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.job-postings.index') }}" icon='fas-briefcase'
+                                    :active="request()->routeIs('admin.job-postings*')">Stellenausschreibungen</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view credits')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.credits.index') }}" icon='fas-coins'
+                                    :active="request()->routeIs('admin.credits*')">Guthaben</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view logs')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.audits.index') }}" icon='fas-list-check'
+                                    :active="request()->routeIs('admin.audits*')">Audit Logs</x-layouts.sidebar-two-level-link>
+                                @endcan
+                            </x-layouts.sidebar-two-level-link-parent>
+                            @endcanany
                         </ul>
                     </nav>
                 </div>

@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class JobPosting extends Model
+class JobPosting extends Model implements Auditable
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SoftDeletes , \OwenIt\Auditing\Auditable;
 
     const EMPLOYMENT_TYPE_FULL_TIME = 'full_time';
     const EMPLOYMENT_TYPE_PART_TIME = 'part_time';

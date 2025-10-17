@@ -8,10 +8,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Facility extends Model implements HasMedia
+class Facility extends Model implements HasMedia, \OwenIt\Auditing\Contracts\Auditable
 {
     use HasSlug;
     use InteractsWithMedia;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'organization_id',

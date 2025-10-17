@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditPackageController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Settings;
@@ -9,10 +10,16 @@ use App\Http\Middleware\PasswordExpired as PasswordExpiredAlias;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $latestJobs = \App\Models\JobPosting::active()
+        ->with(['facility.address', 'facility.organization'])
+        ->orderBy('published_at', 'desc')
+        ->limit(5)
+        ->get();
+
+    return view('welcome', ['latestJobs' => $latestJobs]);
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', PasswordExpiredAlias::class])
     ->name('dashboard');
 
@@ -109,6 +116,116 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         Route::post('/{jobPosting}/extend', [\App\Http\Controllers\JobPostingController::class, 'extend'])->name('extend');
         Route::post('/{jobPosting}/pause', [\App\Http\Controllers\JobPostingController::class, 'pause'])->name('pause');
         Route::post('/{jobPosting}/resume', [\App\Http\Controllers\JobPostingController::class, 'resume'])->name('resume');
+    });
+
+    // Admin Routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Admin Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+            ->middleware('permission:admin view users|admin view organizations|admin view facilities|admin view job postings')
+            ->name('dashboard');
+
+        // Admin User Management
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)
+            ->middleware([
+                'index' => 'permission:admin view users',
+                'create' => 'permission:admin create users',
+                'store' => 'permission:admin create users',
+                'show' => 'permission:admin view users',
+                'edit' => 'permission:admin edit users',
+                'update' => 'permission:admin edit users',
+                'destroy' => 'permission:admin delete users',
+            ]);
+
+        // Admin Organization Management
+        Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class)
+            ->only(['index', 'show', 'edit', 'update', 'destroy'])
+            ->middleware([
+                'index' => 'permission:admin view organizations',
+                'show' => 'permission:admin view organizations',
+                'edit' => 'permission:admin edit organizations',
+                'update' => 'permission:admin edit organizations',
+                'destroy' => 'permission:admin delete organizations',
+            ]);
+
+        // Organization Approval
+        Route::post('organizations/{organization}/approve', [\App\Http\Controllers\Admin\OrganizationController::class, 'approve'])
+            ->middleware('permission:admin edit organizations')
+            ->name('organizations.approve');
+        Route::post('organizations/{organization}/unapprove', [\App\Http\Controllers\Admin\OrganizationController::class, 'unapprove'])
+            ->middleware('permission:admin edit organizations')
+            ->name('organizations.unapprove');
+
+        // Admin Facility Management
+        Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class)
+            ->only(['index', 'show', 'edit', 'update', 'destroy'])
+            ->middleware([
+                'index' => 'permission:admin view facilities',
+                'show' => 'permission:admin view facilities',
+                'edit' => 'permission:admin edit facilities',
+                'update' => 'permission:admin edit facilities',
+                'destroy' => 'permission:admin delete facilities',
+            ]);
+
+        // Admin Job Posting Management
+        Route::prefix('job-postings')->name('job-postings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\JobPostingController::class, 'index'])
+                ->middleware('permission:admin view job postings')
+                ->name('index');
+            Route::get('/{jobPosting}', [\App\Http\Controllers\Admin\JobPostingController::class, 'show'])
+                ->middleware('permission:admin view job postings')
+                ->name('show');
+            Route::get('/{jobPosting}/edit', [\App\Http\Controllers\Admin\JobPostingController::class, 'edit'])
+                ->middleware('permission:admin edit job postings')
+                ->name('edit');
+            Route::put('/{jobPosting}', [\App\Http\Controllers\Admin\JobPostingController::class, 'update'])
+                ->middleware('permission:admin edit job postings')
+                ->name('update');
+            Route::delete('/{jobPosting}', [\App\Http\Controllers\Admin\JobPostingController::class, 'destroy'])
+                ->middleware('permission:admin delete job postings')
+                ->name('destroy');
+            Route::post('/{jobPosting}/publish', [\App\Http\Controllers\Admin\JobPostingController::class, 'publish'])
+                ->middleware('permission:admin publish job postings')
+                ->name('publish');
+            Route::post('/{jobPosting}/pause', [\App\Http\Controllers\Admin\JobPostingController::class, 'pause'])
+                ->middleware('permission:admin publish job postings')
+                ->name('pause');
+            Route::post('/{jobPosting}/resume', [\App\Http\Controllers\Admin\JobPostingController::class, 'resume'])
+                ->middleware('permission:admin publish job postings')
+                ->name('resume');
+            Route::post('/{jobPosting}/extend', [\App\Http\Controllers\Admin\JobPostingController::class, 'extend'])
+                ->middleware('permission:admin publish job postings')
+                ->name('extend');
+        });
+
+        // Admin Credit Management
+        Route::prefix('credits')->name('credits.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\CreditController::class, 'index'])
+                ->middleware('permission:admin view credits')
+                ->name('index');
+            Route::get('/transactions', [\App\Http\Controllers\Admin\CreditController::class, 'transactions'])
+                ->middleware('permission:admin view credits')
+                ->name('transactions');
+            Route::get('/grant', [\App\Http\Controllers\Admin\CreditController::class, 'grant'])
+                ->middleware('permission:admin grant credits')
+                ->name('grant');
+            Route::post('/grant', [\App\Http\Controllers\Admin\CreditController::class, 'storeGrant'])
+                ->middleware('permission:admin grant credits')
+                ->name('grant.store');
+        });
+
+        // Admin Audit Logs
+        Route::prefix('audits')->name('audits.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AuditController::class, 'index'])
+                ->middleware('permission:admin view logs')
+                ->name('index');
+            Route::get('/{audit}', [\App\Http\Controllers\Admin\AuditController::class, 'show'])
+                ->middleware('permission:admin view logs')
+                ->name('show');
+            Route::get('/export/csv', [\App\Http\Controllers\Admin\AuditController::class, 'export'])
+                ->middleware('permission:admin export logs')
+                ->name('export');
+        });
     });
 });
 

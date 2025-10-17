@@ -8,11 +8,17 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Organization extends Model implements HasMedia
+class Organization extends Model implements HasMedia, \OwenIt\Auditing\Contracts\Auditable
 {
     use HasSlug;
     use InteractsWithMedia;
+    use \OwenIt\Auditing\Auditable;
 
+     /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
         'email',
@@ -23,6 +29,11 @@ class Organization extends Model implements HasMedia
         'is_approved',
         'approved_by',
         'approved_at',
+    ];
+
+    protected $casts = [
+        'is_approved' => 'boolean',
+        'approved_at' => 'datetime',
     ];
 
     public function registerMediaCollections(): void
@@ -69,6 +80,14 @@ class Organization extends Model implements HasMedia
     public function getCurrentCreditBalance()
     {
         return $this->creditBalance()->firstOrCreate([])->balance;
+    }
+
+    /**
+     * Get the user who approved this organization
+     */
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function getSlugOptions(): SlugOptions

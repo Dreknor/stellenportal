@@ -45,6 +45,14 @@ class CreditTransaction extends Model implements Auditable
     }
 
     /**
+     * Alias for creditable (for backwards compatibility)
+     */
+    public function transactionable()
+    {
+        return $this->morphTo('creditable');
+    }
+
+    /**
      * Get the user who performed the transaction
      */
     public function user()
