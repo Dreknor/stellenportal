@@ -28,7 +28,8 @@ return new class extends Migration
                 $table->foreignId('related_transaction_id')->nullable()->constrained('credit_transactions');
                 $table->timestamps();
 
-                $table->index(['creditable_type', 'creditable_id', 'created_at']);
+                // Custom index name to avoid MySQL identifier length limit (max 64 chars)
+                $table->index(['creditable_type', 'creditable_id', 'created_at'], 'ct_creditable_created_idx');
             });
 
         }
