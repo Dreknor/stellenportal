@@ -9,67 +9,60 @@
     @endif
 
     @push('structured-data')
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        "title": "{{ $jobPosting->title }}",
-        "description": "{{ strip_tags($jobPosting->description) }}",
-        "datePosted": "{{ $jobPosting->published_at->toIso8601String() }}",
-        "validThrough": "{{ ($jobPosting->expires_at ?? $jobPosting->published_at->addMonths(3))->toIso8601String() }}",
-        "employmentType": "{{ strtoupper(str_replace('_', '_', $jobPosting->employment_type)) }}",
-        "hiringOrganization": {
-            "@type": "Organization",
-            "name": "{{ $jobPosting->facility->name }}"
-            @if($jobPosting->facility->getFirstMediaUrl('logo'))
-            ,
-            "logo": "{{ $jobPosting->facility->getFirstMediaUrl('logo') }}"
-            @endif
-        },
-        @if($jobPosting->facility->address)
-        "jobLocation": {
-            "@type": "Place",
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "{{ $jobPosting->facility->address->street }}",
-                "addressLocality": "{{ $jobPosting->facility->address->city }}",
-                "postalCode": "{{ $jobPosting->facility->address->postal_code }}",
-                "addressRegion": "{{ $jobPosting->facility->address->state }}",
-                "addressCountry": "DE"
-            }
-            @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
-            ,
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": {{ $jobPosting->facility->address->latitude }},
-                "longitude": {{ $jobPosting->facility->address->longitude }}
-            }
-            @endif
-        },
-        @endif
-        @if($jobPosting->requirements)
-        "qualifications": "{{ strip_tags($jobPosting->requirements) }}",
-        @endif
-        @if($jobPosting->benefits)
-        "benefits": "{{ strip_tags($jobPosting->benefits) }}",
-        @endif
-        @if($jobPosting->contact_email)
-        "applicationContact": {
-            "@type": "ContactPoint",
-            "email": "{{ $jobPosting->contact_email }}"
-            @if($jobPosting->contact_phone)
-            ,
-            "telephone": "{{ $jobPosting->contact_phone }}"
-            @endif
-            @if($jobPosting->contact_person)
-            ,
-            "name": "{{ $jobPosting->contact_person }}"
-            @endif
-        },
-        @endif
-        "url": "{{ route('public.jobs.show', $jobPosting) }}"
-    }
-    </script>
+    @php
+        $jobPostingSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'JobPosting',
+            'title' => $jobPosting->title,
+            'description' => strip_tags($jobPosting->description),
+            'datePosted' => $jobPosting->published_at->toIso8601String(),
+            'validThrough' => ($jobPosting->expires_at ?? $jobPosting->published_at->addMonths(3))->toIso8601String(),
+            'employmentType' => strtoupper(str_replace('_', '_', $jobPosting->employment_type)),
+            'hiringOrganization' => array_filter([
+                '@type' => 'Organization',
+                'name' => $jobPosting->facility->name,
+                'logo' => $jobPosting->facility->getFirstMediaUrl('logo') ?: null,
+            ]),
+            'url' => route('public.jobs.show', $jobPosting),
+        ];
+
+        if ($jobPosting->facility->address) {
+            $jobPostingSchema['jobLocation'] = array_filter([
+                '@type' => 'Place',
+                'address' => array_filter([
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $jobPosting->facility->address->street,
+                    'addressLocality' => $jobPosting->facility->address->city,
+                    'postalCode' => $jobPosting->facility->address->postal_code,
+                    'addressRegion' => $jobPosting->facility->address->state,
+                    'addressCountry' => 'DE',
+                ]),
+                'geo' => ($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude) ? [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => $jobPosting->facility->address->latitude,
+                    'longitude' => $jobPosting->facility->address->longitude,
+                ] : null,
+            ]);
+        }
+
+        if ($jobPosting->requirements) {
+            $jobPostingSchema['qualifications'] = strip_tags($jobPosting->requirements);
+        }
+
+        if ($jobPosting->benefits) {
+            $jobPostingSchema['benefits'] = strip_tags($jobPosting->benefits);
+        }
+
+        if ($jobPosting->contact_email) {
+            $jobPostingSchema['applicationContact'] = array_filter([
+                '@type' => 'ContactPoint',
+                'email' => $jobPosting->contact_email,
+                'telephone' => $jobPosting->contact_phone ?: null,
+                'name' => $jobPosting->contact_person ?: null,
+            ]);
+        }
+    @endphp
+    <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @endpush
 
     @php

@@ -3,51 +3,55 @@
     <x-slot:metaDescription>{{ __('Durchsuchen Sie aktuelle Stellenangebote für Lehrkräfte, Schulbegleitung und pädagogisches Personal an evangelischen Schulen und Einrichtungen in Sachsen.') }}</x-slot:metaDescription>
 
     @push('structured-data')
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        "name": "Stellenangebote",
-        "description": "Aktuelle Stellenangebote für Lehrkräfte und pädagogisches Personal",
-        "url": "{{ url()->current() }}",
-        "mainEntity": {
-            "@type": "ItemList",
-            "numberOfItems": {{ $jobPostings->total() }},
-            "itemListElement": [
-                @foreach($jobPostings as $index => $job)
-                {
-                    "@type": "ListItem",
-                    "position": {{ $index + 1 }},
-                    "item": {
-                        "@type": "JobPosting",
-                        "title": "{{ $job->title }}",
-                        "description": "{{ Str::limit(strip_tags($job->description), 200) }}",
-                        "datePosted": "{{ $job->published_at->toIso8601String() }}",
-                        "validThrough": "{{ $job->published_at->addMonths(3)->toIso8601String() }}",
-                        "employmentType": "{{ strtoupper(str_replace('_', '_', $job->employment_type)) }}",
-                        "hiringOrganization": {
-                            "@type": "Organization",
-                            "name": "{{ $job->facility->name }}"
-                        }
-                        @if($job->facility->address)
-                        ,
-                        "jobLocation": {
-                            "@type": "Place",
-                            "address": {
-                                "@type": "PostalAddress",
-                                "addressLocality": "{{ $job->facility->address->city }}",
-                                "addressRegion": "{{ $job->facility->address->state }}",
-                                "addressCountry": "DE"
-                            }
-                        }
-                        @endif
-                    }
-                }{{ $loop->last ? '' : ',' }}
-                @endforeach
-            ]
+    @php
+        $itemListElements = [];
+        foreach ($jobPostings as $index => $job) {
+            $item = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'item' => [
+                    '@type' => 'JobPosting',
+                    'title' => $job->title,
+                    'description' => Str::limit(strip_tags($job->description), 200),
+                    'datePosted' => $job->published_at->toIso8601String(),
+                    'validThrough' => $job->published_at->addMonths(3)->toIso8601String(),
+                    'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
+                    'hiringOrganization' => [
+                        '@type' => 'Organization',
+                        'name' => $job->facility->name,
+                    ],
+                ],
+            ];
+
+            if ($job->facility->address) {
+                $item['item']['jobLocation'] = [
+                    '@type' => 'Place',
+                    'address' => [
+                        '@type' => 'PostalAddress',
+                        'addressLocality' => $job->facility->address->city,
+                        'addressRegion' => $job->facility->address->state,
+                        'addressCountry' => 'DE',
+                    ],
+                ];
+            }
+
+            $itemListElements[] = $item;
         }
-    }
-    </script>
+
+        $collectionPageSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            'name' => 'Stellenangebote',
+            'description' => 'Aktuelle Stellenangebote für Lehrkräfte und pädagogisches Personal',
+            'url' => url()->current(),
+            'mainEntity' => [
+                '@type' => 'ItemList',
+                'numberOfItems' => $jobPostings->total(),
+                'itemListElement' => $itemListElements,
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($collectionPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @endpush
 
     <div class="mb-8">

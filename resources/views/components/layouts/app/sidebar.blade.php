@@ -19,26 +19,7 @@
                             <x-layouts.sidebar-link href="{{ route('job-postings.index') }}" icon='fas-briefcase'
                                 :active="request()->routeIs('job-postings*')">Stellenausschreibungen</x-layouts.sidebar-link>
 
-                            <!-- Guthaben-System -->
-                            @can('manage credit packages')
-                            <x-layouts.sidebar-link href="{{ route('credits.packages.index') }}" icon='fas-coins'
-                                :active="request()->routeIs('credits.packages*')">Guthaben-Pakete</x-layouts.sidebar-link>
-                            @endcan
 
-                            <!-- Rollen & Berechtigungen -->
-                            @can('view roles')
-                            <x-layouts.sidebar-two-level-link-parent title="Berechtigungen" icon="fas-shield-halved"
-                                :active="request()->routeIs('roles*') || request()->routeIs('permissions*')">
-                                @can('view roles')
-                                <x-layouts.sidebar-two-level-link href="{{ route('roles.index') }}" icon='fas-user-tag'
-                                    :active="request()->routeIs('roles*')">Rollen</x-layouts.sidebar-two-level-link>
-                                @endcan
-                                @can('view permissions')
-                                <x-layouts.sidebar-two-level-link href="{{ route('permissions.index') }}" icon='fas-key'
-                                    :active="request()->routeIs('permissions*')">Rechte</x-layouts.sidebar-two-level-link>
-                                @endcan
-                            </x-layouts.sidebar-two-level-link-parent>
-                            @endcan
 
                             <!-- Admin Bereich -->
                             @canany(['admin view users', 'admin view organizations', 'admin view facilities', 'admin view job postings', 'admin view credits', 'admin view logs'])
@@ -88,6 +69,27 @@
                                 @endcan
                             </x-layouts.sidebar-two-level-link-parent>
                             @endcanany
+
+                            <!-- Guthaben-System -->
+                            @can('manage credit packages')
+                                <x-layouts.sidebar-link href="{{ route('credits.packages.index') }}" icon='fas-coins'
+                                                        :active="request()->routeIs('credits.packages*')">Guthaben-Pakete</x-layouts.sidebar-link>
+                            @endcan
+
+                            <!-- Rollen & Berechtigungen -->
+                            @can('view roles')
+                                <x-layouts.sidebar-two-level-link-parent title="Berechtigungen" icon="fas-shield-halved"
+                                                                         :active="request()->routeIs('roles*') || request()->routeIs('permissions*')">
+                                    @can('view roles')
+                                        <x-layouts.sidebar-two-level-link href="{{ route('roles.index') }}" icon='fas-user-tag'
+                                                                          :active="request()->routeIs('roles*')">Rollen</x-layouts.sidebar-two-level-link>
+                                    @endcan
+                                    @can('view permissions')
+                                        <x-layouts.sidebar-two-level-link href="{{ route('permissions.index') }}" icon='fas-key'
+                                                                          :active="request()->routeIs('permissions*')">Rechte</x-layouts.sidebar-two-level-link>
+                                    @endcan
+                                </x-layouts.sidebar-two-level-link-parent>
+                            @endcan
                         </ul>
                     </nav>
                 </div>
