@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -11,6 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 #[ObservedBy([\App\Observers\AddressObserver::class])]
 class Address extends Model implements Auditable, HasMedia
 {
+    use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use InteractsWithMedia;
 
@@ -21,6 +23,8 @@ class Address extends Model implements Auditable, HasMedia
         'zip_code',
         'latitude',
         'longitude',
+        'addressable_id',
+        'addressable_type',
     ];
 
     public function addressable(): \Illuminate\Database\Eloquent\Relations\MorphTo

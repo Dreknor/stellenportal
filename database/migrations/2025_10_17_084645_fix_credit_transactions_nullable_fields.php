@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,9 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Use raw SQL to ensure the columns are properly set to nullable
-        DB::statement('ALTER TABLE `credit_transactions` MODIFY `related_creditable_type` VARCHAR(255) NULL');
-        DB::statement('ALTER TABLE `credit_transactions` MODIFY `related_creditable_id` BIGINT UNSIGNED NULL');
+        // Skip for SQLite (used in testing)
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
+        // Use Laravel's Schema Builder which handles differences between database systems
+        Schema::table('credit_transactions', function (Blueprint $table) {
+            $table->string('related_creditable_type')->nullable()->change();
+            $table->unsignedBigInteger('related_creditable_id')->nullable()->change();
+        });
     }
 
     /**
@@ -21,7 +29,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('ALTER TABLE `credit_transactions` MODIFY `related_creditable_type` VARCHAR(255) NOT NULL');
-        DB::statement('ALTER TABLE `credit_transactions` MODIFY `related_creditable_id` BIGINT UNSIGNED NOT NULL');
+        // Skip for SQLite (used in testing)
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
+        Schema::table('credit_transactions', function (Blueprint $table) {
+            $table->string('related_creditable_type')->nullable(false)->change();
+            $table->unsignedBigInteger('related_creditable_id')->nullable(false)->change();
+        });
     }
 };

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -10,6 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class JobPosting extends Model implements Auditable
 {
+    use HasFactory;
     use HasSlug, SoftDeletes , \OwenIt\Auditing\Auditable;
 
     const EMPLOYMENT_TYPE_FULL_TIME = 'full_time';
@@ -179,4 +181,3 @@ class JobPosting extends Model implements Auditable
         return $this->facility->address;
     }
 }
-

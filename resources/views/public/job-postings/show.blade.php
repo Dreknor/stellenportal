@@ -295,7 +295,7 @@
                     @endif
 
                     <!-- Address Map -->
-                    @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
+                    @if($jobPosting->facility->address && $jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
                         <!-- Map -->
                         <div class="mt-4">
                             <div id="facilityMap" class="h-48 rounded-lg border border-gray-200 dark:border-gray-600" role="img" aria-label="Karte mit Standort der Einrichtung"></div>

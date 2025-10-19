@@ -60,12 +60,9 @@ class JobPostingPolicy
      */
     public function publish(User $user, JobPosting $jobPosting): bool
     {
-        if (!$this->belongsToFacilityOrOrganization($user, $jobPosting)) {
-            return false;
-        }
-
-        // Check if facility has enough credits
-        return $jobPosting->facility->getCurrentCreditBalance() >= JobPosting::CREDITS_PER_POSTING;
+        // Only check if user belongs to facility or organization
+        // Credit check is handled in the service layer for better error messaging
+        return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 
     /**
@@ -73,12 +70,9 @@ class JobPostingPolicy
      */
     public function extend(User $user, JobPosting $jobPosting): bool
     {
-        if (!$this->belongsToFacilityOrOrganization($user, $jobPosting)) {
-            return false;
-        }
-
-        // Check if facility has enough credits
-        return $jobPosting->facility->getCurrentCreditBalance() >= JobPosting::CREDITS_PER_POSTING;
+        // Only check if user belongs to facility or organization
+        // Credit check is handled in the service layer for better error messaging
+        return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 
     /**
@@ -122,4 +116,3 @@ class JobPostingPolicy
         return false;
     }
 }
-
