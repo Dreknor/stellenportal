@@ -30,6 +30,7 @@
 
     @stack('structured-data')
 
+    @stack('js')
     <script>
         window.setAppearance = function(appearance) {
             let setDark = () => document.documentElement.classList.add('dark')

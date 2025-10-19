@@ -81,6 +81,8 @@ class PublicJobPostingController extends Controller
 
         $jobPosting->load(['facility.address', 'facility.organization']);
 
+
+
         return view('public.job-postings.show', compact('jobPosting'));
     }
 

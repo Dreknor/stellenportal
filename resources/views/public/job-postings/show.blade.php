@@ -9,6 +9,7 @@
     @endif
 
     @push('structured-data')
+
     @php
         $jobPostingSchema = [
             '@context' => 'https://schema.org',
@@ -173,7 +174,7 @@
 
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 01-2 2z"></path>
                         </svg>
                         <time datetime="{{ $jobPosting->published_at->toIso8601String() }}" itemprop="datePosted">
                             {{ __('Veröffentlicht am') }} {{ $jobPosting->published_at->format('d.m.Y') }}
@@ -384,6 +385,48 @@
                     @endif
                 </dl>
             </div>
+
+            <!-- Share Buttons -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{{ __('Stelle teilen') }}</h3>
+
+                <div class="flex flex-wrap gap-3">
+                    @php
+                        $shareUrl = route('public.jobs.show', $jobPosting);
+                        $shareText = $jobPosting->title . ' - ' . $jobPosting->facility->name;
+                    @endphp
+
+                    <button type="button" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm" data-share="twitter" aria-label="Teilen auf Twitter">
+                        <!-- Twitter SVG -->
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.633 7.997c.013.176.013.353.013.53 0 5.393-4.103 11.61-11.61 11.61-2.307 0-4.453-.676-6.253-1.847.329.038.657.051.998.051 1.91 0 3.668-.651 5.073-1.747-1.785-.038-3.294-1.21-3.816-2.829.25.038.501.064.767.064.373 0 .746-.05 1.094-.143-1.869-.374-3.272-2.029-3.272-4.014v-.051c.55.307 1.181.494 1.86.517-1.104-.736-1.828-1.989-1.828-3.409 0-.747.201-1.445.552-2.048 2.031 2.493 5.073 4.138 8.494 4.309-.064-.302-.101-.615-.101-.936 0-2.268 1.853-4.121 4.121-4.121 1.186 0 2.258.5 3.011 1.302.936-.176 1.8-.526 2.586-.998-.307.96-.96 1.766-1.816 2.277.829-.089 1.62-.32 2.356-.649-.55.821-1.248 1.542-2.049 2.115z"/></svg>
+                        {{ __('Twitter') }}
+                    </button>
+
+                    <button type="button" class="inline-flex items-center px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md text-sm" data-share="facebook" aria-label="Teilen auf Facebook">
+                        <!-- Facebook SVG -->
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.48 17.52 2 11.93 2 6.48 2 2 6.48 2 12.07c0 4.99 3.66 9.13 8.44 9.94v-7.03H8.08v-2.9h2.36V9.41c0-2.34 1.39-3.62 3.52-3.62.99 0 2.03.18 2.03.18v2.23h-1.14c-1.12 0-1.47.7-1.47 1.41v1.7h2.5l-.4 2.9h-2.1v7.03C18.34 21.2 22 17.06 22 12.07z"/></svg>
+                        {{ __('Facebook') }}
+                    </button>
+
+                    <button type="button" class="inline-flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-md text-sm" data-share="linkedin" aria-label="Teilen auf LinkedIn">
+                        <!-- LinkedIn SVG -->
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V24h-4zM8.5 8.5h3.84v2.08h.05c.54-1.02 1.86-2.08 3.83-2.08 4.1 0 4.86 2.7 4.86 6.21V24h-4v-7.44c0-1.78-.03-4.08-2.49-4.08-2.49 0-2.87 1.95-2.87 3.96V24h-4z"/></svg>
+                        {{ __('LinkedIn') }}
+                    </button>
+
+                    <button type="button" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm" data-share="whatsapp" aria-label="Teilen auf WhatsApp">
+                        <!-- WhatsApp SVG -->
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0012.02 0C5.6 0 .6 5 0 11.38 0 13.1.43 14.74 1.24 16.2L0 24l7.94-1.18c1.44.79 3.07 1.2 4.76 1.2 6.42 0 11.42-5 12.02-11.38.1-.6.16-1.2.16-1.78 0-1.02-.08-2.02-.56-2.94zM12.02 20.06c-1.34 0-2.65-.36-3.78-1.04l-.27-.16-4.7.7.9-4.57-.18-.28A7.66 7.66 0 014.12 6.98c0-4.08 3.32-7.4 7.4-7.4 1.98 0 3.84.77 5.24 2.16A7.33 7.33 0 0120.44 12c0 4.07-3.32 7.4-8.42 8.06z"/></svg>
+                        {{ __('WhatsApp') }}
+                    </button>
+
+                    <button type="button" id="copyLinkBtn" class="inline-flex items-center px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm" aria-label="Link kopieren">
+                        <!-- Copy SVG -->
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8M8 8h8M4 6h.01M4 10h.01M4 14h.01M4 18h.01"/></svg>
+                        <span id="copyLinkText">{{ __('Link kopieren') }}</span>
+                    </button>
+                </div>
+            </div>
         </aside>
     </div>
 
@@ -403,4 +446,74 @@
             </script>
         @endpush
     @endif
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const shareUrl = @json($shareUrl ?? route('public.jobs.show', $jobPosting));
+                const shareText = @json($shareText ?? ($jobPosting->title . ' - ' . $jobPosting->facility->name));
+
+                function openPopup(url) {
+                    const width = 650;
+                    const height = 450;
+                    const left = (screen.width / 2) - (width / 2);
+                    const top = (screen.height / 2) - (height / 2);
+                    window.open(url, 'shareWindow', `toolbar=0,status=0,width=${width},height=${height},top=${top},left=${left}`);
+                }
+
+                document.querySelectorAll('[data-share]').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const provider = this.getAttribute('data-share');
+                        let url = '';
+
+                        switch (provider) {
+                            case 'twitter':
+                                url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                break;
+                            case 'facebook':
+                                url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                                break;
+                            case 'linkedin':
+                                url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+                                break;
+                            case 'whatsapp':
+                                url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+                                break;
+                        }
+
+                        if (url) {
+                            openPopup(url);
+                        }
+                    });
+                });
+
+                // Copy link
+                const copyBtn = document.getElementById('copyLinkBtn');
+                if (copyBtn) {
+                    copyBtn.addEventListener('click', async function () {
+                        try {
+                            await navigator.clipboard.writeText(shareUrl);
+                            const textEl = document.getElementById('copyLinkText');
+                            const original = textEl.innerText;
+                            textEl.innerText = '{{ __('Kopiert!') }}';
+                            setTimeout(() => textEl.innerText = original, 2000);
+                        } catch (e) {
+                            // Fallback: select and prompt
+                            const tempInput = document.createElement('input');
+                            tempInput.value = shareUrl;
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            try { document.execCommand('copy'); }
+                            catch (err) { /* ignore */ }
+                            document.body.removeChild(tempInput);
+                            const textEl = document.getElementById('copyLinkText');
+                            const original = textEl.innerText;
+                            textEl.innerText = '{{ __('Kopiert!') }}';
+                            setTimeout(() => textEl.innerText = original, 2000);
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 </x-layouts.public>
