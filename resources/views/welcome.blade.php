@@ -407,7 +407,7 @@
                 <div>
                     <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="Stellenportal Logo" class="h-10 mb-4">
                     <p class="text-sm">
-                        Ihre professionelle Plattform für Stellenanzeigen im Pflegebereich.
+                        Ihre professionelle Plattform für Stellenanzeigen.
                     </p>
                 </div>
                 <div>
@@ -429,7 +429,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; {{ date('Y') }} Stellenportal. Alle Rechte vorbehalten.</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Alle Rechte vorbehalten.</p>
             </div>
         </div>
     </footer>
