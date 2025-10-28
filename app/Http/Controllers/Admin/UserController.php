@@ -48,7 +48,10 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        return view('admin.users.create', compact('roles'));
+        $organizations = \App\Models\Organization::orderBy('name')->get();
+        $facilities = \App\Models\Facility::with('organization')->orderBy('name')->get();
+
+        return view('admin.users.create', compact('roles', 'organizations', 'facilities'));
     }
 
     public function store(Request $request)
@@ -60,8 +63,15 @@ class UserController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
             'roles' => ['array'],
             'roles.*' => ['exists:roles,name'],
+            'organizations' => ['array'],
+            'organizations.*' => ['exists:organizations,id'],
+            'facilities' => ['array'],
+            'facilities.*' => ['exists:facilities,id'],
             'send_welcome_email' => ['boolean'],
         ]);
+
+        // Store the plain password before hashing
+        $plainPassword = $validated['password'];
 
         $user = User::create([
             'first_name' => $validated['first_name'],
@@ -73,6 +83,22 @@ class UserController extends Controller
 
         if (isset($validated['roles'])) {
             $user->assignRole($validated['roles']);
+        }
+
+        // Attach organizations
+        if (isset($validated['organizations'])) {
+            $user->organizations()->attach($validated['organizations']);
+        }
+
+        // Attach facilities
+        if (isset($validated['facilities'])) {
+            $user->facilities()->attach($validated['facilities']);
+        }
+
+        // Send welcome email if requested
+        if ($request->boolean('send_welcome_email')) {
+            $user->load(['organizations', 'facilities.organization']);
+            \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\AdminUserCreatedMail($user, $plainPassword));
         }
 
         return redirect()->route('admin.users.index')
@@ -89,7 +115,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        $organizations = \App\Models\Organization::orderBy('name')->get();
+        $facilities = \App\Models\Facility::with('organization')->orderBy('name')->get();
+
+        return view('admin.users.edit', compact('user', 'roles', 'organizations', 'facilities'));
     }
 
     public function update(Request $request, User $user)
@@ -101,6 +130,10 @@ class UserController extends Controller
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'roles' => ['array'],
             'roles.*' => ['exists:roles,name'],
+            'organizations' => ['array'],
+            'organizations.*' => ['exists:organizations,id'],
+            'facilities' => ['array'],
+            'facilities.*' => ['exists:facilities,id'],
             'change_password' => ['boolean'],
         ]);
 
@@ -117,6 +150,20 @@ class UserController extends Controller
 
         if (isset($validated['roles'])) {
             $user->syncRoles($validated['roles']);
+        }
+
+        // Sync organizations
+        if (isset($validated['organizations'])) {
+            $user->organizations()->sync($validated['organizations']);
+        } else {
+            $user->organizations()->sync([]);
+        }
+
+        // Sync facilities
+        if (isset($validated['facilities'])) {
+            $user->facilities()->sync($validated['facilities']);
+        } else {
+            $user->facilities()->sync([]);
         }
 
         return redirect()->route('admin.users.show', $user)
