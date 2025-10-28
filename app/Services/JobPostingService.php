@@ -5,8 +5,11 @@ namespace App\Services;
 use App\Models\JobPosting;
 use App\Models\Facility;
 use App\Models\User;
+use App\Mail\JobPostingExpiredMail;
+use App\Mail\JobPostingExpiringMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
 class JobPostingService
@@ -130,9 +133,68 @@ class JobPostingService
      */
     public function markExpiredPostings(): int
     {
-        return JobPosting::where('status', JobPosting::STATUS_ACTIVE)
+        $expiredPostings = JobPosting::where('status', JobPosting::STATUS_ACTIVE)
             ->where('expires_at', '<=', now())
-            ->update(['status' => JobPosting::STATUS_EXPIRED]);
+            ->with(['creator', 'facility'])
+            ->get();
+
+        $count = 0;
+
+        foreach ($expiredPostings as $posting) {
+            $posting->status = JobPosting::STATUS_EXPIRED;
+            $posting->save();
+
+            // Send notification email to the creator
+            if ($posting->creator && $posting->creator->email) {
+                try {
+                    Mail::to($posting->creator->email)
+                        ->send(new JobPostingExpiredMail($posting, $posting->creator));
+
+                    Log::info("Ablaufbenachrichtigung gesendet für Stellenausschreibung: {$posting->title} an {$posting->creator->email}");
+                } catch (\Exception $e) {
+                    Log::error("Fehler beim Senden der Ablaufbenachrichtigung für Stellenausschreibung {$posting->id}: " . $e->getMessage());
+                }
+            }
+
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Notify creators about job postings expiring soon
+     */
+    public function notifyExpiringPostings(int $daysBeforeExpiration = 7): int
+    {
+        $expirationDate = now()->addDays($daysBeforeExpiration);
+
+        $expiringPostings = JobPosting::where('status', JobPosting::STATUS_ACTIVE)
+            ->whereNotNull('expires_at')
+            ->whereDate('expires_at', '=', $expirationDate->toDateString())
+            ->with(['creator', 'facility'])
+            ->get();
+
+        $count = 0;
+
+        foreach ($expiringPostings as $posting) {
+            // Send notification email to the creator
+            if ($posting->creator && $posting->creator->email) {
+                try {
+                    $daysUntilExpiration = now()->diffInDays($posting->expires_at, false);
+
+                    Mail::to($posting->creator->email)
+                        ->send(new JobPostingExpiringMail($posting, $posting->creator, (int)ceil($daysUntilExpiration)));
+
+                    Log::info("Vorwarnungsbenachrichtigung gesendet für Stellenausschreibung: {$posting->title} an {$posting->creator->email}");
+                    $count++;
+                } catch (\Exception $e) {
+                    Log::error("Fehler beim Senden der Vorwarnungsbenachrichtigung für Stellenausschreibung {$posting->id}: " . $e->getMessage());
+                }
+            }
+        }
+
+        return $count;
     }
 
     /**

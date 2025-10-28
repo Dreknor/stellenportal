@@ -10,3 +10,7 @@ Artisan::command('inspire', function () {
 
 // Schedule job postings expiration check daily
 Schedule::command('job-postings:mark-expired')->daily();
+
+// Schedule notification for expiring job postings (7 days before expiration)
+Schedule::command('job-postings:notify-expiring --days=7')->daily();
+

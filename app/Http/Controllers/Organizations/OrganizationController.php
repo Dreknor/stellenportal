@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Organizations;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewOrganizationCreatedMail;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OrganizationController extends Controller
 {
@@ -59,7 +61,7 @@ class OrganizationController extends Controller
 
         $organization = Organization::create($request->only([
             'name', 'email', 'phone', 'website', 'description'
-        ]));
+        ]) + ['is_approved' => false]);
 
         $organization->address()->create($request->only([
             'street', 'number', 'city', 'zip_code'
@@ -68,8 +70,23 @@ class OrganizationController extends Controller
         $user = auth()->user();
         $user->organizations()->attach($organization->id);
 
+        // Benachrichtige Admins mit der Permission "admin edit organizations"
+        $admins = \App\Models\User::permission('admin edit organizations')->get();
+
+        foreach ($admins as $admin) {
+            try {
+                Mail::to($admin->email)->queue(new NewOrganizationCreatedMail($organization, $user));
+            } catch (\Exception $e) {
+                Log::error('Fehler beim Versenden der Admin-Benachrichtigung für neue Organisation', [
+                    'organization_id' => $organization->id,
+                    'admin_id' => $admin->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
         return redirect()->route('organizations.index')
-            ->with('success', 'Organization created successfully.');
+            ->with('success', 'Organisation erfolgreich erstellt. Ein Administrator wurde über die Freischaltungsanfrage informiert.');
 
     }
 

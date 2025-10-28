@@ -100,6 +100,14 @@ class Organization extends Model implements HasMedia, \OwenIt\Auditing\Contracts
     }
 
     /**
+     * Check if organization is approved and can use features
+     */
+    public function canUseFeatures(): bool
+    {
+        return $this->is_approved;
+    }
+
+    /**
      * Get the route key for the model.
      *
      * @return string

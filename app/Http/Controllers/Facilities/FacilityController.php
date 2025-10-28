@@ -34,12 +34,20 @@ class FacilityController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $organizations = $user->organizations;
+        // Nur genehmigte Organisationen
+        $organizations = $user->organizations()->where('is_approved', true)->get();
 
         // Nur Benutzer mit direkter Organisationszuordnung dürfen Einrichtungen anlegen
         if ($organizations->isEmpty()) {
-            return redirect()->route('facilities.index')
-                ->with('error', 'Sie müssen einer Organisation zugeordnet sein, um Einrichtungen anlegen zu können.');
+            // Prüfen ob User überhaupt Organisationen hat
+            if ($user->organizations()->count() === 0) {
+                return redirect()->route('organizations.index')
+                    ->with('error', 'Sie müssen einer Organisation zugeordnet sein, um Einrichtungen anlegen zu können.');
+            }
+
+            // User hat Organisationen, aber keine ist genehmigt
+            return redirect()->route('organizations.index')
+                ->with('error', 'Ihre Organisation(en) müssen erst vom Administrator genehmigt werden, bevor Sie Einrichtungen anlegen können.');
         }
 
         return view('facilities.create', compact('organizations'));
@@ -52,10 +60,11 @@ class FacilityController extends Controller
     {
         $user = auth()->user();
 
-        // Sicherstellen, dass User einer Organisation zugeordnet ist
-        if ($user->organizations->isEmpty()) {
+        // Sicherstellen, dass User einer genehmigten Organisation zugeordnet ist
+        $approvedOrganizations = $user->organizations()->where('is_approved', true)->get();
+        if ($approvedOrganizations->isEmpty()) {
             return redirect()->route('facilities.index')
-                ->with('error', 'Sie müssen einer Organisation zugeordnet sein, um Einrichtungen anlegen zu können.');
+                ->with('error', 'Sie müssen einer genehmigten Organisation zugeordnet sein, um Einrichtungen anlegen zu können.');
         }
 
         $request->validate([
@@ -71,11 +80,16 @@ class FacilityController extends Controller
             'zip_code' => 'required|string|max:20',
         ]);
 
-        // Prüfen ob User der Organisation zugeordnet ist
+        // Prüfen ob User der Organisation zugeordnet ist und diese genehmigt ist
         $organization = Organization::findOrFail($request->organization_id);
         if (!$user->organizations->contains($organization)) {
             return redirect()->route('facilities.index')
                 ->with('error', 'Sie haben keine Berechtigung für diese Organisation.');
+        }
+
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
         }
 
         $facility = Facility::create($request->only([

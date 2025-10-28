@@ -11,6 +11,24 @@
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $organization->name }}</h1>
     </div>
 
+    @if(!$organization->is_approved)
+        <div class="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700 dark:text-yellow-200">
+                        <strong>{{ __('Organisation wartet auf Bestätigung') }}</strong><br>
+                        {{ __('Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie Credits kaufen, Einrichtungen erstellen, Stellenausschreibungen veröffentlichen oder Benutzer verwalten können.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Organization Card -->
         <div>
@@ -26,40 +44,37 @@
                     </h2>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-6 mb-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('Aktueller Kontostand') }}</p>
-                            <p class="text-4xl font-bold text-green-600 dark:text-green-400">
-                                {{ number_format($organization->getCurrentCreditBalance(), 0, ',', '.') }}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('Guthaben') }}</p>
-                        </div>
-                        <div class="text-green-600 dark:text-green-400">
-                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    @if($organization->is_approved)
+                        <x-button type="success" tag="a" :href="route('credits.organization.purchase', $organization)" size="sm" class="w-full justify-center">
+                            <x-fas-plus class="w-4 h-4 mr-2" />
+                            {{ __('Guthaben aufladen') }}
+                        </x-button>
+                        <x-button type="primary" tag="a" :href="route('credits.organization.transfer', $organization)" size="sm" class="w-full justify-center">
+                            <x-fas-exchange-alt class="w-4 h-4 mr-2" />
+                            {{ __('Guthaben umbuchen') }}
+                        </x-button>
+                        <x-button type="secondary" tag="a" :href="route('credits.organization.transactions', $organization)" size="sm" class="w-full justify-center">
+                            <x-fas-list class="w-4 h-4 mr-2" />
+                            {{ __('Transaktionshistorie') }}
+                        </x-button>
+                    @else
+                        <button disabled class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg text-sm cursor-not-allowed">
+                            <x-fas-plus class="w-4 h-4 mr-2 inline" />
+                            {{ __('Guthaben aufladen') }}
+                        </button>
+                        <button disabled class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg text-sm cursor-not-allowed">
+                            <x-fas-exchange-alt class="w-4 h-4 mr-2 inline" />
+                            {{ __('Guthaben umbuchen') }}
+                        </button>
+                        <button disabled class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg text-sm cursor-not-allowed">
+                            <x-fas-list class="w-4 h-4 mr-2 inline" />
+                            {{ __('Transaktionshistorie') }}
+                        </button>
+                    @endif
                             </svg>
                         </div>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 gap-2">
-                    <x-button type="success" tag="a" :href="route('credits.organization.purchase', $organization)" size="sm" class="w-full justify-center">
-                        <x-fas-plus class="w-4 h-4 mr-2" />
-                        {{ __('Guthaben aufladen') }}
-                    </x-button>
-                    <x-button type="primary" tag="a" :href="route('credits.organization.transfer', $organization)" size="sm" class="w-full justify-center">
-                        <x-fas-exchange-alt class="w-4 h-4 mr-2" />
-                        {{ __('Guthaben umbuchen') }}
-                    </x-button>
-                    <x-button type="secondary" tag="a" :href="route('credits.organization.transactions', $organization)" size="sm" class="w-full justify-center">
-                        <x-fas-list class="w-4 h-4 mr-2" />
-                        {{ __('Transaktionshistorie') }}
-                    </x-button>
-                </div>
-            </div>
-        </div>
-
         <!-- Users Overview -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden h-fit">
             <div class="p-6">
@@ -68,9 +83,15 @@
                         {{ __('Zugeordnete Benutzer') }}
                         <span class="text-sm text-gray-500 dark:text-gray-400 font-normal ml-2">({{ $users->count() }})</span>
                     </h2>
-                    <x-button type="primary" tag="a" :href="route('organizations.users.index', $organization)" size="sm">
-                        {{ __('Verwalten') }}
-                    </x-button>
+                    @if($organization->is_approved)
+                        <x-button type="primary" tag="a" :href="route('organizations.users.index', $organization)" size="sm">
+                            {{ __('Verwalten') }}
+                        </x-button>
+                    @else
+                        <button disabled class="px-3 py-1.5 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg text-sm cursor-not-allowed">
+                            {{ __('Verwalten') }}
+                        </button>
+                    @endif
                 </div>
 
                 @if($users->count() > 0)
@@ -112,17 +133,17 @@
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             {{ __('Noch keine Benutzer zugeordnet') }}
                         </p>
-                        <div class="mt-4">
-                            <x-button type="primary" tag="a" :href="route('organizations.users.index', $organization)">
-                                {{ __('Benutzer hinzufügen') }}
-                            </x-button>
-                        </div>
+                        @if($organization->is_approved)
+                            <div class="mt-4">
+                                <x-button type="primary" tag="a" :href="route('organizations.users.index', $organization)">
+                                    {{ __('Benutzer hinzufügen') }}
+                                </x-button>
+                            </div>
+                        @endif
                     </div>
                 @endif
             </div>
         </div>
-    </div>
-
     <!-- Facilities Overview -->
     <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
@@ -131,10 +152,17 @@
                     {{ __('Einrichtungen') }}
                     <span class="text-sm text-gray-500 dark:text-gray-400 font-normal ml-2">({{ $facilities->count() }})</span>
                 </h2>
-                <x-button type="success" tag="a" :href="route('facilities.create')" size="sm">
-                    <x-fas-plus class="w-4 h-4 mr-1" />
-                    {{ __('Neue Einrichtung') }}
-                </x-button>
+                @if($organization->is_approved)
+                    <x-button type="success" tag="a" :href="route('facilities.create')" size="sm">
+                        <x-fas-plus class="w-4 h-4 mr-1" />
+                        {{ __('Neue Einrichtung') }}
+                    </x-button>
+                @else
+                    <button disabled class="px-3 py-1.5 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 rounded-lg text-sm cursor-not-allowed flex items-center">
+                        <x-fas-plus class="w-4 h-4 mr-1" />
+                        {{ __('Neue Einrichtung') }}
+                    </button>
+                @endif
             </div>
 
             @if($facilities->count() > 0)
@@ -175,12 +203,14 @@
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         {{ __('Noch keine Einrichtungen vorhanden') }}
                     </p>
-                    <div class="mt-4">
-                        <x-button type="success" tag="a" :href="route('facilities.create')">
-                            <x-fas-plus class="w-4 h-4 mr-1" />
-                            {{ __('Erste Einrichtung erstellen') }}
-                        </x-button>
-                    </div>
+                    @if($organization->is_approved)
+                        <div class="mt-4">
+                            <x-button type="success" tag="a" :href="route('facilities.create')">
+                                <x-fas-plus class="w-4 h-4 mr-1" />
+                                {{ __('Erste Einrichtung erstellen') }}
+                            </x-button>
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>

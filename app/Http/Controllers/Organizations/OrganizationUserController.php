@@ -19,6 +19,11 @@ class OrganizationUserController extends Controller
      */
     public function index(Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
+        }
+
         $users = $organization->users()->paginate(15);
         return view('organizations.users.index', compact('organization', 'users'));
     }
@@ -28,6 +33,11 @@ class OrganizationUserController extends Controller
      */
     public function store(Request $request, Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
+        }
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -70,6 +80,11 @@ class OrganizationUserController extends Controller
 
         // Send email with login credentials
         Mail::to($user->email)->queue(new UserCreatedMail($user, $organization, $password));
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
+        }
+
 
         return redirect()->route('organizations.users.index', $organization)
             ->with('success', 'Benutzer erfolgreich erstellt und Zugangsdaten per E-Mail versendet.');

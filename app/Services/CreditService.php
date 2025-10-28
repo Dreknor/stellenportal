@@ -166,6 +166,26 @@ class CreditService
     }
 
     /**
+     * Add credits (admin convenience wrapper)
+     *
+     * Kehrt sich nicht von adjustCredits ab, sondern nutzt diese Methode.
+     * Signatur entspricht der Verwendung in `Admin\\CreditController`.
+     *
+     * @param mixed $creditable Organization|Facility
+     * @param int $amount
+     * @param User $user
+     * @param string|null $note
+     * @return CreditTransaction
+     */
+    public function addCredits($creditable, int $amount, User $user, ?string $note = null)
+    {
+        // Verwende adjustCredits und setze einen Standard-Note-Text, falls nicht angegeben.
+        $note = $note ?? 'Admin-Gutschrift';
+
+        return $this->adjustCredits($creditable, $amount, $user, $note);
+    }
+
+    /**
      * Send purchase emails
      */
     protected function sendPurchaseEmails($creditable, CreditTransaction $transaction, User $user, CreditPackage $package)

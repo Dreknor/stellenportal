@@ -26,6 +26,11 @@ class FacilityUserController extends Controller
                 ->with('error', 'Kein Zugriff auf diese Einrichtung.');
         }
 
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden.');
+        }
+
         $users = $facility->users()->paginate(15);
         return view('facilities.users.index', compact('facility', 'users'));
     }
@@ -40,6 +45,11 @@ class FacilityUserController extends Controller
         if (!$this->userHasAccessToFacility($authUser, $facility)) {
             return redirect()->route('facilities.index')
                 ->with('error', 'Kein Zugriff auf diese Einrichtung.');
+        }
+
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden.');
         }
 
         $request->validate([
@@ -98,6 +108,11 @@ class FacilityUserController extends Controller
         if (!$this->userHasAccessToFacility($authUser, $facility)) {
             return redirect()->route('facilities.index')
                 ->with('error', 'Kein Zugriff auf diese Einrichtung.');
+        }
+
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden.');
         }
 
         // Detach user from facility

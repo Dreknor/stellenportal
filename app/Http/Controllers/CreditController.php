@@ -25,6 +25,11 @@ class CreditController extends Controller
      */
     public function showFacilityPurchase(Facility $facility)
     {
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie Guthaben aufladen können.');
+        }
+
         $this->authorize('purchaseCredits', $facility);
 
         $packages = CreditPackage::active()->orderBy('credits', 'asc')->get();
@@ -38,6 +43,11 @@ class CreditController extends Controller
      */
     public function purchaseFacilityCredits(Request $request, Facility $facility)
     {
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie Guthaben aufladen können.');
+        }
+
         $this->authorize('purchaseCredits', $facility);
 
         $validated = $request->validate([
@@ -73,6 +83,11 @@ class CreditController extends Controller
      */
     public function showOrganizationPurchase(Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $organization)
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie Guthaben aufladen können.');
+        }
+
         $this->authorize('purchaseCredits', $organization);
 
         $packages = CreditPackage::active()->orderBy('credits', 'asc')->get();
@@ -86,6 +101,11 @@ class CreditController extends Controller
      */
     public function purchaseOrganizationCredits(Request $request, Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $organization)
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie Guthaben aufladen können.');
+        }
+
         $this->authorize('purchaseCredits', $organization);
 
         $validated = $request->validate([
@@ -121,6 +141,11 @@ class CreditController extends Controller
      */
     public function showTransfer(Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $organization)
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie Guthaben umbuchen können.');
+        }
+
         $this->authorize('transferCredits', $organization);
 
         $facilities = $organization->facilities;
@@ -134,6 +159,11 @@ class CreditController extends Controller
      */
     public function transfer(Request $request, Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $organization)
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie Guthaben umbuchen können.');
+        }
+
         $this->authorize('transferCredits', $organization);
 
         $validated = $request->validate([
@@ -167,6 +197,11 @@ class CreditController extends Controller
      */
     public function facilityTransactions(Facility $facility)
     {
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie die Transaktionshistorie einsehen können.');
+        }
+
         $this->authorize('viewTransactions', $facility);
 
         $transactions = $facility->creditTransactions()->with(['user', 'creditPackage', 'relatedCreditable'])->paginate(20);
@@ -180,6 +215,11 @@ class CreditController extends Controller
      */
     public function organizationTransactions(Organization $organization)
     {
+        if (!$organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $organization)
+                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden, bevor Sie die Transaktionshistorie einsehen können.');
+        }
+
         $this->authorize('viewTransactions', $organization);
 
         $transactions = $organization->creditTransactions()->with(['user', 'creditPackage', 'relatedCreditable'])->paginate(20);

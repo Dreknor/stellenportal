@@ -390,12 +390,14 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{{ __('Stelle teilen') }}</h3>
 
-                <div class="flex flex-wrap gap-3">
-                    @php
-                        $shareUrl = route('public.jobs.show', $jobPosting);
-                        $shareText = $jobPosting->title . ' - ' . $jobPosting->facility->name;
-                    @endphp
+                @php
+                    $shareUrl = route('public.jobs.show', $jobPosting);
+                    $shareText = $jobPosting->title . ' - ' . $jobPosting->facility->name;
+                @endphp
 
+                {{-- Nur anzeigen, wenn die Stelle veröffentlicht wurde --}}
+                @if($jobPosting->published_at && $jobPosting->published_at->isPast())
+                <div class="flex flex-wrap gap-3">
                     <button type="button" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm" data-share="twitter" aria-label="Teilen auf Twitter">
                         <!-- Twitter SVG -->
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.633 7.997c.013.176.013.353.013.53 0 5.393-4.103 11.61-11.61 11.61-2.307 0-4.453-.676-6.253-1.847.329.038.657.051.998.051 1.91 0 3.668-.651 5.073-1.747-1.785-.038-3.294-1.21-3.816-2.829.25.038.501.064.767.064.373 0 .746-.05 1.094-.143-1.869-.374-3.272-2.029-3.272-4.014v-.051c.55.307 1.181.494 1.86.517-1.104-.736-1.828-1.989-1.828-3.409 0-.747.201-1.445.552-2.048 2.031 2.493 5.073 4.138 8.494 4.309-.064-.302-.101-.615-.101-.936 0-2.268 1.853-4.121 4.121-4.121 1.186 0 2.258.5 3.011 1.302.936-.176 1.8-.526 2.586-.998-.307.96-.96 1.766-1.816 2.277.829-.089 1.62-.32 2.356-.649-.55.821-1.248 1.542-2.049 2.115z"/></svg>
@@ -426,6 +428,9 @@
                         <span id="copyLinkText">{{ __('Link kopieren') }}</span>
                     </button>
                 </div>
+                @else
+                    <p class="text-sm text-gray-500">{{ __('Diese Stelle ist noch nicht veröffentlicht und kann nicht geteilt werden.') }}</p>
+                @endif
             </div>
         </aside>
     </div>
@@ -495,8 +500,8 @@
                             await navigator.clipboard.writeText(shareUrl);
                             const textEl = document.getElementById('copyLinkText');
                             const original = textEl.innerText;
-                            textEl.innerText = '{{ __('Kopiert!') }}';
-                            setTimeout(() => textEl.innerText = original, 2000);
+                            textEl.innerText = @json(__('Kopiert!'));
+                             setTimeout(() => textEl.innerText = original, 2000);
                         } catch (e) {
                             // Fallback: select and prompt
                             const tempInput = document.createElement('input');
@@ -508,8 +513,8 @@
                             document.body.removeChild(tempInput);
                             const textEl = document.getElementById('copyLinkText');
                             const original = textEl.innerText;
-                            textEl.innerText = '{{ __('Kopiert!') }}';
-                            setTimeout(() => textEl.innerText = original, 2000);
+                            textEl.innerText = @json(__('Kopiert!'));
+                             setTimeout(() => textEl.innerText = original, 2000);
                         }
                     });
                 }

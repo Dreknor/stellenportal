@@ -209,13 +209,39 @@
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Aktionen') }}</h3>
 
                     @can('extend', $jobPosting)
-                        <form method="POST" action="{{ route('job-postings.extend', $jobPosting) }}">
-                            @csrf
-                            <x-button type="primary" class="w-full justify-center">
-                                <x-fas-redo class="w-4 h-4 mr-2" />
-                                {{ __('Reaktivieren (3 Monate)') }}
-                            </x-button>
-                        </form>
+                        @php
+                            $creditsRequired = \App\Models\JobPosting::CREDITS_PER_POSTING;
+                            $currentBalance = $jobPosting->facility->getCurrentCreditBalance();
+                        @endphp
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                {{ __('Verlängern Sie diese Stellenausschreibung um :months Monate. Kosten: :credits Guthaben', ['months' => \App\Models\JobPosting::POSTING_DURATION_MONTHS, 'credits' => $creditsRequired]) }}
+                            </p>
+
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                {{ __('Aktuelles Guthaben') }}: <strong>{{ $currentBalance }}</strong>
+                            </p>
+
+                            @if($currentBalance < $creditsRequired)
+                                <x-alerts.alert type="warning">
+                                    {{ __('Nicht genügend Guthaben zum Verlängern.') }}
+                                </x-alerts.alert>
+
+                                <x-button type="primary" class="w-full justify-center" disabled aria-disabled="true">
+                                    <x-fas-redo class="w-4 h-4 mr-2" />
+                                    {{ __('Reaktivieren (3 Monate)') }}
+                                </x-button>
+                            @else
+                                <form method="POST" action="{{ route('job-postings.extend', $jobPosting) }}">
+                                    @csrf
+                                    <x-button type="primary" class="w-full justify-center">
+                                        <x-fas-redo class="w-4 h-4 mr-2" />
+                                        {{ __('Reaktivieren (3 Monate)') }}
+                                    </x-button>
+                                </form>
+                            @endif
+                        </div>
                     @endcan
                 </div>
             @endif

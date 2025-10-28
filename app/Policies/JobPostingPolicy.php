@@ -35,8 +35,17 @@ class JobPostingPolicy
      */
     public function create(User $user): bool
     {
-        // User must belong to at least one facility or organization
-        return $user->facilities()->exists() || $user->organizations()->exists();
+        // Check if user has at least one approved organization
+        $hasApprovedOrg = $user->organizations()->where('is_approved', true)->exists();
+
+        // Or check if user has facilities with approved organizations
+        $hasApprovedFacility = $user->facilities()
+            ->whereHas('organization', function ($query) {
+                $query->where('is_approved', true);
+            })
+            ->exists();
+
+        return $hasApprovedOrg || $hasApprovedFacility;
     }
 
     /**
@@ -44,6 +53,11 @@ class JobPostingPolicy
      */
     public function update(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 
@@ -52,6 +66,11 @@ class JobPostingPolicy
      */
     public function delete(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 
@@ -60,6 +79,11 @@ class JobPostingPolicy
      */
     public function publish(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         // Only check if user belongs to facility or organization
         // Credit check is handled in the service layer for better error messaging
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
@@ -70,6 +94,11 @@ class JobPostingPolicy
      */
     public function extend(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         // Only check if user belongs to facility or organization
         // Credit check is handled in the service layer for better error messaging
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
@@ -80,6 +109,11 @@ class JobPostingPolicy
      */
     public function pause(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 
@@ -88,6 +122,11 @@ class JobPostingPolicy
      */
     public function resume(User $user, JobPosting $jobPosting): bool
     {
+        // Organization must be approved
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return false;
+        }
+
         return $this->belongsToFacilityOrOrganization($user, $jobPosting);
     }
 

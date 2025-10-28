@@ -58,6 +58,22 @@ class JobPostingController extends Controller
      */
     public function create(Request $request)
     {
+        // Check if user has at least one approved organization
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $hasApprovedOrg = $user->organizations()->where('is_approved', true)->exists();
+        $hasApprovedFacility = $user->facilities()
+            ->whereHas('organization', function ($query) {
+                $query->where('is_approved', true);
+            })
+            ->exists();
+
+        if (!$hasApprovedOrg && !$hasApprovedFacility) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Sie müssen einer genehmigten Organisation zugeordnet sein, um Stellenausschreibungen zu erstellen.');
+        }
+
         Gate::authorize('create', JobPosting::class);
 
         /** @var \App\Models\User $user */
@@ -102,6 +118,13 @@ class JobPostingController extends Controller
 
         // Check if user has access to this facility
         $facility = Facility::findOrFail($validated['facility_id']);
+
+        // Check if organization is approved
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie Stellenausschreibungen erstellen können.');
+        }
+
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
@@ -137,6 +160,11 @@ class JobPostingController extends Controller
      */
     public function edit(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('update', $jobPosting);
 
         return view('job-postings.edit', compact('jobPosting'));
@@ -147,6 +175,11 @@ class JobPostingController extends Controller
      */
     public function update(Request $request, JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('update', $jobPosting);
 
         $validated = $request->validate([
@@ -172,6 +205,11 @@ class JobPostingController extends Controller
      */
     public function destroy(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('delete', $jobPosting);
 
         $jobPosting->delete();
@@ -185,6 +223,11 @@ class JobPostingController extends Controller
      */
     public function publish(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden, bevor Sie veröffentlichen können.');
+        }
+
         Gate::authorize('publish', $jobPosting);
 
         try {
@@ -204,6 +247,11 @@ class JobPostingController extends Controller
      */
     public function extend(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('extend', $jobPosting);
 
         try {
@@ -223,6 +271,11 @@ class JobPostingController extends Controller
      */
     public function pause(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('pause', $jobPosting);
 
         try {
@@ -240,6 +293,11 @@ class JobPostingController extends Controller
      */
     public function resume(JobPosting $jobPosting)
     {
+        if (!$jobPosting->facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $jobPosting->facility->organization)
+                ->with('error', 'Die Organisation dieser Stellenausschreibung muss erst vom Administrator genehmigt werden.');
+        }
+
         Gate::authorize('resume', $jobPosting);
 
         try {
