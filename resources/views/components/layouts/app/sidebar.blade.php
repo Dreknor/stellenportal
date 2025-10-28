@@ -90,6 +90,17 @@
                                     @endcan
                                 </x-layouts.sidebar-two-level-link-parent>
                             @endcan
+
+                            <!-- Hilfe -->
+                            <li class="pt-4 pb-2">
+                                <div x-show="sidebarOpen" class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Support
+                                </div>
+                                <div x-show="!sidebarOpen" class="border-t border-gray-300 dark:border-gray-600 mx-2"></div>
+                            </li>
+
+                            <x-layouts.sidebar-link href="{{ route('help') }}" icon='fas-circle-question'
+                                :active="request()->routeIs('help')">Hilfe & FAQ</x-layouts.sidebar-link>
                         </ul>
                     </nav>
                 </div>

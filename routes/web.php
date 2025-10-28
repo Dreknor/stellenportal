@@ -3,6 +3,7 @@
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditPackageController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Settings;
@@ -34,6 +35,9 @@ Route::middleware(['auth', 'verified', ])->group(function () {
 
 
 Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(function () {
+    // Hilfe-Seite
+    Route::get('help', [HelpController::class, 'index'])->name('help');
+
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');
     Route::delete('settings/profile', [Settings\ProfileController::class, 'destroy'])->name('settings.profile.destroy');
