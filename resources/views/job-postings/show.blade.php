@@ -97,6 +97,105 @@
         </x-alerts.alert>
     @endif
 
+    <!-- Statistics Section -->
+    @can('view job posting statistics')
+        @if($jobPosting->isActive() || $jobPosting->status === 'expired')
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                    <x-fas-chart-bar class="w-5 h-5 inline-block mr-2" />
+                    {{ __('Statistiken') }}
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                <!-- Views -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Aufrufe') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['views']) }}</p>
+                        </div>
+                        <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3">
+                            <x-fas-eye class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        {{ number_format($uniqueVisitors) }} {{ __('eindeutig') }}
+                    </p>
+                </div>
+
+                <!-- Apply Clicks -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Bewerbungen') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['apply_clicks']) }}</p>
+                        </div>
+                        <div class="bg-green-100 dark:bg-green-900/30 rounded-full p-3">
+                            <x-fas-paper-plane class="w-6 h-6 text-green-600 dark:text-green-400" />
+                        </div>
+                    </div>
+                    @if($stats['views'] > 0)
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            {{ number_format(($stats['apply_clicks'] / $stats['views']) * 100, 1) }}% {{ __('Conversion') }}
+                        </p>
+                    @endif
+                </div>
+
+                <!-- Email Reveals -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('E-Mail angezeigt') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['email_reveals']) }}</p>
+                        </div>
+                        <div class="bg-purple-100 dark:bg-purple-900/30 rounded-full p-3">
+                            <x-fas-envelope class="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Reveals -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Telefon angezeigt') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['phone_reveals']) }}</p>
+                        </div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900/30 rounded-full p-3">
+                            <x-fas-phone class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Downloads -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('PDF-Downloads') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['downloads']) }}</p>
+                        </div>
+                        <div class="bg-red-100 dark:bg-red-900/30 rounded-full p-3">
+                            <x-fas-download class="w-6 h-6 text-red-600 dark:text-red-400" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Interactions -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Interaktionen') }}</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['total_interactions']) }}</p>
+                        </div>
+                        <div class="bg-indigo-100 dark:bg-indigo-900/30 rounded-full p-3">
+                            <x-fas-mouse-pointer class="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    @endcan
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">

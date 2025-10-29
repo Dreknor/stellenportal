@@ -62,6 +62,11 @@ class JobPosting extends Model implements Auditable
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function interactions()
+    {
+        return $this->hasMany(JobPostingInteraction::class);
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -180,4 +185,37 @@ class JobPosting extends Model implements Auditable
     {
         return $this->facility->address;
     }
+
+    /**
+     * Get interaction statistics
+     */
+    public function getInteractionStats(): array
+    {
+        $stats = $this->interactions()
+            ->selectRaw('interaction_type, COUNT(*) as count')
+            ->groupBy('interaction_type')
+            ->pluck('count', 'interaction_type')
+            ->toArray();
+
+        return [
+            'views' => $stats[JobPostingInteraction::TYPE_VIEW] ?? 0,
+            'apply_clicks' => $stats[JobPostingInteraction::TYPE_APPLY_CLICK] ?? 0,
+            'email_reveals' => $stats[JobPostingInteraction::TYPE_EMAIL_REVEAL] ?? 0,
+            'phone_reveals' => $stats[JobPostingInteraction::TYPE_PHONE_REVEAL] ?? 0,
+            'downloads' => $stats[JobPostingInteraction::TYPE_DOWNLOAD] ?? 0,
+            'total_interactions' => array_sum($stats),
+        ];
+    }
+
+    /**
+     * Get unique visitors count (based on unique IP addresses)
+     */
+    public function getUniqueVisitorsCount(): int
+    {
+        return $this->interactions()
+            ->where('interaction_type', JobPostingInteraction::TYPE_VIEW)
+            ->distinct('ip_address')
+            ->count('ip_address');
+    }
 }
+

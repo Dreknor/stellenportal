@@ -103,6 +103,7 @@
         </a>
 
         <a href="{{ route('public.jobs.pdf', $jobPosting) }}"
+           id="pdfDownloadBtn"
            class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors"
            target="_blank"
            aria-label="Stellenanzeige als PDF herunterladen">
@@ -472,6 +473,28 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                const trackingUrl = @json(route('public.jobs.track', $jobPosting));
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                // Helper function to track interactions
+                function trackInteraction(type) {
+                    fetch(trackingUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ type: type })
+                    }).catch(err => {
+                        // Silently fail - don't interrupt user experience
+                        console.debug('Tracking failed:', err);
+                    });
+                }
+
+                // Track page view
+                trackInteraction('view');
+
                 // Prepare email subject
                 const jobTitle = @json($jobPosting->title);
                 const facilityName = @json($jobPosting->facility->name);
@@ -491,9 +514,15 @@
 
                             // Check if this is the main "Jetzt bewerben" button
                             if (this.classList.contains('block')) {
+                                // Track apply button click
+                                trackInteraction('apply_click');
+
                                 // Main "Jetzt bewerben" button - open mail client directly with subject
                                 window.location.href = 'mailto:' + decodedEmail + '?subject=' + emailSubject;
                             } else {
+                                // Track email reveal
+                                trackInteraction('email_reveal');
+
                                 // Sidebar email display - show email and convert to link
                                 displaySpan.textContent = decodedEmail;
                                 if (hintSpan) hintSpan.remove();
@@ -509,6 +538,9 @@
                         }
 
                         if (phone) {
+                            // Track phone reveal
+                            trackInteraction('phone_reveal');
+
                             // Decode phone from base64
                             const decodedPhone = atob(phone);
 
@@ -567,6 +599,14 @@
                         }
                     });
                 });
+
+                // Track PDF download
+                const pdfBtn = document.getElementById('pdfDownloadBtn');
+                if (pdfBtn) {
+                    pdfBtn.addEventListener('click', function() {
+                        trackInteraction('download');
+                    });
+                }
 
                 // Copy link
                 const copyBtn = document.getElementById('copyLinkBtn');

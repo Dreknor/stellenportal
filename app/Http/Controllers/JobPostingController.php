@@ -152,7 +152,16 @@ class JobPostingController extends Controller
 
         $jobPosting->load(['facility.address', 'creator']);
 
-        return view('job-postings.show', compact('jobPosting'));
+        // Get interaction statistics only if user has permission
+        $stats = null;
+        $uniqueVisitors = null;
+
+        if (auth()->user()->can('view job posting statistics')) {
+            $stats = $jobPosting->getInteractionStats();
+            $uniqueVisitors = $jobPosting->getUniqueVisitorsCount();
+        }
+
+        return view('job-postings.show', compact('jobPosting', 'stats', 'uniqueVisitors'));
     }
 
     /**

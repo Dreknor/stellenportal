@@ -49,7 +49,11 @@ class JobPostingController extends Controller
     {
         $jobPosting->load(['facility.organization', 'facility.address', 'audits']);
 
-        return view('admin.job-postings.show', compact('jobPosting'));
+        // Get interaction statistics (always available for admins)
+        $stats = $jobPosting->getInteractionStats();
+        $uniqueVisitors = $jobPosting->getUniqueVisitorsCount();
+
+        return view('admin.job-postings.show', compact('jobPosting', 'stats', 'uniqueVisitors'));
     }
 
     public function edit(JobPosting $jobPosting)
