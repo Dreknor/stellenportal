@@ -23,6 +23,7 @@
                         @endif
                     </div>
                 </div>
+                {!! RecaptchaV3::field('register') !!}
 
                 <x-button type="primary" class="w-full py-3 text-lg font-semibold">{{ __('Anmelden') }}</x-button>
             </form>

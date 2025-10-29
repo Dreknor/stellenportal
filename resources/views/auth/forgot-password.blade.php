@@ -20,6 +20,7 @@
                 <div>
                     <x-forms.input name="email" type="email" label="E-Mail" placeholder="ihre@email.com" />
                 </div>
+                {!! RecaptchaV3::field('register') !!}
 
                 <x-button type="primary" buttonType="submit" class="w-full py-3 text-lg font-semibold">
                     {{ __('Link zum Zurücksetzen des Passworts senden') }}

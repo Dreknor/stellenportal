@@ -30,6 +30,9 @@
 
     @stack('structured-data')
 
+    {!! RecaptchaV3::initJs() !!}
+
+
     @stack('js')
     <script>
         window.setAppearance = function(appearance) {

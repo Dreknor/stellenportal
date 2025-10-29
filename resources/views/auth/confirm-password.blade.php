@@ -14,6 +14,7 @@
                 <div class="mb-4">
                     <x-forms.input name="password" type="password" label="Passwort" placeholder="••••••••" />
                 </div>
+                {!! RecaptchaV3::field('register') !!}
 
                 <x-button type="primary" buttonType="submit" class="w-full">
                     {{ __('Passwort bestätigen') }}
