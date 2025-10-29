@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mail\UserMailVerification;
 use App\Models\CreditPackage;
 use App\Models\JobPosting;
 use App\Policies\CreditPackagePolicy;
@@ -9,7 +10,9 @@ use App\Policies\CreditPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\JobPostingPolicy;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -43,5 +46,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Register Job Posting Policy
         Gate::policy(JobPosting::class, JobPostingPolicy::class);
+
+        // Use custom mailable for email verification
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            Log::debug('Generating custom email verification mail for user: ' . $notifiable->email);
+            return (new UserMailVerification($notifiable, $url))->to($notifiable->email);
+        });
     }
 }
