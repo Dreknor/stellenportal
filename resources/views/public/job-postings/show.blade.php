@@ -474,10 +474,16 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const trackingUrl = @json(route('public.jobs.track', $jobPosting));
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
 
                 // Helper function to track interactions
                 function trackInteraction(type) {
+                    if (!csrfToken) {
+                        console.warn('CSRF token not found');
+                        return;
+                    }
+
                     fetch(trackingUrl, {
                         method: 'POST',
                         headers: {
@@ -600,7 +606,6 @@
                     });
                 });
 
-                // Track PDF download
                 const pdfBtn = document.getElementById('pdfDownloadBtn');
                 if (pdfBtn) {
                     pdfBtn.addEventListener('click', function() {

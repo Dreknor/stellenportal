@@ -492,8 +492,8 @@
                             const shareText = @json($shareText ?? ($jobPosting->title . ' - ' . $jobPosting->facility->name));
 
                             function openPopup(url) {
-                                const width = 650;
-                                const height = 450;
+                                const width = 800;
+                                const height = 600;
                                 const left = (screen.width / 2) - (width / 2);
                                 const top = (screen.height / 2) - (height / 2);
                                 window.open(url, 'shareWindow', `toolbar=0,status=0,width=${width},height=${height},top=${top},left=${left}`);
@@ -535,6 +535,7 @@
                                         const original = textEl.innerText;
                                         textEl.innerText = '{{ __('Kopiert!') }}';
                                         setTimeout(() => textEl.innerText = original, 2000);
+
                                     } catch (e) {
                                         // Fallback: select and prompt
                                         const tempInput = document.createElement('input');
