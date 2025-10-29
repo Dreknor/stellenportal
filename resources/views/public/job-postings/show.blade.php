@@ -83,6 +83,14 @@
         // Check if address has a map
         $hasMap = $jobPosting->facility->address && $jobPosting->facility->address->getFirstMedia('map');
         $mapUrl = $hasMap ? $jobPosting->facility->address->getFirstMediaUrl('map') : null;
+
+        // Obfuscate email and phone for bot protection
+        $obfuscatedEmail = $jobPosting->contact_email ? base64_encode($jobPosting->contact_email) : null;
+        $obfuscatedPhone = $jobPosting->contact_phone ? base64_encode($jobPosting->contact_phone) : null;
+
+        // Create display versions (partially hidden)
+        $displayEmail = $jobPosting->contact_email ? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $jobPosting->contact_email) : null;
+        $displayPhone = $jobPosting->contact_phone ? preg_replace('/(?<=.{3}).(?=.{2})/u', '*', $jobPosting->contact_phone) : null;
     @endphp
 
     <!-- Back Button -->
@@ -236,11 +244,12 @@
                 <p class="text-gray-700 dark:text-gray-300 mb-6">{{ __('Bewerben Sie sich jetzt für diese Stelle!') }}</p>
 
                 @if($jobPosting->contact_email)
-                    <a href="mailto:{{ $jobPosting->contact_email }}"
-                       class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-medium py-3 px-6 rounded-md transition-colors mb-3"
-                       aria-label="Per E-Mail bewerben">
+                    <button type="button"
+                            data-contact-email="{{ $obfuscatedEmail }}"
+                            class="contact-reveal-btn block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-medium py-3 px-6 rounded-md transition-colors mb-3"
+                            aria-label="Per E-Mail bewerben">
                         {{ __('Jetzt bewerben') }}
-                    </a>
+                    </button>
                 @endif
             </div>
 
@@ -327,9 +336,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
                             <div>
-                                <a href="mailto:{{ $jobPosting->contact_email }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline break-all">
-                                    {{ $jobPosting->contact_email }}
-                                </a>
+                                <button type="button"
+                                        class="contact-reveal-btn text-sm text-blue-600 dark:text-blue-400 hover:underline break-all text-left"
+                                        data-contact-email="{{ $obfuscatedEmail }}"
+                                        aria-label="E-Mail-Adresse anzeigen">
+                                    <span class="contact-display">{{ $displayEmail }}</span>
+                                    <span class="contact-hint ml-2 text-xs text-gray-500">({{ __('Klicken zum Anzeigen') }})</span>
+                                </button>
                             </div>
                         </div>
                     @endif
@@ -340,9 +353,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                             </svg>
                             <div>
-                                <a href="tel:{{ $jobPosting->contact_phone }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                                    {{ $jobPosting->contact_phone }}
-                                </a>
+                                <button type="button"
+                                        class="contact-reveal-btn text-sm text-blue-600 dark:text-blue-400 hover:underline text-left"
+                                        data-contact-phone="{{ $obfuscatedPhone }}"
+                                        aria-label="Telefonnummer anzeigen">
+                                    <span class="contact-display">{{ $displayPhone }}</span>
+                                    <span class="contact-hint ml-2 text-xs text-gray-500">({{ __('Klicken zum Anzeigen') }})</span>
+                                </button>
                             </div>
                         </div>
                     @endif
@@ -455,6 +472,65 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                // Prepare email subject
+                const jobTitle = @json($jobPosting->title);
+                const facilityName = @json($jobPosting->facility->name);
+                const emailSubject = encodeURIComponent('Bewerbung: ' + jobTitle + ' - ' + facilityName);
+
+                // Bot protection: Reveal contact info on user interaction
+                document.querySelectorAll('.contact-reveal-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const email = this.getAttribute('data-contact-email');
+                        const phone = this.getAttribute('data-contact-phone');
+                        const displaySpan = this.querySelector('.contact-display');
+                        const hintSpan = this.querySelector('.contact-hint');
+
+                        if (email) {
+                            // Decode email from base64
+                            const decodedEmail = atob(email);
+
+                            // Check if this is the main "Jetzt bewerben" button
+                            if (this.classList.contains('block')) {
+                                // Main "Jetzt bewerben" button - open mail client directly with subject
+                                window.location.href = 'mailto:' + decodedEmail + '?subject=' + emailSubject;
+                            } else {
+                                // Sidebar email display - show email and convert to link
+                                displaySpan.textContent = decodedEmail;
+                                if (hintSpan) hintSpan.remove();
+
+                                // Convert button to link
+                                const link = document.createElement('a');
+                                link.href = 'mailto:' + decodedEmail + '?subject=' + emailSubject;
+                                link.className = this.className.replace('contact-reveal-btn', '');
+                                link.textContent = decodedEmail;
+                                link.setAttribute('aria-label', 'E-Mail an ' + decodedEmail + ' senden');
+                                this.replaceWith(link);
+                            }
+                        }
+
+                        if (phone) {
+                            // Decode phone from base64
+                            const decodedPhone = atob(phone);
+
+                            // For phone, open tel: link directly
+                            if (this.classList.contains('block')) {
+                                window.location.href = 'tel:' + decodedPhone;
+                            } else {
+                                // Sidebar phone display - show phone and convert to link
+                                displaySpan.textContent = decodedPhone;
+                                if (hintSpan) hintSpan.remove();
+
+                                const link = document.createElement('a');
+                                link.href = 'tel:' + decodedPhone;
+                                link.className = this.className.replace('contact-reveal-btn', '');
+                                link.textContent = decodedPhone;
+                                link.setAttribute('aria-label', 'Anrufen unter ' + decodedPhone);
+                                this.replaceWith(link);
+                            }
+                        }
+                    }, { once: true }); // Only fire once per button
+                });
+
                 const shareUrl = @json($shareUrl ?? route('public.jobs.show', $jobPosting));
                 const shareText = @json($shareText ?? ($jobPosting->title . ' - ' . $jobPosting->facility->name));
 
