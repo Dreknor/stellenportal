@@ -76,14 +76,16 @@
                                 <x-button type="secondary" size="sm" tag="a" :href="route('admin.failed-jobs.show', $job->id)">
                                     <x-fas-eye class="w-3"/>
                                 </x-button>
-                                <form method="POST" action="{{ route('admin.failed-jobs.retry', $job->id) }}" class="inline-block">@csrf
-                                    <x-button type="primary" size="sm" native-type="submit">{{ __('Neu starten') }}</x-button>
-                                </form>
-                                <form method="POST" action="{{ route('admin.failed-jobs.destroy', $job->id) }}" class="inline-block" onsubmit="return confirm('{{ __('Möchten Sie diesen fehlgeschlagenen Job wirklich löschen?') }}');">
-                                    @method('DELETE')
-                                    @csrf
-                                    <x-button type="secondary" size="sm" native-type="submit">{{ __('Löschen') }}</x-button>
-                                </form>
+                                @can('admin manage jobs')
+                                    <form method="POST" action="{{ route('admin.failed-jobs.retry', $job->id) }}" class="inline-block">@csrf
+                                        <x-button type="primary" size="sm" native-type="submit">{{ __('Neu starten') }}</x-button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.failed-jobs.destroy', $job->id) }}" class="inline-block" onsubmit="return confirm('{{ __('Möchten Sie diesen fehlgeschlagenen Job wirklich löschen?') }}');">
+                                        @method('DELETE')
+                                        @csrf
+                                        <x-button type="secondary" size="sm" native-type="submit">{{ __('Löschen') }}</x-button>
+                                    </form>
+                                @endcan
                             </td>
                         </tr>
                     @empty

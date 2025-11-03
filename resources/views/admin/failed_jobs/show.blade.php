@@ -39,15 +39,16 @@
     </div>
 
     <div class="flex gap-2">
-        <form method="POST" action="{{ route('admin.failed-jobs.retry', $job->id) }}" class="inline-block">@csrf
-            <x-button type="primary">{{ __('Neu starten') }}</x-button>
-        </form>
-        <form method="POST" action="{{ route('admin.failed-jobs.destroy', $job->id) }}" class="inline-block" onsubmit="return confirm('{{ __('Möchten Sie diesen fehlgeschlagenen Job wirklich löschen?') }}');">
-            @method('DELETE')
-            @csrf
-            <x-button type="secondary">{{ __('Löschen') }}</x-button>
-        </form>
+        @can('admin manage jobs')
+            <form method="POST" action="{{ route('admin.failed-jobs.retry', $job->id) }}" class="inline-block">@csrf
+                <x-button type="primary">{{ __('Neu starten') }}</x-button>
+            </form>
+            <form method="POST" action="{{ route('admin.failed-jobs.destroy', $job->id) }}" class="inline-block" onsubmit="return confirm('{{ __('Möchten Sie diesen fehlgeschlagenen Job wirklich löschen?') }}');">
+                @method('DELETE')
+                @csrf
+                <x-button type="secondary">{{ __('Löschen') }}</x-button>
+            </form>
+        @endcan
         <x-button type="secondary" tag="a" :href="route('admin.failed-jobs.index')">{{ __('Zurück') }}</x-button>
     </div>
 </x-layouts.app>
-
