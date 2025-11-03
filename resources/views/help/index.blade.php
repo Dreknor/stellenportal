@@ -362,6 +362,7 @@
     </div>
 
     <!-- Kontakt Section -->
+    @if(config('mail.support_email'))
     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-md p-6 border border-blue-200 dark:border-gray-600">
         <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
             {{ __('Weitere Fragen?') }}
@@ -370,12 +371,13 @@
             {{ __('Wenn Sie weitere Fragen haben oder Unterstützung benötigen, kontaktieren Sie uns gerne.') }}
         </p>
         <div class="flex flex-wrap gap-4">
-            <a href="mailto:support@stellenportal.de"
+            <a href="mailto:{{ config('mail.support_email') }}"
                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                 <x-icon name="fas-envelope" class="h-4 w-4 mr-2" />
                 {{ __('E-Mail Support') }}
             </a>
         </div>
     </div>
+    @endif
 </x-layouts.app>
 

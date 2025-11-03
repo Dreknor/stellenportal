@@ -30,6 +30,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Support Email Address
+    |--------------------------------------------------------------------------
+    |
+    | This email address will be displayed on the help page as a contact
+    | for user support. If not set, the support button will not be shown.
+    |
+    */
+
+    'support_email' => env('MAIL_SUPPORT_ADDRESS'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
     |
