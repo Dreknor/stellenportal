@@ -251,6 +251,35 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
                 ->name('export');
         });
 
+        // Admin Logs (application log files)
+        Route::prefix('logs')->name('logs.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])
+                ->middleware('permission:admin view logs')
+                ->name('index');
+            Route::get('/download/{file}', [\App\Http\Controllers\Admin\LogController::class, 'download'])
+                ->middleware('permission:admin view logs')
+                ->name('download');
+            Route::get('/{file}', [\App\Http\Controllers\Admin\LogController::class, 'show'])
+                ->middleware('permission:admin view logs')
+                ->name('show');
+        });
+
+        // Admin Failed Jobs
+        Route::prefix('failed-jobs')->name('failed-jobs.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\FailedJobController::class, 'index'])
+                ->middleware('permission:admin view logs')
+                ->name('index');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\FailedJobController::class, 'show'])
+                ->middleware('permission:admin view logs')
+                ->name('show');
+            Route::post('/{id}/retry', [\App\Http\Controllers\Admin\FailedJobController::class, 'retry'])
+                ->middleware('permission:admin manage jobs')
+                ->name('retry');
+            Route::delete('/{id}', [\App\Http\Controllers\Admin\FailedJobController::class, 'destroy'])
+                ->middleware('permission:admin manage jobs')
+                ->name('destroy');
+        });
+
         // Admin Footer Settings
         Route::resource('footer-settings', \App\Http\Controllers\Admin\FooterSettingController::class)
             ->middleware([

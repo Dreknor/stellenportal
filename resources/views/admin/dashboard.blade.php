@@ -140,10 +140,16 @@
                         {{ __('Audit-Logs') }}
                     </x-button>
                 @endcan
-                @can('admin view credits')
-                    <x-button type="secondary" size="sm" tag="a" :href="route('admin.credits.transactions')" class="w-full justify-center">
-                        <x-fas-exchange-alt class="w-3 mr-2"/>
-                        {{ __('Transaktionen') }}
+                @can('admin view logs')
+                    <x-button type="secondary" size="sm" tag="a" :href="route('admin.logs.index')" class="w-full justify-center">
+                        <x-fas-file-alt class="w-3 mr-2"/>
+                        {{ __('Logs') }}
+                    </x-button>
+                @endcan
+                @can('admin view logs')
+                    <x-button type="danger" size="sm" tag="a" :href="route('admin.failed-jobs.index')" class="w-full justify-center">
+                        <x-fas-bug class="w-3 mr-2"/>
+                        {{ __('Fehlgeschlagene Jobs') }}
                     </x-button>
                 @endcan
             </div>
@@ -273,4 +279,3 @@
         </div>
     </div>
 </x-layouts.app>
-
