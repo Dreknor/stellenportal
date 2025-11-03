@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             CreditPackageSeeder::class,
             AssignAllPermissionsToUserOneSeeder::class,
-            CreditPermissionsSeeder::class
+            CreditPermissionsSeeder::class,
+            FooterSettingSeeder::class,
         ]);
     }
 }

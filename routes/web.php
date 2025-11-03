@@ -250,6 +250,22 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
                 ->middleware('permission:admin export logs')
                 ->name('export');
         });
+
+        // Admin Footer Settings
+        Route::resource('footer-settings', \App\Http\Controllers\Admin\FooterSettingController::class)
+            ->middleware([
+                'index' => 'permission:admin edit organizations',
+                'create' => 'permission:admin edit organizations',
+                'store' => 'permission:admin edit organizations',
+                'show' => 'permission:admin edit organizations',
+                'edit' => 'permission:admin edit organizations',
+                'update' => 'permission:admin edit organizations',
+                'destroy' => 'permission:admin delete organizations',
+            ]);
+        Route::post('footer-settings/{footerSetting}/activate',
+            [\App\Http\Controllers\Admin\FooterSettingController::class, 'activate'])
+            ->middleware('permission:admin edit organizations')
+            ->name('footer-settings.activate');
     });
 });
 

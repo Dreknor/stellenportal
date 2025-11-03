@@ -128,6 +128,12 @@
                         {{ __('Credits gewähren') }}
                     </x-button>
                 @endcan
+                @can('admin edit organizations')
+                    <x-button type="secondary" size="sm" tag="a" :href="route('admin.footer-settings.index')" class="w-full justify-center">
+                        <x-fas-cog class="w-3 mr-2"/>
+                        {{ __('Footer-Einstellungen') }}
+                    </x-button>
+                @endcan
                 @can('admin view logs')
                     <x-button type="secondary" size="sm" tag="a" :href="route('admin.audits.index')" class="w-full justify-center">
                         <x-fas-clipboard-list class="w-3 mr-2"/>

@@ -99,6 +99,8 @@
                 </div>
             </main>
         </div>
+
+        <x-layouts.app.footer />
     </div>
 
     @stack('scripts')
