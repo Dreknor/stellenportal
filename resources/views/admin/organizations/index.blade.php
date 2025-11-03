@@ -70,17 +70,25 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($organization->is_approved)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                                        <x-fas-check-circle class="w-3 mr-1"/>
-                                        {{ __('Bestätigt') }}
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
-                                        <x-fas-clock class="w-3 mr-1"/>
-                                        {{ __('Ausstehend') }}
-                                    </span>
-                                @endif
+                                <div class="flex flex-col gap-1">
+                                    @if($organization->is_approved)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                            <x-fas-check-circle class="w-3 mr-1"/>
+                                            {{ __('Bestätigt') }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+                                            <x-fas-clock class="w-3 mr-1"/>
+                                            {{ __('Ausstehend') }}
+                                        </span>
+                                    @endif
+                                    @if($organization->is_cooperative_member)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                            <x-fas-star class="w-3 mr-1"/>
+                                            {{ __('Genossenschaft') }}
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">

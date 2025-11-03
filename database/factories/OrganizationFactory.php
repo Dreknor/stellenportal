@@ -17,7 +17,18 @@ class OrganizationFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'website' => fake()->url(),
             'description' => fake()->paragraph(),
+            'is_cooperative_member' => false,
         ];
+    }
+
+    /**
+     * Indicate that the organization is a cooperative member.
+     */
+    public function cooperativeMember(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_cooperative_member' => true,
+        ]);
     }
 }
 

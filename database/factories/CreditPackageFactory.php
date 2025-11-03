@@ -19,6 +19,7 @@ class CreditPackageFactory extends Factory
             'credits' => $credits,
             'price' => $credits * fake()->randomFloat(2, 8, 12),
             'is_active' => true,
+            'for_cooperative_members' => false,
         ];
     }
 
@@ -26,6 +27,16 @@ class CreditPackageFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_active' => false,
+        ]);
+    }
+
+    /**
+     * Indicate that the package is for cooperative members.
+     */
+    public function forCooperativeMembers(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'for_cooperative_members' => true,
         ]);
     }
 }

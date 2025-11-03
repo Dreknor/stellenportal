@@ -12,45 +12,83 @@ class CreditPackageSeeder extends Seeder
      */
     public function run(): void
     {
-        $packages = [
+        // Standard-Pakete für Nicht-Genossenschaftsmitglieder
+        $standardPackages = [
             [
                 'name' => 'Starter-Paket',
                 'description' => 'Ideal für kleine Einrichtungen',
-                'credits' => 100,
+                'credits' => 10,
                 'price' => 49.99,
                 'is_active' => true,
+                'for_cooperative_members' => false,
             ],
             [
                 'name' => 'Basic-Paket',
                 'description' => 'Optimal für mittlere Einrichtungen',
-                'credits' => 250,
+                'credits' => 25,
                 'price' => 99.99,
                 'is_active' => true,
+                'for_cooperative_members' => false,
             ],
             [
                 'name' => 'Professional-Paket',
                 'description' => 'Perfekt für größere Einrichtungen',
-                'credits' => 500,
+                'credits' => 50,
                 'price' => 179.99,
                 'is_active' => true,
+                'for_cooperative_members' => false,
             ],
             [
                 'name' => 'Premium-Paket',
                 'description' => 'Für Organisationen mit mehreren Einrichtungen',
-                'credits' => 1000,
+                'credits' => 100,
                 'price' => 299.99,
                 'is_active' => true,
+                'for_cooperative_members' => false,
             ],
             [
                 'name' => 'Enterprise-Paket',
                 'description' => 'Das ultimative Paket für große Organisationen',
-                'credits' => 2500,
+                'credits' => 250,
                 'price' => 649.99,
                 'is_active' => true,
+                'for_cooperative_members' => false,
             ],
         ];
 
-        foreach ($packages as $package) {
+        // Spezial-Pakete für Genossenschaftsmitglieder (mit vergünstigten Preisen)
+        $cooperativePackages = [
+            [
+                'name' => 'Genossenschaft Starter',
+                'description' => 'Vergünstigtes Starter-Paket für Genossenschaftsmitglieder',
+                'credits' => 5,
+                'price' => 20.00,
+                'is_active' => true,
+                'for_cooperative_members' => true,
+            ],
+            [
+                'name' => 'Genossenschaft Starter',
+                'description' => 'Vergünstigtes Starter-Paket für Genossenschaftsmitglieder',
+                'credits' => 10,
+                'price' => 39.99,
+                'is_active' => true,
+                'for_cooperative_members' => true,
+            ],
+            [
+                'name' => 'Genossenschaft Basic',
+                'description' => 'Vergünstigtes Basic-Paket für Genossenschaftsmitglieder',
+                'credits' => 25,
+                'price' => 79.99,
+                'is_active' => true,
+                'for_cooperative_members' => true,
+            ]
+        ];
+
+        foreach ($standardPackages as $package) {
+            CreditPackage::create($package);
+        }
+
+        foreach ($cooperativePackages as $package) {
             CreditPackage::create($package);
         }
     }

@@ -57,6 +57,7 @@ class OrganizationController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'website' => ['nullable', 'url', 'max:255'],
             'description' => ['nullable', 'string'],
+            'is_cooperative_member' => ['boolean'],
         ]);
 
         $organization->update($validated);

@@ -65,6 +65,17 @@
                             @enderror
                         </div>
 
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="for_cooperative_members" value="1" {{ old('for_cooperative_members', false) ? 'checked' : '' }} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Nur für Genossenschaftsmitglieder</span>
+                            </label>
+                            <p class="text-sm text-gray-500 mt-1 ml-6">Wenn aktiviert, ist dieses Paket nur für Organisationen sichtbar, die Mitglied der Genossenschaft sind.</p>
+                            @error('for_cooperative_members')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex justify-between items-center border-t pt-6">
                             <a href="{{ route('credits.packages.index') }}" class="text-gray-600 hover:text-gray-800">
                                 Abbrechen

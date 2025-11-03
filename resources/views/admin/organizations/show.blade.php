@@ -194,6 +194,27 @@
                 @endif
             </div>
 
+            <!-- Cooperative Membership -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Genossenschaft') }}</h2>
+                @if($organization->is_cooperative_member)
+                    <div class="mb-2">
+                        <span class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 w-full justify-center">
+                            <x-fas-star class="w-4 h-4 mr-2"/>
+                            {{ __('Genossenschaftsmitglied') }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Hat Zugang zu speziellen Guthaben-Paketen') }}</p>
+                @else
+                    <div class="mb-2">
+                        <span class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 w-full justify-center">
+                            {{ __('Kein Mitglied') }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Standardzugang zu Guthaben-Paketen') }}</p>
+                @endif
+            </div>
+
             <!-- Credit Balance -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Guthaben') }}</h2>

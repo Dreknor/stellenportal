@@ -69,6 +69,23 @@
                 </div>
 
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('Mitgliedschaft') }}</h3>
+                    <div>
+                        <label class="flex items-start">
+                            <input type="checkbox" name="is_cooperative_member" value="1" {{ old('is_cooperative_member', $organization->is_cooperative_member) ? 'checked' : '' }}
+                                   class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <div class="ml-3">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Genossenschaftsmitglied') }}</span>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Wenn aktiviert, hat diese Organisation Zugang zu speziellen Guthaben-Paketen für Genossenschaftsmitglieder.') }}</p>
+                            </div>
+                        </label>
+                        @error('is_cooperative_member')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('Informationen') }}</h3>
                     <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                         <div class="flex">

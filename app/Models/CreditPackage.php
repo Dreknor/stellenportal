@@ -17,12 +17,14 @@ class CreditPackage extends Model implements Auditable
         'credits',
         'price',
         'is_active',
+        'for_cooperative_members',
     ];
 
     protected $casts = [
         'credits' => 'integer',
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'for_cooperative_members' => 'boolean',
     ];
 
     /**
@@ -47,5 +49,32 @@ class CreditPackage extends Model implements Auditable
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope packages for cooperative members
+     */
+    public function scopeForCooperativeMembers($query)
+    {
+        return $query->where('for_cooperative_members', true);
+    }
+
+    /**
+     * Scope packages for non-cooperative members
+     */
+    public function scopeForNonCooperativeMembers($query)
+    {
+        return $query->where('for_cooperative_members', false);
+    }
+
+    /**
+     * Scope packages available for organization based on their cooperative membership
+     */
+    public function scopeAvailableFor($query, $organization)
+    {
+        if ($organization && $organization->is_cooperative_member) {
+            return $query->where('for_cooperative_members', true);
+        }
+        return $query->where('for_cooperative_members', false);
     }
 }

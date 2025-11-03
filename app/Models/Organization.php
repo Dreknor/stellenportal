@@ -31,11 +31,13 @@ class Organization extends Model implements HasMedia, \OwenIt\Auditing\Contracts
         'is_approved',
         'approved_by',
         'approved_at',
+        'is_cooperative_member',
     ];
 
     protected $casts = [
         'is_approved' => 'boolean',
         'approved_at' => 'datetime',
+        'is_cooperative_member' => 'boolean',
     ];
 
     public function registerMediaCollections(): void

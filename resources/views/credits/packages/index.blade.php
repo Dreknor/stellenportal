@@ -34,15 +34,22 @@
                                 <div class="border rounded-lg p-6 {{ $package->is_active ? 'border-gray-200' : 'border-red-200 bg-red-50' }}">
                                     <div class="flex justify-between items-start mb-4">
                                         <h3 class="text-xl font-bold text-gray-900">{{ $package->name }}</h3>
-                                        @if(!$package->is_active)
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">
-                                                Inaktiv
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">
-                                                Aktiv
-                                            </span>
-                                        @endif
+                                        <div class="flex flex-col gap-1">
+                                            @if(!$package->is_active)
+                                                <span class="px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">
+                                                    Inaktiv
+                                                </span>
+                                            @else
+                                                <span class="px-2 py-1 text-xs font-semibold rounded bg-green-100 text-green-800">
+                                                    Aktiv
+                                                </span>
+                                            @endif
+                                            @if($package->for_cooperative_members)
+                                                <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
+                                                    Genossenschaft
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     @if($package->description)

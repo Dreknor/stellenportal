@@ -32,7 +32,10 @@ class CreditController extends Controller
 
         $this->authorize('purchaseCredits', $facility);
 
-        $packages = CreditPackage::active()->orderBy('credits', 'asc')->get();
+        $packages = CreditPackage::active()
+            ->availableFor($facility->organization)
+            ->orderBy('credits', 'asc')
+            ->get();
         $balance = $facility->getCurrentCreditBalance();
 
         return view('credits.purchase.facility', compact('facility', 'packages', 'balance'));
@@ -90,7 +93,10 @@ class CreditController extends Controller
 
         $this->authorize('purchaseCredits', $organization);
 
-        $packages = CreditPackage::active()->orderBy('credits', 'asc')->get();
+        $packages = CreditPackage::active()
+            ->availableFor($organization)
+            ->orderBy('credits', 'asc')
+            ->get();
         $balance = $organization->getCurrentCreditBalance();
 
         return view('credits.purchase.organization', compact('organization', 'packages', 'balance'));

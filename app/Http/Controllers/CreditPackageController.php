@@ -45,6 +45,7 @@ class CreditPackageController extends Controller
             'credits' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0.01',
             'is_active' => 'boolean',
+            'for_cooperative_members' => 'boolean',
         ]);
 
         $package = CreditPackage::create($validated);
@@ -76,6 +77,7 @@ class CreditPackageController extends Controller
             'credits' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0.01',
             'is_active' => 'boolean',
+            'for_cooperative_members' => 'boolean',
         ]);
 
         $package->update($validated);

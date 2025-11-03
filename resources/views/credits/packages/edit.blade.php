@@ -68,6 +68,17 @@
                             @enderror
                         </div>
 
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="for_cooperative_members" value="1" {{ old('for_cooperative_members', $package->for_cooperative_members) ? 'checked' : '' }} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Nur für Genossenschaftsmitglieder</span>
+                            </label>
+                            <p class="text-sm text-gray-500 mt-1 ml-6">Wenn aktiviert, ist dieses Paket nur für Organisationen sichtbar, die Mitglied der Genossenschaft sind.</p>
+                            @error('for_cooperative_members')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="bg-gray-50 rounded-lg p-4 mb-6">
                             <p class="text-sm text-gray-600">
                                 <strong>Hinweis:</strong> Änderungen an diesem Paket wirken sich nicht auf bereits getätigte Käufe aus. Neue Bestellungen verwenden die aktualisierten Werte.
