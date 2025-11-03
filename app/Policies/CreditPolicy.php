@@ -18,8 +18,9 @@ class CreditPolicy
             if (!$creditable->organization->canUseFeatures()) {
                 return false;
             }
-            // User must be assigned to the facility
-            return $user->facilities->contains($creditable);
+            // User must be assigned to the facility OR to the facility's organization
+            return $user->facilities->contains($creditable)
+                || $user->organizations->contains($creditable->organization);
         }
 
         if ($creditable instanceof Organization) {
