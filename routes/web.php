@@ -242,6 +242,10 @@ Route::prefix('jobs')->name('public.jobs.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');
     Route::get('/{jobPosting}', [\App\Http\Controllers\PublicJobPostingController::class, 'show'])->name('show');
     Route::get('/{jobPosting}/pdf', [\App\Http\Controllers\PublicJobPostingController::class, 'exportPdf'])->name('pdf');
+
+    // Interaction tracking API
+    Route::post('/{jobPosting}/track', [\App\Http\Controllers\Api\JobPostingInteractionController::class, 'track'])
+        ->name('track');
 });
 
 require __DIR__.'/auth.php';
