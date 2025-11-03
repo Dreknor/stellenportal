@@ -42,6 +42,7 @@
                         <option value="mini_job" {{ old('employment_type', $jobPosting->employment_type) === 'mini_job' ? 'selected' : '' }}>{{ __('Minijob') }}</option>
                         <option value="internship" {{ old('employment_type', $jobPosting->employment_type) === 'internship' ? 'selected' : '' }}>{{ __('Praktikum') }}</option>
                         <option value="apprenticeship" {{ old('employment_type', $jobPosting->employment_type) === 'apprenticeship' ? 'selected' : '' }}>{{ __('Ausbildung') }}</option>
+                        <option value="volunteer" {{ old('employment_type', $jobPosting->employment_type) === 'volunteer' ? 'selected' : '' }}>{{ __('Ehrenamt') }}</option>
                     </select>
                     @error('employment_type')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>

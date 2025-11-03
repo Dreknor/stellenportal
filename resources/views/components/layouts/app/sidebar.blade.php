@@ -60,7 +60,12 @@
 
                                 @can('admin view credits')
                                 <x-layouts.sidebar-two-level-link href="{{ route('admin.credits.index') }}" icon='fas-coins'
-                                    :active="request()->routeIs('admin.credits*')">Guthaben</x-layouts.sidebar-two-level-link>
+                                    :active="request()->routeIs('admin.credits.index') || request()->routeIs('admin.credits.transactions') || request()->routeIs('admin.credits.grant')">Guthaben</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view credits')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.job-posting-credit-exemptions.index') }}" icon='fas-file-circle-exclamation'
+                                    :active="request()->routeIs('admin.job-posting-credit-exemptions*')">Guthabenausnahmen</x-layouts.sidebar-two-level-link>
                                 @endcan
 
                                 @can('admin view logs')

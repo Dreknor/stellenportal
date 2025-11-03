@@ -222,6 +222,22 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
                 ->name('grant.store');
         });
 
+        // Admin Job Posting Credit Exemptions
+        Route::resource('job-posting-credit-exemptions', \App\Http\Controllers\Admin\JobPostingCreditExemptionController::class)
+            ->middleware([
+                'index' => 'permission:admin view credits',
+                'create' => 'permission:admin grant credits',
+                'store' => 'permission:admin grant credits',
+                'show' => 'permission:admin view credits',
+                'edit' => 'permission:admin grant credits',
+                'update' => 'permission:admin grant credits',
+                'destroy' => 'permission:admin grant credits',
+            ]);
+        Route::post('job-posting-credit-exemptions/{jobPostingCreditExemption}/toggle',
+            [\App\Http\Controllers\Admin\JobPostingCreditExemptionController::class, 'toggle'])
+            ->middleware('permission:admin grant credits')
+            ->name('job-posting-credit-exemptions.toggle');
+
         // Admin Audit Logs
         Route::prefix('audits')->name('audits.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\AuditController::class, 'index'])

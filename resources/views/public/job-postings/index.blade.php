@@ -99,6 +99,7 @@
                         <option value="mini_job" {{ request('employment_type') === 'mini_job' ? 'selected' : '' }}>{{ __('Minijob') }}</option>
                         <option value="internship" {{ request('employment_type') === 'internship' ? 'selected' : '' }}>{{ __('Praktikum') }}</option>
                         <option value="apprenticeship" {{ request('employment_type') === 'apprenticeship' ? 'selected' : '' }}>{{ __('Ausbildung') }}</option>
+                        <option value="volunteer" {{ request('employment_type') === 'volunteer' ? 'selected' : '' }}>{{ __('Ehrenamt') }}</option>
                     </select>
                 </div>
 

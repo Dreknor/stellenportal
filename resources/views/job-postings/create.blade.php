@@ -22,7 +22,7 @@
                         {{ __('Einrichtung') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="facility_id" name="facility_id" required
-                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('facility_id') border-red-500 @enderror">
+                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('facility_id') border-red-500 @enderror">
                         <option value="">{{ __('Einrichtung wählen...') }}</option>
                         @foreach($facilities as $facility)
                             <option value="{{ $facility->id }}" {{ old('facility_id', $preselectedFacilityId) == $facility->id ? 'selected' : '' }}>
@@ -41,7 +41,7 @@
                         {{ __('Stellentitel') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="title" name="title" value="{{ old('title') }}" required
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('title') border-red-500 @enderror">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('title') border-red-500 @enderror">
                     @error('title')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -53,12 +53,13 @@
                         {{ __('Beschäftigungsart') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="employment_type" name="employment_type" required
-                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('employment_type') border-red-500 @enderror">
+                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('employment_type') border-red-500 @enderror">
                         <option value="full_time" {{ old('employment_type') === 'full_time' ? 'selected' : '' }}>{{ __('Vollzeit') }}</option>
                         <option value="part_time" {{ old('employment_type') === 'part_time' ? 'selected' : '' }}>{{ __('Teilzeit') }}</option>
                         <option value="mini_job" {{ old('employment_type') === 'mini_job' ? 'selected' : '' }}>{{ __('Minijob') }}</option>
                         <option value="internship" {{ old('employment_type') === 'internship' ? 'selected' : '' }}>{{ __('Praktikum') }}</option>
                         <option value="apprenticeship" {{ old('employment_type') === 'apprenticeship' ? 'selected' : '' }}>{{ __('Ausbildung') }}</option>
+                        <option value="volunteer" {{ old('employment_type') === 'volunteer' ? 'selected' : '' }}>{{ __('Ehrenamt') }}</option>
                     </select>
                     @error('employment_type')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -71,7 +72,7 @@
                         {{ __('Berufsgruppe / Kategorie') }}
                     </label>
                     <input type="text" id="job_category" name="job_category" value="{{ old('job_category') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('job_category') border-red-500 @enderror">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('job_category') border-red-500 @enderror">
                     @error('job_category')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -83,7 +84,7 @@
                         {{ __('Stellenbeschreibung') }} <span class="text-red-500">*</span>
                     </label>
                     <textarea id="description" name="description" rows="6" required
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+                              class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -95,7 +96,7 @@
                         {{ __('Anforderungen') }}
                     </label>
                     <textarea id="requirements" name="requirements" rows="4"
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('requirements') border-red-500 @enderror">{{ old('requirements') }}</textarea>
+                              class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('requirements') border-red-500 @enderror">{{ old('requirements') }}</textarea>
                     @error('requirements')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -107,7 +108,7 @@
                         {{ __('Wir bieten') }}
                     </label>
                     <textarea id="benefits" name="benefits" rows="4"
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('benefits') border-red-500 @enderror">{{ old('benefits') }}</textarea>
+                              class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('benefits') border-red-500 @enderror">{{ old('benefits') }}</textarea>
                     @error('benefits')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -123,7 +124,7 @@
                                 {{ __('Ansprechpartner') }}
                             </label>
                             <input type="text" id="contact_person" name="contact_person" value="{{ old('contact_person') }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                         </div>
 
                         <div>
@@ -131,7 +132,7 @@
                                 {{ __('Kontakt E-Mail') }}
                             </label>
                             <input type="email" id="contact_email" name="contact_email" value="{{ old('contact_email') }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                         </div>
 
                         <div>
@@ -139,7 +140,7 @@
                                 {{ __('Kontakt Telefon') }}
                             </label>
                             <input type="text" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                         </div>
                     </div>
                 </div>

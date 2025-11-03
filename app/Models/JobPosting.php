@@ -19,6 +19,7 @@ class JobPosting extends Model implements Auditable
     const EMPLOYMENT_TYPE_MINI_JOB = 'mini_job';
     const EMPLOYMENT_TYPE_INTERNSHIP = 'internship';
     const EMPLOYMENT_TYPE_APPRENTICESHIP = 'apprenticeship';
+    const EMPLOYMENT_TYPE_VOLUNTEER = 'volunteer';
 
     const STATUS_DRAFT = 'draft';
     const STATUS_ACTIVE = 'active';
@@ -118,6 +119,7 @@ class JobPosting extends Model implements Auditable
             self::EMPLOYMENT_TYPE_MINI_JOB => 'Minijob',
             self::EMPLOYMENT_TYPE_INTERNSHIP => 'Praktikum',
             self::EMPLOYMENT_TYPE_APPRENTICESHIP => 'Ausbildung',
+            self::EMPLOYMENT_TYPE_VOLUNTEER => 'Ehrenamt',
             default => 'Unbekannt',
         };
     }
@@ -216,6 +218,15 @@ class JobPosting extends Model implements Auditable
             ->where('interaction_type', JobPostingInteraction::TYPE_VIEW)
             ->distinct('ip_address')
             ->count('ip_address');
+    }
+
+    /**
+     * Check if this job posting is exempt from credit charges
+     */
+    public function isExemptFromCredits(): bool
+    {
+        $organization = $this->facility->organization;
+        return JobPostingCreditExemption::hasExemption($this->employment_type, $organization);
     }
 }
 

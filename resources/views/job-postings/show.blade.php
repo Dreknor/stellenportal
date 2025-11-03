@@ -100,96 +100,84 @@
     <!-- Statistics Section -->
     @can('view job posting statistics')
         @if($jobPosting->isActive() || $jobPosting->status === 'expired')
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                    <x-fas-chart-bar class="w-5 h-5 inline-block mr-2" />
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+                    <x-fas-chart-bar class="w-5 h-5 mr-2" />
                     {{ __('Statistiken') }}
                 </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <!-- Views -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Aufrufe') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['views']) }}</p>
-                        </div>
-                        <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3">
-                            <x-fas-eye class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-blue-100 dark:bg-blue-900/40 rounded-full p-2">
+                            <x-fas-eye class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['views']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('Aufrufe') }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
                         {{ number_format($uniqueVisitors) }} {{ __('eindeutig') }}
                     </p>
                 </div>
 
                 <!-- Apply Clicks -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Bewerbungen') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['apply_clicks']) }}</p>
-                        </div>
-                        <div class="bg-green-100 dark:bg-green-900/30 rounded-full p-3">
-                            <x-fas-paper-plane class="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div class="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-green-100 dark:bg-green-900/40 rounded-full p-2">
+                            <x-fas-paper-plane class="w-5 h-5 text-green-600 dark:text-green-400" />
                         </div>
                     </div>
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['apply_clicks']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('Bewerbungen') }}</p>
                     @if($stats['views'] > 0)
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            {{ number_format(($stats['apply_clicks'] / $stats['views']) * 100, 1) }}% {{ __('Conversion') }}
+                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+                            {{ number_format(($stats['apply_clicks'] / $stats['views']) * 100, 1) }}% {{ __('Rate') }}
                         </p>
                     @endif
                 </div>
 
                 <!-- Email Reveals -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('E-Mail angezeigt') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['email_reveals']) }}</p>
-                        </div>
-                        <div class="bg-purple-100 dark:bg-purple-900/30 rounded-full p-3">
-                            <x-fas-envelope class="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <div class="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-purple-100 dark:bg-purple-900/40 rounded-full p-2">
+                            <x-fas-envelope class="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         </div>
                     </div>
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['email_reveals']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('E-Mail') }}</p>
                 </div>
 
                 <!-- Phone Reveals -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Telefon angezeigt') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['phone_reveals']) }}</p>
-                        </div>
-                        <div class="bg-yellow-100 dark:bg-yellow-900/30 rounded-full p-3">
-                            <x-fas-phone class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                <div class="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-yellow-100 dark:bg-yellow-900/40 rounded-full p-2">
+                            <x-fas-phone class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                         </div>
                     </div>
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['phone_reveals']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('Telefon') }}</p>
                 </div>
 
                 <!-- Downloads -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('PDF-Downloads') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['downloads']) }}</p>
-                        </div>
-                        <div class="bg-red-100 dark:bg-red-900/30 rounded-full p-3">
-                            <x-fas-download class="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div class="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-red-100 dark:bg-red-900/40 rounded-full p-2">
+                            <x-fas-download class="w-5 h-5 text-red-600 dark:text-red-400" />
                         </div>
                     </div>
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['downloads']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('PDF-Downloads') }}</p>
                 </div>
 
                 <!-- Total Interactions -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Interaktionen') }}</p>
-                            <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['total_interactions']) }}</p>
-                        </div>
-                        <div class="bg-indigo-100 dark:bg-indigo-900/30 rounded-full p-3">
-                            <x-fas-mouse-pointer class="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                <div class="text-center p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                    <div class="flex justify-center mb-2">
+                        <div class="bg-indigo-100 dark:bg-indigo-900/40 rounded-full p-2">
+                            <x-fas-mouse-pointer class="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                     </div>
+                    <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['total_interactions']) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('Interaktionen') }}</p>
                 </div>
             </div>
         </div>
@@ -198,10 +186,10 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-4">
             <!-- Description -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Stellenbeschreibung') }}</h2>
+                <h2 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Stellenbeschreibung') }}</h2>
                 <div class="prose dark:prose-invert max-w-none">
                     {!! nl2br(e($jobPosting->description)) !!}
                 </div>
@@ -209,7 +197,7 @@
 
             @if($jobPosting->requirements)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Anforderungen') }}</h2>
+                    <h2 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Anforderungen') }}</h2>
                     <div class="prose dark:prose-invert max-w-none">
                         {!! nl2br(e($jobPosting->requirements)) !!}
                     </div>
@@ -218,7 +206,7 @@
 
             @if($jobPosting->benefits)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Wir bieten') }}</h2>
+                    <h2 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Wir bieten') }}</h2>
                     <div class="prose dark:prose-invert max-w-none">
                         {!! nl2br(e($jobPosting->benefits)) !!}
                     </div>
@@ -227,49 +215,75 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="space-y-6">
+        <div class="space-y-4">
             <!-- Actions Card -->
             @if($jobPosting->isDraft())
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Aktionen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
 
-                    <div class="space-y-3">
-                        @can('publish', $jobPosting)
-                            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                    @can('publish', $jobPosting)
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                            @if($jobPosting->isExemptFromCredits())
+                                <div class="flex items-start mb-2">
+                                    <x-fas-info-circle class="w-4 h-4 text-green-600 dark:text-green-400 mr-2 mt-0.5 flex-shrink-0"/>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300">
+                                        {{ __('Für diese Beschäftigungsart (') }}{{ $jobPosting->getEmploymentTypeLabel() }}{{ __(') werden keine Guthaben benötigt.') }}
+                                    </p>
+                                </div>
                                 <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                                    {{ __('Veröffentlichen Sie diese Stellenausschreibung für 3 Monate. Kosten: 1 Guthaben') }}
+                                    {{ __('Veröffentlichen Sie diese Stellenausschreibung kostenlos für 3 Monate.') }}
                                 </p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                    {{ __('Aktuelles Guthaben') }}: <strong>{{ $jobPosting->facility->getCurrentCreditBalance() }}</strong>
+                            @else
+                                <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                    {{ __('Veröffentlichen Sie diese Stellenausschreibung für 3 Monate.') }}
                                 </p>
-                                <form method="POST" action="{{ route('job-postings.publish', $jobPosting) }}">
-                                    @csrf
-                                    <x-button type="success" class="w-full justify-center">
-                                        <x-fas-check class="w-4 h-4 mr-2" />
-                                        {{ __('Jetzt veröffentlichen') }}
-                                    </x-button>
-                                </form>
-                            </div>
-                        @else
-                            <x-alerts.alert type="warning">
-                                {{ __('Nicht genügend Guthaben zum Veröffentlichen.') }}
-                            </x-alerts.alert>
-                        @endcan
-                    </div>
+                                <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3 bg-white/50 dark:bg-gray-800/50 rounded px-2 py-1.5">
+                                    <span>{{ __('Kosten') }}:</span>
+                                    <span class="font-semibold">1 Guthaben</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3 bg-white/50 dark:bg-gray-800/50 rounded px-2 py-1.5">
+                                    <span>{{ __('Verfügbar') }}:</span>
+                                    <span class="font-semibold">{{ $jobPosting->facility->getCurrentCreditBalance() }} Guthaben</span>
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('job-postings.publish', $jobPosting) }}">
+                                @csrf
+                                <x-button type="success" class="w-full justify-center">
+                                    <x-fas-check class="w-4 h-4 mr-2" />
+                                    {{ __('Jetzt veröffentlichen') }}
+                                </x-button>
+                            </form>
+                        </div>
+                    @else
+                        <x-alerts.alert type="warning" class="text-sm">
+                            {{ __('Nicht genügend Guthaben zum Veröffentlichen.') }}
+                        </x-alerts.alert>
+                    @endcan
                 </div>
             @endif
 
             @if($jobPosting->isActive())
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Aktionen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
 
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         @can('extend', $jobPosting)
+                            @if($jobPosting->isExemptFromCredits())
+                                <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-2 mb-2">
+                                    <p class="text-xs text-green-700 dark:text-green-300 flex items-center">
+                                        <x-fas-info-circle class="w-3.5 h-3.5 inline mr-1.5 flex-shrink-0"/>
+                                        {{ __('Verlängerung ist kostenlos für diese Beschäftigungsart.') }}
+                                    </p>
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('job-postings.extend', $jobPosting) }}">
                                 @csrf
                                 <x-button type="primary" class="w-full justify-center">
                                     <x-fas-clock class="w-4 h-4 mr-2" />
                                     {{ __('Um 3 Monate verlängern') }}
+                                    @unless($jobPosting->isExemptFromCredits())
+                                        (1 Guthaben)
+                                    @endunless
                                 </x-button>
                             </form>
                         @endcan
@@ -288,8 +302,8 @@
             @endif
 
             @if($jobPosting->status === 'paused')
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Aktionen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
 
                     @can('resume', $jobPosting)
                         <form method="POST" action="{{ route('job-postings.resume', $jobPosting) }}">
@@ -304,8 +318,8 @@
             @endif
 
             @if($jobPosting->status === 'expired')
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Aktionen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
 
                     @can('extend', $jobPosting)
                         @php
@@ -313,17 +327,18 @@
                             $currentBalance = $jobPosting->facility->getCurrentCreditBalance();
                         @endphp
 
-                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
                             <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
                                 {{ __('Verlängern Sie diese Stellenausschreibung um :months Monate. Kosten: :credits Guthaben', ['months' => \App\Models\JobPosting::POSTING_DURATION_MONTHS, 'credits' => $creditsRequired]) }}
                             </p>
 
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                {{ __('Aktuelles Guthaben') }}: <strong>{{ $currentBalance }}</strong>
-                            </p>
+                            <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3 bg-white/50 dark:bg-gray-800/50 rounded px-2 py-1.5">
+                                <span>{{ __('Aktuelles Guthaben') }}:</span>
+                                <span class="font-semibold">{{ $currentBalance }}</span>
+                            </div>
 
                             @if($currentBalance < $creditsRequired)
-                                <x-alerts.alert type="warning">
+                                <x-alerts.alert type="warning" class="text-xs mb-2">
                                     {{ __('Nicht genügend Guthaben zum Verlängern.') }}
                                 </x-alerts.alert>
 
@@ -346,8 +361,8 @@
             @endif
 
             <!-- Facility Info -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Einrichtung') }}</h3>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Einrichtung') }}</h3>
 
                 <div class="space-y-3">
                     <div>
@@ -378,8 +393,8 @@
 
             <!-- Contact Info -->
             @if($jobPosting->contact_person || $jobPosting->contact_email || $jobPosting->contact_phone)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Kontakt') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Kontakt') }}</h3>
 
                     <div class="space-y-3">
                         @if($jobPosting->contact_person)
@@ -417,8 +432,8 @@
             @endif
 
             <!-- Meta Info -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Informationen') }}</h3>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Informationen') }}</h3>
 
                 <div class="space-y-2 text-sm">
                     @if($jobPosting->published_at)
@@ -442,15 +457,22 @@
 
                     <div class="flex justify-between">
                         <span class="text-gray-600 dark:text-gray-400">{{ __('Guthabenverbrauch') }}</span>
-                        <span class="text-gray-800 dark:text-gray-200">{{ $jobPosting->credits_used }}</span>
+                        <span class="text-gray-800 dark:text-gray-200">
+                            {{ $jobPosting->credits_used }}
+                            @if($jobPosting->isExemptFromCredits())
+                                <span class="ml-2 text-xs px-2 py-1 bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 rounded-full">
+                                    {{ __('Ausnahme') }}
+                                </span>
+                            @endif
+                        </span>
                     </div>
                 </div>
             </div>
 
             {{-- Share Buttons (nur sichtbar wenn veröffentlicht) --}}
             @if($jobPosting->published_at)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Stellenausschreibung teilen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Stellenausschreibung teilen') }}</h3>
 
                     <div class="flex flex-wrap gap-3">
                         @php
@@ -559,8 +581,8 @@
 
             <!-- Delete -->
             @can('delete', $jobPosting)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-red-200 dark:border-red-700 p-6">
-                    <h3 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">{{ __('Gefahrenzone') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-red-200 dark:border-red-700 p-5">
+                    <h3 class="text-base font-semibold text-red-600 dark:text-red-400 mb-3">{{ __('Gefahrenzone') }}</h3>
 
                     <form method="POST" action="{{ route('job-postings.destroy', $jobPosting) }}" onsubmit="return confirm('{{ __('Wirklich löschen?') }}');">
                         @csrf

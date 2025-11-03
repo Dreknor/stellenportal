@@ -30,24 +30,29 @@ class JobPostingService
         $facility = $jobPosting->facility;
         $creditsRequired = JobPosting::CREDITS_PER_POSTING;
 
-        if ($facility->getCurrentCreditBalance() < $creditsRequired) {
+        // Check if this posting is exempt from credit charges
+        $isExempt = $jobPosting->isExemptFromCredits();
+
+        if (!$isExempt && $facility->getCurrentCreditBalance() < $creditsRequired) {
             throw new \Exception('Nicht genügend Guthaben vorhanden.');
         }
 
-        return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired) {
-            // Deduct credits
-            $this->creditService->useCredits(
-                $facility,
-                $creditsRequired,
-                $user,
-                "Stellenausschreibung veröffentlicht: {$jobPosting->title}"
-            );
+        return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $isExempt) {
+            // Deduct credits only if not exempt
+            if (!$isExempt) {
+                $this->creditService->useCredits(
+                    $facility,
+                    $creditsRequired,
+                    $user,
+                    "Stellenausschreibung veröffentlicht: {$jobPosting->title}"
+                );
+                $jobPosting->credits_used += $creditsRequired;
+            }
 
             // Update job posting
             $jobPosting->status = JobPosting::STATUS_ACTIVE;
             $jobPosting->published_at = now();
             $jobPosting->expires_at = now()->addMonths(JobPosting::POSTING_DURATION_MONTHS);
-            $jobPosting->credits_used += $creditsRequired;
             $jobPosting->save();
 
             return $jobPosting;
@@ -66,18 +71,24 @@ class JobPostingService
         $facility = $jobPosting->facility;
         $creditsRequired = JobPosting::CREDITS_PER_POSTING;
 
-        if ($facility->getCurrentCreditBalance() < $creditsRequired) {
+        // Check if this posting is exempt from credit charges
+        $isExempt = $jobPosting->isExemptFromCredits();
+
+        if (!$isExempt && $facility->getCurrentCreditBalance() < $creditsRequired) {
             throw new \Exception('Nicht genügend Guthaben vorhanden.');
         }
 
-        return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $months) {
-            // Deduct credits
-            $this->creditService->useCredits(
-                $facility,
-                $creditsRequired,
-                $user,
-                "Stellenausschreibung verlängert: {$jobPosting->title}"
-            );
+        return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $months, $isExempt) {
+            // Deduct credits only if not exempt
+            if (!$isExempt) {
+                $this->creditService->useCredits(
+                    $facility,
+                    $creditsRequired,
+                    $user,
+                    "Stellenausschreibung verlängert: {$jobPosting->title}"
+                );
+                $jobPosting->credits_used += $creditsRequired;
+            }
 
             // Extend expiration date
             $newExpiresAt = $jobPosting->expires_at && $jobPosting->expires_at->isFuture()
@@ -86,7 +97,6 @@ class JobPostingService
 
             $jobPosting->status = JobPosting::STATUS_ACTIVE;
             $jobPosting->expires_at = $newExpiresAt;
-            $jobPosting->credits_used += $creditsRequired;
             $jobPosting->save();
 
             return $jobPosting;

@@ -107,7 +107,7 @@ class JobPostingController extends Controller
             'facility_id' => 'required|exists:facilities,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'employment_type' => 'required|in:full_time,part_time,mini_job,internship,apprenticeship',
+            'employment_type' => 'required|in:full_time,part_time,mini_job,internship,apprenticeship,volunteer',
             'job_category' => 'nullable|string|max:255',
             'requirements' => 'nullable|string',
             'benefits' => 'nullable|string',
@@ -194,7 +194,7 @@ class JobPostingController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'employment_type' => 'required|in:full_time,part_time,mini_job,internship,apprenticeship',
+            'employment_type' => 'required|in:full_time,part_time,mini_job,internship,apprenticeship,volunteer',
             'job_category' => 'nullable|string|max:255',
             'requirements' => 'nullable|string',
             'benefits' => 'nullable|string',
