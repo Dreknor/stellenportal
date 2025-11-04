@@ -11,8 +11,7 @@
     <link rel="shortcut icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="{{ $metaDescription ?? 'Aktuelle Stellenangebote für Lehrkräfte, Schulbegleitung und pädagogisches Personal an evangelischen Schulen und Einrichtungen in Sachsen.' }}">
-    <meta name="keywords" content="Stellenangebote, Lehrkräfte, evangelische Schulen, Jobs Sachsen, Pädagogik, Schulbegleitung, Lehrer Jobs">
+    <meta name="description" content="{{ $metaDescription ?? 'AStellenportal für Schulen in Sachsen: Jobs für Lehrkräfte, Sozialarbeit, Pädagogik und Verwaltung an evangelischen und freien Schulträgern in Dresden, Leipzig und Chemnitz. Jetzt bewerben oder ausschreiben!'}}">
     <meta name="author" content="{{ config('app.name') }}">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="{{ $canonical ?? url()->current() }}">
