@@ -6,12 +6,14 @@ use App\Models\CreditPackage;
 use App\Models\CreditTransaction;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class CreditPurchasedConfirmationMail extends Mailable
+class CreditPurchasedConfirmationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -29,6 +31,39 @@ class CreditPurchasedConfirmationMail extends Mailable
         $this->transaction = $transaction;
         $this->user = $user;
         $this->package = $package;
+    }
+
+    /**
+     * Handle a job failure due to missing models.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        // Log the failure for debugging
+        Log::error('CreditPurchasedConfirmationMail failed: ' . $exception->getMessage(), [
+            'transaction_id' => $this->transaction?->id ?? 'unknown',
+            'user_id' => $this->user?->id ?? 'unknown',
+            'package_id' => $this->package?->id ?? 'unknown',
+        ]);
+    }
+
+    /**
+     * Determine the models that should be restored with their relationships.
+     */
+    public function restoreModel($value)
+    {
+        try {
+            return parent::restoreModel($value);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // If the model is a CreditPackage and not found, we can handle it gracefully
+            if (isset($value->class) && $value->class === CreditPackage::class) {
+                Log::warning('CreditPackage not found during mail queue processing', [
+                    'package_id' => $value->id ?? 'unknown',
+                ]);
+                // Return null or a default value
+                return null;
+            }
+            throw $e;
+        }
     }
 
     /**

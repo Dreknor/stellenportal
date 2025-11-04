@@ -84,6 +84,7 @@
             <h2>Rechnungsdetails</h2>
             <div class="invoice-details">
                 <table>
+                    @if($package)
                     <tr>
                         <td>Paket:</td>
                         <td>{{ $package->name }}</td>
@@ -104,6 +105,21 @@
                         <td>Preis pro Guthaben:</td>
                         <td>{{ number_format($package->pricePerCredit, 4, ',', '.') }} €</td>
                     </tr>
+                    @else
+                    <tr>
+                        <td colspan="2">
+                            <em>Paketinformationen nicht verfügbar (Paket wurde möglicherweise gelöscht)</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Anzahl Guthaben:</td>
+                        <td>{{ number_format($transaction->credits, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Preis:</td>
+                        <td><strong>{{ number_format($transaction->amount, 2, ',', '.') }} €</strong></td>
+                    </tr>
+                    @endif
                     @if($transaction->note)
                     <tr>
                         <td>Notiz:</td>

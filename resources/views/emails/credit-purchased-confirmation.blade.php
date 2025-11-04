@@ -71,7 +71,7 @@
             <p>Ihre Guthaben-Aufladung wurde erfolgreich durchgeführt!</p>
 
             <div class="success-box">
-                <h2 style="margin: 0;">{{ number_format($package->credits, 0, ',', '.') }} Guthaben</h2>
+                <h2 style="margin: 0;">{{ number_format($package ? $package->credits : $transaction->credits, 0, ',', '.') }} Guthaben</h2>
                 <p style="margin: 5px 0 0 0;">wurden erfolgreich gebucht</p>
             </div>
 
@@ -86,6 +86,7 @@
                         <td>Datum:</td>
                         <td>{{ $transaction->created_at->format('d.m.Y H:i') }} Uhr</td>
                     </tr>
+                    @if($package)
                     <tr>
                         <td>Paket:</td>
                         <td>{{ $package->name }}</td>
@@ -98,6 +99,20 @@
                         <td>Preis:</td>
                         <td><strong>{{ number_format($package->price, 2, ',', '.') }} €</strong></td>
                     </tr>
+                    @else
+                    <tr>
+                        <td>Paket:</td>
+                        <td><em>Paketinformationen nicht verfügbar</em></td>
+                    </tr>
+                    <tr>
+                        <td>Anzahl Guthaben:</td>
+                        <td>{{ number_format($transaction->credits, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Preis:</td>
+                        <td><strong>{{ number_format($transaction->amount, 2, ',', '.') }} €</strong></td>
+                    </tr>
+                    @endif
                     <tr>
                         <td>Gebucht für:</td>
                         <td>{{ $creditable->name }}</td>
