@@ -33,7 +33,6 @@
                         'streetAddress' => $job->facility->address->street,
                         'addressLocality' => $job->facility->address->city,
                         'postalCode' => $job->facility->address->zip_code,
-                        'addressRegion' => $job->facility->address->state,
                         'addressCountry' => 'DE',
                     ]),
                 ];
@@ -258,6 +257,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                             <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                                                <span itemprop="addressLocality">{{ $jobPosting->facility->address->city }}</span>
                                                 <span itemprop="addressLocality">{{ $jobPosting->facility->address->city }}</span>
                                             </span>
                                         </div>

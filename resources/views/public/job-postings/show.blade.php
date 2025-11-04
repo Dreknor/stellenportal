@@ -35,7 +35,6 @@
                 'streetAddress' => $jobPosting->facility->address->street,
                 'addressLocality' => $jobPosting->facility->address->city,
                 'postalCode' => $jobPosting->facility->address->zip_code,
-                'addressRegion' => $jobPosting->facility->address->state,
                 'addressCountry' => 'DE',
             ]),
         ];
@@ -232,7 +231,6 @@
                         <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }}">
                         <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
                         <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
-                        <meta itemprop="addressRegion" content="{{ $jobPosting->facility->address->state }}">
                         <meta itemprop="addressCountry" content="DE">
                     </div>
                 </div>
@@ -293,7 +291,7 @@
                                 <address class="not-italic">
                                     <p class="text-gray-700 dark:text-gray-300">{{ $jobPosting->facility->address->street }}</p>
                                     <p class="text-gray-700 dark:text-gray-300">
-                                        {{ $jobPosting->facility->address->postal_code }} {{ $jobPosting->facility->address->city }}
+                                        {{ $jobPosting->facility->address->zip_code }} {{ $jobPosting->facility->address->city }}
                                     </p>
                                 </address>
                             </div>
