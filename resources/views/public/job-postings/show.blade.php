@@ -12,56 +12,59 @@
 
     @php
         $jobPostingSchema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'JobPosting',
-            'title' => $jobPosting->title,
-            'description' => strip_tags($jobPosting->description),
-            'datePosted' => $jobPosting->published_at->toIso8601String(),
-            'validThrough' => ($jobPosting->expires_at ?? $jobPosting->published_at->addMonths(3))->toIso8601String(),
-            'employmentType' => strtoupper(str_replace('_', '_', $jobPosting->employment_type)),
-            'hiringOrganization' => array_filter([
-                '@type' => 'Organization',
-                'name' => $jobPosting->facility->name,
-                'logo' => $jobPosting->facility->getFirstMediaUrl('logo') ?: null,
+        '@context' => 'https://schema.org',
+        '@type' => 'JobPosting',
+        'title' => $jobPosting->title,
+        'description' => strip_tags($jobPosting->description),
+        'datePosted' => $jobPosting->published_at->toIso8601String(),
+        'validThrough' => ($jobPosting->expires_at ?? $jobPosting->published_at->addMonths(3))->toIso8601String(),
+        'employmentType' => strtoupper(str_replace('_', '_', $jobPosting->employment_type)),
+        'hiringOrganization' => array_filter([
+            '@type' => 'Organization',
+            'name' => $jobPosting->facility->name,
+            'logo' => $jobPosting->facility->getFirstMediaUrl('logo') ?: null,
+        ]),
+        'url' => route('public.jobs.show', $jobPosting),
+    ];
+
+    if ($jobPosting->facility->address) {
+        $jobPostingSchema['jobLocation'] = [
+            '@type' => 'Place',
+            'address' => array_filter([
+                '@type' => 'PostalAddress',
+                'streetAddress' => $jobPosting->facility->address->street,
+                'addressLocality' => $jobPosting->facility->address->city,
+                'postalCode' => $jobPosting->facility->address->postal_code,
+                'addressRegion' => $jobPosting->facility->address->state,
+                'addressCountry' => 'DE',
             ]),
-            'url' => route('public.jobs.show', $jobPosting),
         ];
 
-        if ($jobPosting->facility->address) {
-            $jobPostingSchema['jobLocation'] = array_filter([
-                '@type' => 'Place',
-                'address' => array_filter([
-                    '@type' => 'PostalAddress',
-                    'streetAddress' => $jobPosting->facility->address->street,
-                    'addressLocality' => $jobPosting->facility->address->city,
-                    'postalCode' => $jobPosting->facility->address->postal_code,
-                    'addressRegion' => $jobPosting->facility->address->state,
-                    'addressCountry' => 'DE',
-                ]),
-                'geo' => ($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude) ? [
-                    '@type' => 'GeoCoordinates',
-                    'latitude' => $jobPosting->facility->address->latitude,
-                    'longitude' => $jobPosting->facility->address->longitude,
-                ] : null,
-            ]);
+        if ($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude) {
+            $jobPostingSchema['jobLocation']['geo'] = [
+                '@type' => 'GeoCoordinates',
+                'latitude' => $jobPosting->facility->address->latitude,
+                'longitude' => $jobPosting->facility->address->longitude,
+            ];
         }
+    }
 
-        if ($jobPosting->requirements) {
-            $jobPostingSchema['qualifications'] = strip_tags($jobPosting->requirements);
-        }
+    if ($jobPosting->requirements) {
+        $jobPostingSchema['qualifications'] = strip_tags($jobPosting->requirements);
+    }
 
-        if ($jobPosting->benefits) {
-            $jobPostingSchema['benefits'] = strip_tags($jobPosting->benefits);
-        }
+    if ($jobPosting->benefits) {
+        $jobPostingSchema['benefits'] = strip_tags($jobPosting->benefits);
+    }
 
-        if ($jobPosting->contact_email) {
-            $jobPostingSchema['applicationContact'] = array_filter([
-                '@type' => 'ContactPoint',
-                'email' => $jobPosting->contact_email,
-                'telephone' => $jobPosting->contact_phone ?: null,
-                'name' => $jobPosting->contact_person ?: null,
-            ]);
-        }
+    if ($jobPosting->contact_email) {
+        $jobPostingSchema['applicationContact'] = array_filter([
+            '@type' => 'ContactPoint',
+            'email' => $jobPosting->contact_email,
+            'telephone' => $jobPosting->contact_phone ?: null,
+            'name' => $jobPosting->contact_person ?: null,
+        ]);
+    }
     @endphp
     <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @endpush

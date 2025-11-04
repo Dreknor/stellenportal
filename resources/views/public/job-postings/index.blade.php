@@ -14,25 +14,54 @@
                     'title' => $job->title,
                     'description' => Str::limit(strip_tags($job->description), 200),
                     'datePosted' => $job->published_at->toIso8601String(),
-                    'validThrough' => $job->published_at->addMonths(3)->toIso8601String(),
+                    'validThrough' => ($job->expires_at ?? $job->published_at->addMonths(3))->toIso8601String(),
                     'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
-                    'hiringOrganization' => [
+                    'hiringOrganization' => array_filter([
                         '@type' => 'Organization',
                         'name' => $job->facility->name,
-                    ],
+                        'logo' => $job->facility->getFirstMediaUrl('logo') ?: null,
+                    ]),
+                    'url' => route('public.jobs.show', $job),
                 ],
             ];
 
             if ($job->facility->address) {
                 $item['item']['jobLocation'] = [
                     '@type' => 'Place',
-                    'address' => [
+                    'address' => array_filter([
                         '@type' => 'PostalAddress',
+                        'streetAddress' => $job->facility->address->street,
                         'addressLocality' => $job->facility->address->city,
+                        'postalCode' => $job->facility->address->postal_code,
                         'addressRegion' => $job->facility->address->state,
                         'addressCountry' => 'DE',
-                    ],
+                    ]),
                 ];
+
+                if ($job->facility->address->latitude && $job->facility->address->longitude) {
+                    $item['item']['jobLocation']['geo'] = [
+                        '@type' => 'GeoCoordinates',
+                        'latitude' => $job->facility->address->latitude,
+                        'longitude' => $job->facility->address->longitude,
+                    ];
+                }
+            }
+
+            if ($job->requirements) {
+                $item['item']['qualifications'] = strip_tags($job->requirements);
+            }
+
+            if ($job->benefits) {
+                $item['item']['benefits'] = strip_tags($job->benefits);
+            }
+
+            if ($job->contact_email) {
+                $item['item']['applicationContact'] = array_filter([
+                    '@type' => 'ContactPoint',
+                    'email' => $job->contact_email,
+                    'telephone' => $job->contact_phone ?: null,
+                    'name' => $job->contact_person ?: null,
+                ]);
             }
 
             $itemListElements[] = $item;
