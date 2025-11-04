@@ -34,7 +34,7 @@
                 '@type' => 'PostalAddress',
                 'streetAddress' => $jobPosting->facility->address->street,
                 'addressLocality' => $jobPosting->facility->address->city,
-                'postalCode' => $jobPosting->facility->address->postal_code,
+                'postalCode' => $jobPosting->facility->address->zip_code,
                 'addressRegion' => $jobPosting->facility->address->state,
                 'addressCountry' => 'DE',
             ]),
@@ -231,7 +231,7 @@
                     <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                         <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }}">
                         <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
-                        <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->postal_code }}">
+                        <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
                         <meta itemprop="addressRegion" content="{{ $jobPosting->facility->address->state }}">
                         <meta itemprop="addressCountry" content="DE">
                     </div>

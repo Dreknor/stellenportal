@@ -32,7 +32,7 @@
                         '@type' => 'PostalAddress',
                         'streetAddress' => $job->facility->address->street,
                         'addressLocality' => $job->facility->address->city,
-                        'postalCode' => $job->facility->address->postal_code,
+                        'postalCode' => $job->facility->address->zip_code,
                         'addressRegion' => $job->facility->address->state,
                         'addressCountry' => 'DE',
                     ]),
