@@ -272,19 +272,22 @@
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800" itemprop="employmentType">
                                 @switch($job->employment_type)
                                     @case('full_time')
-                                        FULL_TIME
+                                        Vollzeit
                                         @break
                                     @case('part_time')
-                                        PART_TIME
+                                        Teilzeit
                                         @break
                                     @case('mini_job')
-                                        PART_TIME
+                                        Minijob
                                         @break
                                     @case('internship')
-                                        INTERN
+                                        Praktikum
                                         @break
                                     @case('apprenticeship')
-                                        INTERN
+                                        Ausbildung
+                                        @break
+                                    @case('volunteer')
+                                        Ehrenamt
                                         @break
                                     @default
                                         {{ $job->employment_type }}

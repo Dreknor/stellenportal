@@ -10,7 +10,7 @@ class SitemapController extends Controller
     public function index(): Response
     {
         $jobPostings = JobPosting::with('facility.address')
-            ->where('status', 'published')
+            ->where('status', 'active')
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
             ->get();
