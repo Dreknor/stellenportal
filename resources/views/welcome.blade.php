@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name') }}</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="Das Stellenportal für evangelische Schulen und Einrichtungen in Sachsen. Finden Sie Lehrkräfte, Schulbegleiterinnen, Referendarinnen und Praktikanten für das Hauptfach: Mensch.">
     <meta name="keywords" content="Stellenportal, evangelische Schulen, Lehrkräfte, Schulbegleitung, Referendariat, Praktikum, Sachsen, Stellenangebote, Lehrer Jobs, Pädagogik">
