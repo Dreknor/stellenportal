@@ -94,7 +94,7 @@
                 <div class="md:col-span-2">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suchbegriff') }}</label>
                     <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="{{ __('Stichwort, Berufsgruppe, Einrichtung...') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                            aria-describedby="search-help">
                     <p id="search-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname') }}</p>
                 </div>
@@ -102,12 +102,12 @@
                 <div>
                     <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Ort / PLZ') }}</label>
                     <input type="text" id="location" name="location" value="{{ request('location') }}" placeholder="{{ __('z.B. Berlin oder 10115') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                 </div>
 
                 <div>
                     <label for="radius" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Umkreis (km)') }}</label>
-                    <select id="radius" name="radius" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                    <select id="radius" name="radius" class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                         <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>10 km</option>
                         <option value="25" {{ request('radius') == '25' ? 'selected' : '' }}>25 km</option>
                         <option value="50" {{ request('radius', '50') == '50' ? 'selected' : '' }}>50 km</option>
@@ -120,7 +120,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                     <label for="employment_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Beschäftigungsart') }}</label>
-                    <select id="employment_type" name="employment_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                    <select id="employment_type" name="employment_type" class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
                         <option value="">{{ __('Alle') }}</option>
                         <option value="full_time" {{ request('employment_type') === 'full_time' ? 'selected' : '' }}>{{ __('Vollzeit') }}</option>
                         <option value="part_time" {{ request('employment_type') === 'part_time' ? 'selected' : '' }}>{{ __('Teilzeit') }}</option>
