@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Stellenangebote' }} - {{ config('app.name') }}</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{ $metaDescription ?? 'Aktuelle Stellenangebote für Lehrkräfte, Schulbegleitung und pädagogisches Personal an evangelischen Schulen und Einrichtungen in Sachsen.' }}">
     <meta name="keywords" content="Stellenangebote, Lehrkräfte, evangelische Schulen, Jobs Sachsen, Pädagogik, Schulbegleitung, Lehrer Jobs">
