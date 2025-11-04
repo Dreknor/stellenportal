@@ -48,6 +48,10 @@ class CreditPackageController extends Controller
             'for_cooperative_members' => 'boolean',
         ]);
 
+        // Set checkboxes to false if not present in request
+        $validated['is_active'] = $request->has('is_active');
+        $validated['for_cooperative_members'] = $request->has('for_cooperative_members');
+
         $package = CreditPackage::create($validated);
 
         return redirect()->route('credits.packages.index')
@@ -79,6 +83,10 @@ class CreditPackageController extends Controller
             'is_active' => 'boolean',
             'for_cooperative_members' => 'boolean',
         ]);
+
+        // Set checkboxes to false if not present in request
+        $validated['is_active'] = $request->has('is_active');
+        $validated['for_cooperative_members'] = $request->has('for_cooperative_members');
 
         $package->update($validated);
 
