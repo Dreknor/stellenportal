@@ -404,38 +404,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12" role="contentinfo">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div>
-                    <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="Stellenportal Logo" class="h-10 mb-4">
-                    <p class="text-sm">
-                        Ihre professionelle Plattform für Stellenanzeigen.
-                    </p>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Links</h4>
-                    <ul class="space-y-2 text-sm">
-                        @guest
-                        <li><a href="{{ route('login') }}" class="hover:text-white transition-colors">Anmelden</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Registrieren</a></li>
-                        @else
-                        <li><a href="{{ url('/dashboard') }}" class="hover:text-white transition-colors">Dashboard</a></li>
-                        @endguest
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Support</h4>
-                    <p class="text-sm">
-                        Bei Fragen stehen wir Ihnen gerne zur Verfügung.
-                    </p>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Alle Rechte vorbehalten.</p>
-            </div>
-        </div>
-    </footer>
+    <x-layouts.app.footer />
 </body>
 
 </html>
