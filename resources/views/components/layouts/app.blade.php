@@ -80,19 +80,19 @@
                 </style>
                 <div class="p-6">
                     @session('status')
-                        <x-alerts.alert status="status"/>
+                        <x-alerts.alert type="status"/>
                     @endsession
                     @session('success')
-                        <x-alerts.alert status="success" />
+                        <x-alerts.alert type="success" />
                     @endsession
                     @session('warning')
-                        <x-alerts.alert status="warning" />
+                        <x-alerts.alert type="warning" />
                     @endsession
                     @session('danger')
-                        <x-alerts.alert status="danger" />
+                        <x-alerts.alert type="danger" />
                     @endsession
                     @session('primary')
-                        <x-alerts.alert status='primary' />
+                        <x-alerts.alert type='primary' />
                     @endsession
                     {{ $slot }}
 

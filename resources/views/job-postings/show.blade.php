@@ -99,7 +99,7 @@
 
     <!-- Statistics Section -->
     @can('view job posting statistics')
-        @if($jobPosting->isActive() || $jobPosting->status === 'expired')
+        @if(in_array($jobPosting->status, ['active', 'expired', 'paused']))
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
                     <x-fas-chart-bar class="w-5 h-5 mr-2" />
@@ -262,9 +262,21 @@
                 </div>
             @endif
 
-            @if($jobPosting->isActive())
+            @if($jobPosting->status === 'active')
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
                     <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
+
+                    @if($jobPosting->expires_at && $jobPosting->expires_at->isPast())
+                        <x-alerts.alert type="warning" class="text-sm mb-3">
+                            <div class="flex items-start">
+                                <x-fas-exclamation-triangle class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <p class="font-semibold">{{ __('Abgelaufen') }}</p>
+                                    <p class="text-xs mt-1">{{ __('Diese Stellenausschreibung ist am :date abgelaufen. Der Status wird automatisch aktualisiert.', ['date' => $jobPosting->expires_at->format('d.m.Y')]) }}</p>
+                                </div>
+                            </div>
+                        </x-alerts.alert>
+                    @endif
 
                     <div class="space-y-2">
                         @can('extend', $jobPosting)
@@ -318,44 +330,81 @@
             @endif
 
             @if($jobPosting->status === 'expired')
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-orange-200 dark:border-orange-700 p-5">
+                    <div class="flex items-center mb-4">
+                        <x-fas-exclamation-triangle class="w-5 h-5 text-orange-600 dark:text-orange-400 mr-2" />
+                        <h3 class="text-base font-semibold text-orange-900 dark:text-orange-200">{{ __('Stellenausschreibung abgelaufen') }}</h3>
+                    </div>
 
                     @can('extend', $jobPosting)
                         @php
                             $creditsRequired = \App\Models\JobPosting::CREDITS_PER_POSTING;
                             $currentBalance = $jobPosting->facility->getCurrentCreditBalance();
+                            $isExempt = $jobPosting->isExemptFromCredits();
                         @endphp
 
-                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-                            <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('Verlängern Sie diese Stellenausschreibung um :months Monate. Kosten: :credits Guthaben', ['months' => \App\Models\JobPosting::POSTING_DURATION_MONTHS, 'credits' => $creditsRequired]) }}
-                            </p>
-
-                            <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3 bg-white/50 dark:bg-gray-800/50 rounded px-2 py-1.5">
-                                <span>{{ __('Aktuelles Guthaben') }}:</span>
-                                <span class="font-semibold">{{ $currentBalance }}</span>
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-3">
+                            <div class="flex items-start">
+                                <x-fas-info-circle class="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <p class="text-sm text-blue-900 dark:text-blue-200 font-medium mb-2">
+                                        {{ __('Reaktivieren Sie diese Stellenausschreibung') }}
+                                    </p>
+                                    <p class="text-xs text-blue-800 dark:text-blue-300 mb-3">
+                                        {{ __('Sie können diese Stellenausschreibung um :months weitere Monate aktiv machen.', ['months' => \App\Models\JobPosting::POSTING_DURATION_MONTHS]) }}
+                                    </p>
+                                </div>
                             </div>
+                        </div>
 
-                            @if($currentBalance < $creditsRequired)
-                                <x-alerts.alert type="warning" class="text-xs mb-2">
-                                    {{ __('Nicht genügend Guthaben zum Verlängern.') }}
-                                </x-alerts.alert>
+                        @if($isExempt)
+                            <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 mb-3">
+                                <p class="text-xs text-green-700 dark:text-green-300 flex items-center">
+                                    <x-fas-check-circle class="w-3.5 h-3.5 inline mr-1.5 flex-shrink-0"/>
+                                    {{ __('Reaktivierung ist kostenlos für diese Beschäftigungsart.') }}
+                                </p>
+                            </div>
+                        @else
+                            <div class="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3 mb-3 space-y-2">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ __('Kosten') }}:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $creditsRequired }} {{ __('Guthaben') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ __('Aktuelles Guthaben') }}:</span>
+                                    <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $currentBalance }} {{ __('Guthaben') }}</span>
+                                </div>
+                            </div>
+                        @endif
 
+                        @if(!$isExempt && $currentBalance < $creditsRequired)
+                            <x-alerts.alert type="warning" class="text-xs mb-3">
+                                {{ __('Nicht genügend Guthaben zum Reaktivieren.') }}
+                            </x-alerts.alert>
+
+                            <div class="space-y-2">
                                 <x-button type="primary" class="w-full justify-center" disabled aria-disabled="true">
                                     <x-fas-redo class="w-4 h-4 mr-2" />
                                     {{ __('Reaktivieren (3 Monate)') }}
                                 </x-button>
-                            @else
-                                <form method="POST" action="{{ route('job-postings.extend', $jobPosting) }}">
-                                    @csrf
-                                    <x-button type="primary" class="w-full justify-center">
-                                        <x-fas-redo class="w-4 h-4 mr-2" />
-                                        {{ __('Reaktivieren (3 Monate)') }}
-                                    </x-button>
-                                </form>
-                            @endif
-                        </div>
+                                <x-button tag="a" :href="route('credits.facility.purchase', $jobPosting->facility)" type="secondary" class="w-full justify-center">
+                                    <x-fas-plus class="w-4 h-4 mr-2" />
+                                    {{ __('Guthaben aufladen') }}
+                                </x-button>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('job-postings.extend', $jobPosting) }}">
+                                @csrf
+                                <x-button type="success" class="w-full justify-center">
+                                    <x-fas-redo class="w-4 h-4 mr-2" />
+                                    {{ __('Jetzt reaktivieren') }}
+                                </x-button>
+                            </form>
+                        @endif
+                    @else
+                        <x-alerts.alert type="info" class="text-sm">
+                            {{ __('Sie haben keine Berechtigung, diese Stellenausschreibung zu reaktivieren.') }}
+                        </x-alerts.alert>
                     @endcan
                 </div>
             @endif

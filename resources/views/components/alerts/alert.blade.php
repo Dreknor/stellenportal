@@ -1,4 +1,4 @@
-@props(['message', 'status' => 'status'])
+@props(['type' => 'success'])
 
 @php
     $colorClasses = [
@@ -15,6 +15,12 @@
             'button' => 'text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-800 focus:ring-green-500',
         ],
         'primary' => [
+            'container' => 'bg-blue-50 dark:bg-blue-900 border-blue-500',
+            'text' => 'text-blue-700 dark:text-blue-200',
+            'icon' => 'text-blue-500 dark:text-blue-400',
+            'button' => 'text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 focus:ring-blue-500',
+        ],
+        'info' => [
             'container' => 'bg-blue-50 dark:bg-blue-900 border-blue-500',
             'text' => 'text-blue-700 dark:text-blue-200',
             'icon' => 'text-blue-500 dark:text-blue-400',
@@ -38,11 +44,24 @@
             'icon' => 'text-red-500 dark:text-red-400',
             'button' => 'text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800 focus:ring-red-500',
         ],
+        'error' => [
+            'container' => 'bg-red-50 dark:bg-red-900 border-red-500',
+            'text' => 'text-red-700 dark:text-red-200',
+            'icon' => 'text-red-500 dark:text-red-400',
+            'button' => 'text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800 focus:ring-red-500',
+        ],
     ];
 
-    $classes = $colorClasses[$status] ?? $colorClasses['success'];
+    $classes = $colorClasses[$type] ?? $colorClasses['success'];
+
+    // Determine message: Use slot content if provided, otherwise fallback to session
+    $message = trim($slot ?? '');
+    if (empty($message)) {
+        $message = session($type);
+    }
 @endphp
 
+@if(!empty($message))
 <div x-data="{ showStatusMessage: true }" x-show="showStatusMessage"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 transform -translate-y-2"
@@ -50,7 +69,7 @@
      x-transition:leave="transition ease-in duration-300"
      x-transition:leave-start="opacity-100 transform translate-y-0"
      x-transition:leave-end="opacity-0 transform -translate-y-2"
-     class="mb-6 border-l-4 p-4 rounded-md {{ $classes['container'] }}">
+     {{ $attributes->merge(['class' => "border-l-4 p-4 rounded-md {$classes['container']}"]) }}>
     <div class="flex items-center">
         <div class="flex-shrink-0">
             <svg class="h-5 w-5 {{ $classes['icon'] }}"
@@ -60,8 +79,8 @@
                       clip-rule="evenodd" />
             </svg>
         </div>
-        <div class="ml-3">
-            <p class="text-sm {{ $classes['text'] }}">{{ session($status) }}</p>
+        <div class="ml-3 flex-1">
+            <div class="text-sm {{ $classes['text'] }}">{!! $message !!}</div>
         </div>
         <div class="ml-auto pl-3">
             <div class="-mx-1.5 -my-1.5">
@@ -79,3 +98,4 @@
         </div>
     </div>
 </div>
+@endif

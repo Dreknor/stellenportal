@@ -103,11 +103,17 @@
             <div>
                 @if($showActions)
                     @if($editUrl === true)
-                        <x-button type="primary" tag="a" :href="$url">{{ __('Bearbeiten') }}</x-button>
-                    @else
-                        <x-button type="primary" tag="a" :href="$url">{{ __('Details') }}</x-button>
-                    @endif
-                @endif
+                        <div class="flex items-center space-x-3">
+                            <x-button type="primary" tag="a" :href="$url">{{ __('Bearbeiten') }}</x-button>
+                            <x-button type="success" tag="a" :href="route('credits.facility.purchase', $facility)" size="sm" class="justify-center">
+                                <x-fas-plus class="w-4 h-4 mr-2" />
+                                {{ __('Guthaben aufladen') }}
+                            </x-button>
+                        </div>
+                     @else
+                         <x-button type="primary" tag="a" :href="$url">{{ __('Details') }}</x-button>
+                     @endif
+                 @endif
             </div>
 
             <div class="text-sm text-gray-500 dark:text-gray-400">

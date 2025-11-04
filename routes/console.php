@@ -14,7 +14,9 @@ Schedule::command('job-postings:mark-expired')->daily();
 // Schedule notification for expiring job postings (7 days before expiration)
 Schedule::command('job-postings:notify-expiring --days=7')->daily();
 
-// Schedule queue worker to process jobs every minute (only if cronjob mode is enabled)
+// Queue Worker Mode Configuration (set in .env: QUEUE_WORKER_MODE)
+// - 'cronjob': Queue jobs are processed every minute via cronjob (default, simple setup)
+// - 'supervisor': Queue worker runs continuously as daemon (recommended for production)
 if (env('QUEUE_WORKER_MODE', 'cronjob') === 'cronjob') {
     Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute();
 }
