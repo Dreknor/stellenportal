@@ -68,7 +68,7 @@
                                             {{ number_format($package->price, 2, ',', '.') }} €
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            {{ number_format($package->pricePerCredit, 4, ',', '.') }} € pro Guthaben
+                                            {{ number_format($package->pricePerCredit, 2, ',', '.') }} € pro Guthaben
                                         </div>
                                     </div>
 
