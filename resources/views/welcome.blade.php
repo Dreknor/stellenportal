@@ -266,6 +266,9 @@
                                             <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                                                 <span itemprop="addressLocality">{{ $job->facility->address->city }}</span>,
                                                 <span itemprop="addressRegion">{{ $job->facility->address->state }}</span>
+                                                <meta itemprop="streetAddress" content="{{ $job->facility->address->street }} {{ $job->facility->address->house_number }}">
+                                                <meta itemprop="postalCode" content="{{ $job->facility->address->postal_code }}">
+                                                <meta itemprop="addressCountry" content="DE">
                                             </span>
                                         </div>
                                     @endif
