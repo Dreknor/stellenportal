@@ -62,7 +62,7 @@
                         {{ __('Stellentitel') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="title" name="title" value="{{ old('title', $jobPosting->title) }}" required
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('title') border-red-500 @enderror">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('title') border-red-500 @enderror">
                     @error('title')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -74,7 +74,7 @@
                         {{ __('Beschäftigungsart') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="employment_type" name="employment_type" required
-                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('employment_type') border-red-500 @enderror">
+                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('employment_type') border-red-500 @enderror">
                         <option value="full_time" {{ old('employment_type', $jobPosting->employment_type) === 'full_time' ? 'selected' : '' }}>{{ __('Vollzeit') }}</option>
                         <option value="part_time" {{ old('employment_type', $jobPosting->employment_type) === 'part_time' ? 'selected' : '' }}>{{ __('Teilzeit') }}</option>
                         <option value="mini_job" {{ old('employment_type', $jobPosting->employment_type) === 'mini_job' ? 'selected' : '' }}>{{ __('Minijob') }}</option>
@@ -93,7 +93,7 @@
                         {{ __('Stellenbeschreibung') }} <span class="text-red-500">*</span>
                     </label>
                     <textarea id="description" name="description" rows="6" required
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('description') border-red-500 @enderror">{{ old('description', $jobPosting->description) }}</textarea>
+                              class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('description') border-red-500 @enderror">{{ old('description', $jobPosting->description) }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -105,7 +105,7 @@
                         {{ __('Anforderungen') }}
                     </label>
                     <textarea id="requirements" name="requirements" rows="4"
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('requirements') border-red-500 @enderror">{{ old('requirements', $jobPosting->requirements) }}</textarea>
+                              class="w-full border rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('requirements') border-red-500 @enderror">{{ old('requirements', $jobPosting->requirements) }}</textarea>
                     @error('requirements')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -117,40 +117,12 @@
                         {{ __('Wir bieten') }}
                     </label>
                     <textarea id="benefits" name="benefits" rows="4"
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('benefits') border-red-500 @enderror">{{ old('benefits', $jobPosting->benefits) }}</textarea>
+                              class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('benefits') border-red-500 @enderror">{{ old('benefits', $jobPosting->benefits) }}</textarea>
                     @error('benefits')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Salary Range -->
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Gehaltsinformationen') }}</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="salary_min" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('Mindestgehalt (€)') }}
-                            </label>
-                            <input type="number" id="salary_min" name="salary_min" value="{{ old('salary_min', $jobPosting->salary_min) }}" step="0.01" min="0"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('salary_min') border-red-500 @enderror">
-                            @error('salary_min')
-                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="salary_max" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('Höchstgehalt (€)') }}
-                            </label>
-                            <input type="number" id="salary_max" name="salary_max" value="{{ old('salary_max', $jobPosting->salary_max) }}" step="0.01" min="0"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('salary_max') border-red-500 @enderror">
-                            @error('salary_max')
-                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Contact Information -->
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
@@ -162,7 +134,7 @@
                                 {{ __('Kontakt E-Mail') }}
                             </label>
                             <input type="email" id="contact_email" name="contact_email" value="{{ old('contact_email', $jobPosting->contact_email) }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('contact_email') border-red-500 @enderror">
+                                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('contact_email') border-red-500 @enderror">
                             @error('contact_email')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
@@ -173,7 +145,7 @@
                                 {{ __('Kontakt Telefon') }}
                             </label>
                             <input type="text" id="contact_phone" name="contact_phone" value="{{ old('contact_phone', $jobPosting->contact_phone) }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('contact_phone') border-red-500 @enderror">
+                                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 @error('contact_phone') border-red-500 @enderror">
                             @error('contact_phone')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
