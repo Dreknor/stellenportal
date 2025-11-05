@@ -264,10 +264,9 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                             </svg>
                                             <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                                                <span itemprop="addressLocality">{{ $job->facility->address->city }}</span>,
-                                                <span itemprop="addressRegion">{{ $job->facility->address->state }}</span>
-                                                <meta itemprop="streetAddress" content="{{ $job->facility->address->street }} {{ $job->facility->address->house_number }}">
-                                                <meta itemprop="postalCode" content="{{ $job->facility->address->postal_code }}">
+                                                <span itemprop="addressLocality">{{ $job->facility->address->city }}</span>
+                                                <meta itemprop="streetAddress" content="{{ $job->facility->address->street }} {{ $job->facility->address->number }}">
+                                                <meta itemprop="postalCode" content="{{ $job->facility->address->zip_code }}">
                                                 <meta itemprop="addressCountry" content="DE">
                                             </span>
                                         </div>
