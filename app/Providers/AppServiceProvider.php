@@ -11,6 +11,8 @@ use App\Policies\RolePolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\JobPostingPolicy;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +53,21 @@ class AppServiceProvider extends ServiceProvider
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
             Log::debug('Generating custom email verification mail for user: ' . $notifiable->email);
             return (new UserMailVerification($notifiable, $url))->to($notifiable->email);
+        });
+
+        Event::listen(MessageSending::class, function (MessageSending $event) {
+
+            if (config('mail.audit_bcc_address') === false) {
+                return;
+            }
+
+            $bcc = config('mail.audit_bcc_address');
+
+            // Symfony Email (Laravel 9+) hat bcc/addBcc
+            if (method_exists($event->message, 'bcc')) {
+                $event->message->bcc($bcc);
+                return;
+            }
         });
     }
 }
