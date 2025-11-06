@@ -223,6 +223,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             Route::post('/grant', [\App\Http\Controllers\Admin\CreditController::class, 'storeGrant'])
                 ->middleware('permission:admin grant credits')
                 ->name('grant.store');
+            Route::get('/revoke', [\App\Http\Controllers\Admin\CreditController::class, 'revoke'])
+                ->middleware('permission:admin grant credits')
+                ->name('revoke');
+            Route::post('/revoke', [\App\Http\Controllers\Admin\CreditController::class, 'storeRevoke'])
+                ->middleware('permission:admin grant credits')
+                ->name('revoke.store');
         });
 
         // Admin Job Posting Credit Exemptions
