@@ -259,10 +259,28 @@
                                             </svg>
                                             <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                                                 <span itemprop="addressLocality">{{ $jobPosting->facility->address->city }}</span>
-                                                <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
-                                                <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
-                                                <meta itemprop="addressCountry" content="DE">
+                                                @if($jobPosting->facility->address->zip_code)
+                                                    , <span itemprop="postalCode">{{ $jobPosting->facility->address->zip_code }}</span>
+                                                @endif
+                                                @if($jobPosting->facility->address->street)
+                                                    , <span itemprop="streetAddress">
+                                                        {{ $jobPosting->facility->address->street }}
+                                                        @if($jobPosting->facility->address->number)
+                                                            {{ ' ' . $jobPosting->facility->address->number }}
+                                                        @endif
+                                                    </span>
+                                                @endif
                                             </span>
+                                            @if($jobPosting->facility->address)
+                                                <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
+                                                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                                                        <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
+                                                        <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
+                                                        <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
+                                                        <meta itemprop="addressCountry" content="DE">
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
