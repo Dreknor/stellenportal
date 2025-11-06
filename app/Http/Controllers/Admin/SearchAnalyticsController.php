@@ -17,7 +17,8 @@ class SearchAnalyticsController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', \App\Models\User::class); // Nur für Admins
+        // Authorization wird bereits durch Route-Middleware geprüft
+        // ->middleware('permission:admin view logs')
 
         $period = $request->get('period', 7); // Standard: letzte 7 Tage
 
