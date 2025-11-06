@@ -129,6 +129,12 @@
                 </div>
 
                 <div class="flex items-center gap-4">
+                    <a href="{{ route('public.jobs.index') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Stellenangebote">
+                        Stellenangebote
+                    </a>
+                    <a href="{{ route('public.pricing') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Preise">
+                        Preise
+                    </a>
                     @auth
                         <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Zum Dashboard">
                             Dashboard

@@ -21,6 +21,9 @@ Route::get('/', function () {
     return view('welcome', ['latestJobs' => $latestJobs]);
 })->name('home');
 
+// Öffentliche Preisübersicht
+Route::get('/preise', [\App\Http\Controllers\PublicPricingController::class, 'index'])->name('public.pricing');
+
 // Sitemap für SEO
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
