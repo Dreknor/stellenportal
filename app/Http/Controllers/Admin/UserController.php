@@ -97,6 +97,9 @@ class UserController extends Controller
 
         // Send welcome email if requested
         if ($request->boolean('send_welcome_email')) {
+            // Send email verification notification
+            $user->sendEmailVerificationNotification();
+
             $user->load(['organizations', 'facilities.organization']);
             \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\AdminUserCreatedMail($user, $plainPassword));
         }

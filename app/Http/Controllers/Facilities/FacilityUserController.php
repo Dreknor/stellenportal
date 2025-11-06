@@ -91,6 +91,9 @@ class FacilityUserController extends Controller
         // Attach user to facility
         $user->facilities()->attach($facility->id);
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
+
         // Send email with login credentials
         Mail::to($user->email)->queue(new UserCreatedForFacilityMail($user, $facility, $password));
 
