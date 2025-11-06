@@ -276,10 +276,6 @@
                     <p class="text-gray-600">Die Kosten werden in Guthaben berechnet. Details zu den Kosten pro Stellenanzeige finden Sie in Ihrem Dashboard nach der Registrierung.</p>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition">
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Wie werde ich Genossenschaftsmitglied?</h3>
-                    <p class="text-gray-600">Informationen zur Mitgliedschaft in unserer Genossenschaft erhalten Sie nach der Registrierung oder kontaktieren Sie uns direkt.</p>
-                </div>
 
                 <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition">
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Welche Zahlungsmöglichkeiten gibt es?</h3>
