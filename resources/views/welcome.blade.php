@@ -123,12 +123,14 @@
     <nav class="fixed w-full top-0 z-50 bg-white shadow-md">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
                 <div class="flex items-center">
                     <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="{{ config('app.name') }} Logo" class="h-12">
-                    <span class="ml-3 text-2xl font-bold text-gray-800">{{ config('app.name') }}</span>
+                    <span class="ml-3 text-xl sm:text-2xl font-bold text-gray-800 hidden sm:inline">{{ config('app.name') }}</span>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center gap-4">
                     <a href="{{ route('public.jobs.index') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Stellenangebote">
                         Stellenangebote
                     </a>
@@ -150,6 +152,45 @@
                         @endif
                     @endauth
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <button type="button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                    <span class="sr-only">Hauptmenü öffnen</span>
+                    <!-- Icon when menu is closed -->
+                    <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" id="menu-icon-closed">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                    <!-- Icon when menu is open -->
+                    <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" id="menu-icon-open">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="lg:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+                <a href="{{ route('public.jobs.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Stellenangebote">
+                    Stellenangebote
+                </a>
+                <a href="{{ route('public.pricing') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Preise">
+                    Preise
+                </a>
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Zum Dashboard">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Anmelden">
+                        Anmelden
+                    </a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="block mx-3 my-2 px-6 py-2.5 bg-blue-600 text-white text-center rounded-lg font-medium hover:bg-blue-700 transition-colors" aria-label="Jetzt registrieren">
+                            Registrieren
+                        </a>
+                    @endif
+                @endauth
             </div>
         </div>
     </nav>
@@ -180,6 +221,50 @@
                         Zum Dashboard
                     </a>
                     @endguest
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hauptfach Mensch Video Section -->
+    <section class="py-20 bg-white" aria-labelledby="hauptfach-mensch-heading">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 id="hauptfach-mensch-heading" class="text-4xl font-bold text-gray-900 mb-6">Hauptfach: Mensch</h2>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Erfahren Sie mehr über die namensgebende Aktion "Hauptfach Mensch" und was evangelische Schulen in Sachsen besonders macht.
+                    </p>
+                </div>
+
+                <!-- Video Embed -->
+                <div class="mb-8">
+                    <div class="relative w-full" style="padding-bottom: 56.25%;">
+                        <iframe
+                            class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg border-0"
+                            src="https://www.youtube-nocookie.com/embed/SjijPYrIxVs?si=_VkGEmcOOuvv6vxw"
+                            title="Hauptfach Mensch - YouTube Video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Link zur Aktion -->
+                <div class="text-center">
+                    <p class="text-gray-600 mb-4">
+                        Mehr Informationen zur Aktion "Hauptfach Mensch":
+                    </p>
+                    <a href="https://www.ev-schulen-sachsen.de/hauptfach-mensch-1"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                        Zur Aktion "Hauptfach Mensch"
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
@@ -420,6 +505,43 @@
 
     <!-- Footer -->
     <x-layouts.app.footer />
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconClosed = document.getElementById('menu-icon-closed');
+            const menuIconOpen = document.getElementById('menu-icon-open');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                    // Toggle menu visibility
+                    mobileMenu.classList.toggle('hidden');
+
+                    // Toggle icons
+                    menuIconClosed.classList.toggle('hidden');
+                    menuIconOpen.classList.toggle('hidden');
+
+                    // Update aria-expanded
+                    mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                });
+
+                // Close menu when clicking on a link
+                const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+                mobileMenuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenu.classList.add('hidden');
+                        menuIconClosed.classList.remove('hidden');
+                        menuIconOpen.classList.add('hidden');
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
