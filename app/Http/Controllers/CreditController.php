@@ -36,6 +36,14 @@ class CreditController extends Controller
             ->availableFor($facility->organization)
             ->orderBy('credits', 'asc')
             ->get();
+
+        // Add purchase availability information to packages
+        $packages = $packages->map(function ($package) use ($facility) {
+            $package->can_be_purchased = $package->canBePurchasedBy($facility);
+            $package->remaining_purchases = $package->getRemainingPurchasesFor($facility);
+            return $package;
+        });
+
         $balance = $facility->getCurrentCreditBalance();
 
         return view('credits.purchase.facility', compact('facility', 'packages', 'balance'));
@@ -97,6 +105,14 @@ class CreditController extends Controller
             ->availableFor($organization)
             ->orderBy('credits', 'asc')
             ->get();
+
+        // Add purchase availability information to packages
+        $packages = $packages->map(function ($package) use ($organization) {
+            $package->can_be_purchased = $package->canBePurchasedBy($organization);
+            $package->remaining_purchases = $package->getRemainingPurchasesFor($organization);
+            return $package;
+        });
+
         $balance = $organization->getCurrentCreditBalance();
 
         return view('credits.purchase.organization', compact('organization', 'packages', 'balance'));

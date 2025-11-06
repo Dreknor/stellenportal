@@ -76,6 +76,17 @@
                             @enderror
                         </div>
 
+                        <div class="mb-6">
+                            <label for="purchase_limit_per_organization" class="block text-sm font-medium text-gray-700 mb-2">
+                                Kauflimit pro Träger (optional)
+                            </label>
+                            <input type="number" name="purchase_limit_per_organization" id="purchase_limit_per_organization" value="{{ old('purchase_limit_per_organization') }}" min="1" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="z.B. 1 für einmaligen Kauf">
+                            <p class="text-sm text-gray-500 mt-1">Maximale Anzahl, wie oft dieses Paket von einem Träger (inkl. aller Einrichtungen) gekauft werden kann. Leer lassen für unbegrenzten Kauf.</p>
+                            @error('purchase_limit_per_organization')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex justify-between items-center border-t pt-6">
                             <a href="{{ route('credits.packages.index') }}" class="text-gray-600 hover:text-gray-800">
                                 Abbrechen

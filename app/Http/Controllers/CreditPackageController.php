@@ -46,6 +46,7 @@ class CreditPackageController extends Controller
             'price' => 'required|numeric|min:0.01',
             'is_active' => 'boolean',
             'for_cooperative_members' => 'boolean',
+            'purchase_limit_per_organization' => 'nullable|integer|min:1',
         ]);
 
         // Set checkboxes to false if not present in request
@@ -82,6 +83,7 @@ class CreditPackageController extends Controller
             'price' => 'required|numeric|min:0.01',
             'is_active' => 'boolean',
             'for_cooperative_members' => 'boolean',
+            'purchase_limit_per_organization' => 'nullable|integer|min:1',
         ]);
 
         // Set checkboxes to false if not present in request
