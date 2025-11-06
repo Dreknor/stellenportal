@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SearchQuery;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SearchAnalyticsController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display search analytics dashboard
      */
