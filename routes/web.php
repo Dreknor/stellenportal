@@ -249,10 +249,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             Route::get('/{audit}', [\App\Http\Controllers\Admin\AuditController::class, 'show'])
                 ->middleware('permission:admin view logs')
                 ->name('show');
-            Route::get('/export/csv', [\App\Http\Controllers\Admin\AuditController::class, 'export'])
-                ->middleware('permission:admin export logs')
-                ->name('export');
         });
+
+        // Admin Search Analytics
+        Route::get('/search-analytics', [\App\Http\Controllers\Admin\SearchAnalyticsController::class, 'index'])
+            ->middleware('permission:admin view logs')
+            ->name('search-analytics.index');
 
         // Admin Logs (application log files)
         Route::prefix('logs')->name('logs.')->group(function () {

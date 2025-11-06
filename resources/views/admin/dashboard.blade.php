@@ -141,6 +141,12 @@
                     </x-button>
                 @endcan
                 @can('admin view logs')
+                    <x-button type="info" size="sm" tag="a" :href="route('admin.search-analytics.index')" class="w-full justify-center">
+                        <x-fas-chart-line class="w-3 mr-2"/>
+                        {{ __('Such-Analyse') }}
+                    </x-button>
+                @endcan
+                @can('admin view logs')
                     <x-button type="secondary" size="sm" tag="a" :href="route('admin.logs.index')" class="w-full justify-center">
                         <x-fas-file-alt class="w-3 mr-2"/>
                         {{ __('Logs') }}
