@@ -11,10 +11,16 @@
     <div class="mb-6 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Guthaben-Übersicht') }}</h1>
         @can('admin grant credits')
-            <x-button type="primary" tag="a" :href="route('admin.credits.grant')">
-                <x-fas-plus class="w-3 mr-3"/>
-                {{ __('Guthaben gewähren') }}
-            </x-button>
+            <div class="flex gap-2">
+                <x-button type="primary" tag="a" :href="route('admin.credits.grant')">
+                    <x-fas-plus class="w-3 mr-2"/>
+                    {{ __('Guthaben gewähren') }}
+                </x-button>
+                <x-button type="danger" tag="a" :href="route('admin.credits.revoke')">
+                    <x-fas-minus-circle class="w-3 mr-2"/>
+                    {{ __('Guthaben entziehen') }}
+                </x-button>
+            </div>
         @endcan
     </div>
 
