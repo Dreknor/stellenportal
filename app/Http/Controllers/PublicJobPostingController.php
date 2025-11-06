@@ -25,11 +25,12 @@ class PublicJobPostingController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('job_category', 'like', "%{$search}%")
-                    ->orWhere('requirements', 'like', "%{$search}%")
-                    ->orWhere('benefits', 'like', "%{$search}%")
+
+                $q->where('job_postings.title', 'like', "%{$search}%")
+                    ->orWhere('job_postings.description', 'like', "%{$search}%")
+                    ->orWhere('job_postings.job_category', 'like', "%{$search}%")
+                    ->orWhere('job_postings.requirements', 'like', "%{$search}%")
+                    ->orWhere('job_postings.benefits', 'like', "%{$search}%")
                     ->orWhereHas('facility', function ($fq) use ($search) {
                         $fq->where('name', 'like', "%{$search}%");
                     });
@@ -38,7 +39,7 @@ class PublicJobPostingController extends Controller
 
         // Filter by employment type
         if ($request->filled('employment_type')) {
-            $query->where('employment_type', $request->employment_type);
+            $query->where('job_postings.employment_type', $request->employment_type);
         }
 
         // Location-based search with radius
