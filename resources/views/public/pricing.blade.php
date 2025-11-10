@@ -1,40 +1,7 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Preise & Guthaben-Pakete - {{ config('app.name') }}</title>
+<x-layouts.public>
+    <x-slot:title>{{ __('Preise') }}</x-slot:title>
+    <x-slot:metaDescription>{{ __('Transparente Preise für Stellenanzeigen. Wählen Sie das passende Guthaben-Paket für Ihre Organisation oder Einrichtung.') }}</x-slot:metaDescription>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('img/Stellenportal-Logo.png') }}">
-
-    <!-- SEO -->
-    <meta name="description" content="Transparente Preise für Stellenanzeigen. Wählen Sie das passende Guthaben-Paket für Ihre Einrichtung.">
-    <meta name="robots" content="index, follow">
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="antialiased bg-gradient-to-br from-gray-50 to-gray-100">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center">
-                <a href="{{ route('home') }}" class="flex items-center space-x-3">
-                    <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="Logo" class="h-10 w-10">
-                    <span class="text-xl font-bold text-gray-900">{{ config('app.name') }}</span>
-                </a>
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('public.jobs.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">Stellenangebote</a>
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 font-medium">Anmelden</a>
-                        <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">Registrieren</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </header>
 
     <!-- Hero Section -->
     <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
@@ -306,37 +273,4 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-white font-bold mb-4">{{ config('app.name') }}</h3>
-                    <p class="text-sm">Das Stellenportal für evangelische Schulen und Einrichtungen in Sachsen.</p>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold mb-4">Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition">Startseite</a></li>
-                        <li><a href="{{ route('public.jobs.index') }}" class="hover:text-white transition">Stellenangebote</a></li>
-                        <li><a href="{{ route('public.pricing') }}" class="hover:text-white transition">Preise</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold mb-4">Rechtliches</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Impressum</a></li>
-                        <li><a href="#" class="hover:text-white transition">Datenschutz</a></li>
-                        <li><a href="#" class="hover:text-white transition">AGB</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Alle Rechte vorbehalten.</p>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
-
+</x-layouts.public>
