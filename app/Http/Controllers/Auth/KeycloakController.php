@@ -17,7 +17,19 @@ class KeycloakController extends Controller
      */
     public function redirect(): SymfonyRedirectResponse
     {
-        return Socialite::driver('keycloak')->redirect();
+        // Debug: Log Keycloak configuration
+        Log::info('Keycloak Config', [
+            'base_url' => config('services.keycloak.base_url'),
+            'realms' => config('services.keycloak.realms'),
+            'client_id' => config('services.keycloak.client_id'),
+        ]);
+
+        $redirect = Socialite::driver('keycloak')->redirect();
+
+        // Debug: Log redirect URL
+        Log::info('Keycloak Redirect URL', ['url' => $redirect->getTargetUrl()]);
+
+        return $redirect;
     }
 
     /**

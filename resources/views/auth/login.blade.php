@@ -28,7 +28,7 @@
                 <x-button type="primary" class="w-full py-3 text-lg font-semibold">{{ __('Anmelden') }}</x-button>
             </form>
 
-            @if(config('services.keycloak.client_id'))
+            @if(config('services.keycloak.client_id') && config('services.keycloak.base_url'))
                 <div class="mt-6">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">

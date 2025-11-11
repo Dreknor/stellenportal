@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
-use SocialiteProviders\Keycloak\Provider as KeycloakProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -36,11 +35,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register Keycloak Socialite Provider
-        $socialite = $this->app->make(SocialiteFactory::class);
-        $socialite->extend('keycloak', function ($app) use ($socialite) {
-            $config = $app['config']['services.keycloak'];
-            return $socialite->buildProvider(KeycloakProvider::class, $config);
+        // Register Keycloak Socialite Provider using Event Listener
+        Event::listen(function (SocialiteWasCalled $event) {
+            $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);
         });
 
         // Register Credit Policies

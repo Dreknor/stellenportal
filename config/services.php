@@ -38,9 +38,9 @@ return [
     'keycloak' => [
         'client_id' => env('KEYCLOAK_CLIENT_ID'),
         'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
-        'redirect' => env('KEYCLOAK_REDIRECT_URI'),
-        'base_url' => env('KEYCLOAK_BASE_URL'),
-        'realms' => env('KEYCLOAK_REALM'),
+        'redirect' => env('KEYCLOAK_REDIRECT_URI', env('APP_URL').'/auth/keycloak/callback'),
+        'base_url' => rtrim(env('KEYCLOAK_BASE_URL'), '/'),
+        'realms' => env('KEYCLOAK_REALM', 'master'),
     ],
 
 ];
