@@ -20,16 +20,31 @@ class KeycloakController extends Controller
         // Debug: Log Keycloak configuration
         Log::info('Keycloak Config', [
             'base_url' => config('services.keycloak.base_url'),
+            'realm' => config('services.keycloak.realm'),
             'realms' => config('services.keycloak.realms'),
             'client_id' => config('services.keycloak.client_id'),
+            'redirect' => config('services.keycloak.redirect'),
+            'app_url' => config('app.url'),
         ]);
 
-        $redirect = Socialite::driver('keycloak')->redirect();
+        try {
+            // Explicitly set the redirect URI
+            $redirect = Socialite::driver('keycloak')
+                ->redirectUrl(config('services.keycloak.redirect'))
+                ->redirect();
 
-        // Debug: Log redirect URL
-        Log::info('Keycloak Redirect URL', ['url' => $redirect->getTargetUrl()]);
+            // Debug: Log redirect URL
+            Log::info('Keycloak Redirect URL', ['url' => $redirect->getTargetUrl()]);
 
-        return $redirect;
+            return $redirect;
+        } catch (\Exception $e) {
+            Log::error('Keycloak Redirect Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect('/')
+                ->with('error', 'Fehler beim Weiterleiten zu Keycloak: ' . $e->getMessage());
+        }
     }
 
     /**

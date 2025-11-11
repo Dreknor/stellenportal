@@ -40,6 +40,16 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);
         });
 
+        // Debug Keycloak configuration
+        if (config('app.debug')) {
+            Log::debug('Keycloak Service Configuration', [
+                'client_id' => config('services.keycloak.client_id'),
+                'redirect' => config('services.keycloak.redirect'),
+                'base_url' => config('services.keycloak.base_url'),
+                'realm' => config('services.keycloak.realms'),
+            ]);
+        }
+
         // Register Credit Policies
         Gate::policy(CreditPackage::class, CreditPackagePolicy::class);
 
