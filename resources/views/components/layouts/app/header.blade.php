@@ -16,7 +16,9 @@
             </div>
 
             <h1 class="ml-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {{ config('app.name') }}
+                <a href="{{ url('/') }}" title="{{ config('app.name') }} - Home">
+                    {{ config('app.name') }}
+                </a>
             </h1>
 
         </div>

@@ -29,19 +29,32 @@ class VerificationController extends Controller
         return back()->with('status', 'verification-link-sent');
     }
 
-    public function verify(EmailVerificationRequest $request): RedirectResponse
+    public function verify(Request $request, string $id, string $hash): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        // Find the user by ID
+        $user = \App\Models\User::findOrFail($id);
+
+        // Verify the hash matches
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403, 'Invalid verification link.');
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            /** @var \Illuminate\Contracts\Auth\MustVerifyEmail $user */
-            $user = $request->user();
+        // If user is already verified, redirect to login or dashboard
+        if ($user->hasVerifiedEmail()) {
+            if (auth()->check()) {
+                return redirect()->route('dashboard')->with('status', 'Email already verified.');
+            }
+            return redirect()->route('login')->with('status', 'Email bereits bestätigt. Bitte melden Sie sich an.');
+        }
 
+        // Mark email as verified
+        if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        // Log the user in automatically after verification
+        auth()->login($user);
+
+        return redirect()->route('dashboard')->with('status', 'E-Mail erfolgreich bestätigt!');
     }
 }

@@ -28,7 +28,9 @@
             @endif
         </div>
 
-        <p><strong>Wichtig:</strong> Aus Sicherheitsgründen müssen Sie Ihr Passwort beim ersten Login ändern.</p>
+        <p><strong>Wichtig:</strong> Sie erhalten eine separate E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.</p>
+
+        <p><strong>Hinweis:</strong> Aus Sicherheitsgründen müssen Sie Ihr Passwort beim ersten Login ändern.</p>
 
         <p style="margin-top: 30px;">
             <a href="{{ route('login') }}" style="display: inline-block; padding: 12px 24px; background-color: #10b981; color: #fff; text-decoration: none; border-radius: 5px;">Jetzt anmelden</a>

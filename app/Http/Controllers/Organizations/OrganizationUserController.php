@@ -77,6 +77,8 @@ class OrganizationUserController extends Controller
         // Attach user to organization
         $user->organizations()->attach($organization->id);
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
 
         // Send email with login credentials
         Mail::to($user->email)->queue(new UserCreatedMail($user, $organization, $password));

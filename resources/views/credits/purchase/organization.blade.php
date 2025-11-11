@@ -61,9 +61,14 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                                 @foreach($packages as $package)
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="credit_package_id" value="{{ $package->id }}" class="peer sr-only" required>
-                                        <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-green-300 transition">
+                                    <label class="cursor-pointer {{ !$package->can_be_purchased ? 'opacity-60 cursor-not-allowed' : '' }}">
+                                        <input type="radio"
+                                               name="credit_package_id"
+                                               value="{{ $package->id }}"
+                                               class="peer sr-only"
+                                               {{ !$package->can_be_purchased ? 'disabled' : '' }}
+                                               required>
+                                        <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-green-300 transition {{ !$package->can_be_purchased ? 'bg-gray-50' : '' }}">
                                             <div class="text-center">
                                                 <h4 class="text-xl font-bold text-gray-900 mb-2">{{ $package->name }}</h4>
                                                 @if($package->description)
@@ -76,9 +81,27 @@
                                                 <div class="text-2xl font-bold text-gray-900 mb-2">
                                                     {{ number_format($package->price, 2, ',', '.') }} €
                                                 </div>
-                                                <div class="text-sm text-gray-500">
+                                                <div class="text-sm text-gray-500 mb-2">
                                                     {{ number_format($package->pricePerCredit, 2, ',', '.') }} € pro Guthaben
                                                 </div>
+
+                                                @if($package->purchase_limit_per_organization)
+                                                    @if(!$package->can_be_purchased)
+                                                        <div class="mt-3 px-3 py-2 bg-red-100 text-red-700 text-sm rounded-md">
+                                                            <svg class="w-4 h-4 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                                            </svg>
+                                                            Kauflimit erreicht
+                                                        </div>
+                                                    @else
+                                                        <div class="mt-3 px-3 py-2 bg-yellow-50 text-yellow-700 text-xs rounded-md">
+                                                            <svg class="w-4 h-4 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                                            </svg>
+                                                            Noch {{ $package->remaining_purchases }}x verfügbar
+                                                        </div>
+                                                    @endif
+                                                @endif
                                             </div>
                                         </div>
                                     </label>

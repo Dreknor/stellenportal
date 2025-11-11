@@ -20,6 +20,12 @@ class CreditService
      */
     public function purchaseCredits($creditable, CreditPackage $package, User $user, ?string $note = null)
     {
+        // Check if package can still be purchased by this organization
+        if (!$package->canBePurchasedBy($creditable)) {
+            $remaining = $package->getRemainingPurchasesFor($creditable);
+            throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
+        }
+
         return DB::transaction(function () use ($creditable, $package, $user, $note) {
             // Get or create credit balance
             $balance = $creditable->creditBalance()->firstOrCreate([]);

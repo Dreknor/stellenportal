@@ -21,6 +21,9 @@ Route::get('/', function () {
     return view('welcome', ['latestJobs' => $latestJobs]);
 })->name('home');
 
+// Öffentliche Preisübersicht
+Route::get('/preise', [\App\Http\Controllers\PublicPricingController::class, 'index'])->name('public.pricing');
+
 // Sitemap für SEO
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
@@ -220,6 +223,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             Route::post('/grant', [\App\Http\Controllers\Admin\CreditController::class, 'storeGrant'])
                 ->middleware('permission:admin grant credits')
                 ->name('grant.store');
+            Route::get('/revoke', [\App\Http\Controllers\Admin\CreditController::class, 'revoke'])
+                ->middleware('permission:admin grant credits')
+                ->name('revoke');
+            Route::post('/revoke', [\App\Http\Controllers\Admin\CreditController::class, 'storeRevoke'])
+                ->middleware('permission:admin grant credits')
+                ->name('revoke.store');
         });
 
         // Admin Job Posting Credit Exemptions
@@ -246,10 +255,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             Route::get('/{audit}', [\App\Http\Controllers\Admin\AuditController::class, 'show'])
                 ->middleware('permission:admin view logs')
                 ->name('show');
-            Route::get('/export/csv', [\App\Http\Controllers\Admin\AuditController::class, 'export'])
-                ->middleware('permission:admin export logs')
-                ->name('export');
         });
+
+        // Admin Search Analytics
+        Route::get('/search-analytics', [\App\Http\Controllers\Admin\SearchAnalyticsController::class, 'index'])
+            ->middleware('permission:admin view logs')
+            ->name('search-analytics.index');
 
         // Admin Logs (application log files)
         Route::prefix('logs')->name('logs.')->group(function () {

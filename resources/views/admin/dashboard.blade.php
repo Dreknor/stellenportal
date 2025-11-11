@@ -128,6 +128,12 @@
                         {{ __('Credits gewähren') }}
                     </x-button>
                 @endcan
+                @can('admin grant credits')
+                    <x-button type="danger" size="sm" tag="a" :href="route('admin.credits.revoke')" class="w-full justify-center">
+                        <x-fas-minus-circle class="w-3 mr-2"/>
+                        {{ __('Credits entziehen') }}
+                    </x-button>
+                @endcan
                 @can('admin edit organizations')
                     <x-button type="secondary" size="sm" tag="a" :href="route('admin.footer-settings.index')" class="w-full justify-center">
                         <x-fas-cog class="w-3 mr-2"/>
@@ -138,6 +144,12 @@
                     <x-button type="secondary" size="sm" tag="a" :href="route('admin.audits.index')" class="w-full justify-center">
                         <x-fas-clipboard-list class="w-3 mr-2"/>
                         {{ __('Audit-Logs') }}
+                    </x-button>
+                @endcan
+                @can('admin view logs')
+                    <x-button type="info" size="sm" tag="a" :href="route('admin.search-analytics.index')" class="w-full justify-center">
+                        <x-fas-chart-line class="w-3 mr-2"/>
+                        {{ __('Such-Analyse') }}
                     </x-button>
                 @endcan
                 @can('admin view logs')

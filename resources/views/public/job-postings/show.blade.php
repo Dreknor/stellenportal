@@ -28,11 +28,12 @@
     ];
 
     if ($jobPosting->facility->address) {
+        $streetAddress = trim($jobPosting->facility->address->street . ' ' . $jobPosting->facility->address->number);
         $jobPostingSchema['jobLocation'] = [
             '@type' => 'Place',
             'address' => array_filter([
                 '@type' => 'PostalAddress',
-                'streetAddress' => $jobPosting->facility->address->street,
+                'streetAddress' => $streetAddress ?: null,
                 'addressLocality' => $jobPosting->facility->address->city,
                 'postalCode' => $jobPosting->facility->address->zip_code,
                 'addressCountry' => 'DE',
@@ -228,7 +229,7 @@
                 @if($jobPosting->facility->address)
                 <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
                     <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                        <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }}">
+                        <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
                         <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
                         <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
                         <meta itemprop="addressCountry" content="DE">

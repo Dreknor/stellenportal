@@ -19,7 +19,9 @@
             <p style="margin: 5px 0;"><strong>Passwort:</strong> <code style="background-color: #f4f4f4; padding: 2px 6px; border-radius: 3px;">{{ $password }}</code></p>
         </div>
 
-        <p><strong>Wichtig:</strong> Aus Sicherheitsgründen müssen Sie Ihr Passwort beim ersten Login ändern.</p>
+        <p><strong>Wichtig:</strong> Sie erhalten eine separate E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.</p>
+
+        <p><strong>Hinweis:</strong> Aus Sicherheitsgründen müssen Sie Ihr Passwort beim ersten Login ändern.</p>
 
         <p style="margin-top: 30px;">
             <a href="{{ route('login') }}" style="display: inline-block; padding: 12px 24px; background-color: #3490dc; color: #fff; text-decoration: none; border-radius: 5px;">Jetzt anmelden</a>
