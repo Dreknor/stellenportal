@@ -1,12 +1,19 @@
 <?php
 
 use App\Http\Controllers\Auth\ConfirmationController;
+use App\Http\Controllers\Auth\KeycloakController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Route;
+
+// Keycloak SSO Routes
+Route::middleware('guest')->group(function () {
+    Route::get('auth/keycloak', [KeycloakController::class, 'redirect'])->name('keycloak.redirect');
+    Route::get('auth/keycloak/callback', [KeycloakController::class, 'callback'])->name('keycloak.callback');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegistrationController::class, 'create'])->name('register');

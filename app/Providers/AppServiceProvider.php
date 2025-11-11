@@ -14,6 +14,8 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\Contracts\Factory as SocialiteFactory;
+use SocialiteProviders\Keycloak\Provider as KeycloakProvider;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -32,6 +34,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Keycloak Socialite Provider
+        $socialite = $this->app->make(SocialiteFactory::class);
+        $socialite->extend('keycloak', function ($app) use ($socialite) {
+            $config = $app['config']['services.keycloak'];
+            return $socialite->buildProvider(KeycloakProvider::class, $config);
+        });
+
         // Register Credit Policies
         Gate::policy(CreditPackage::class, CreditPackagePolicy::class);
 
