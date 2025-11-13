@@ -148,6 +148,13 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
                 'destroy' => 'permission:admin delete users',
             ]);
 
+        // User Impersonation
+        Route::post('users/{user}/impersonate', [\App\Http\Controllers\Admin\ImpersonateController::class, 'start'])
+            ->middleware('permission:admin impersonate users')
+            ->name('users.impersonate');
+        Route::post('impersonate/stop', [\App\Http\Controllers\Admin\ImpersonateController::class, 'stop'])
+            ->name('impersonate.stop');
+
         // Admin Organization Management
         Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class)
             ->only(['index', 'show', 'edit', 'update', 'destroy'])
