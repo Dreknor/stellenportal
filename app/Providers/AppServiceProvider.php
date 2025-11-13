@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Mail\UserMailVerification;
 use App\Models\CreditPackage;
 use App\Models\JobPosting;
+use App\Models\LogEntry;
+use App\Observers\LogEntryObserver;
 use App\Policies\CreditPackagePolicy;
 use App\Policies\CreditPolicy;
 use App\Policies\RolePolicy;
@@ -35,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register LogEntry Observer for critical log notifications
+        LogEntry::observe(LogEntryObserver::class);
+
         // Register Keycloak Socialite Provider using Event Listener
         Event::listen(function (SocialiteWasCalled $event) {
             $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);

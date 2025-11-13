@@ -2,89 +2,123 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\LogEntry;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\Controller;
 
 class LogController extends Controller
 {
-    // List available log files in storage/logs
+    /**
+     * Display a listing of log entries from database.
+     */
     public function index(Request $request)
     {
-        $logPath = storage_path('logs');
-        $files = [];
+        $query = LogEntry::query()->orderBy('created_at', 'desc');
 
-        if (is_dir($logPath)) {
-            foreach (scandir($logPath) as $f) {
-                if ($f === '.' || $f === '..') continue;
-                $full = $logPath.DIRECTORY_SEPARATOR.$f;
-                if (is_file($full)) {
-                    $files[] = [
-                        'name' => $f,
-                        'size' => filesize($full),
-                        'modified' => date('Y-m-d H:i:s', filemtime($full)),
-                    ];
-                }
-            }
+        // Filter by level
+        if ($request->filled('level') && $request->level !== 'all') {
+            $query->level($request->level);
         }
 
-        return view('admin.logs.index', ['files' => $files]);
+        // Filter by channel
+        if ($request->filled('channel') && $request->channel !== 'all') {
+            $query->channel($request->channel);
+        }
+
+        // Search in messages
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        // Get available levels and channels for filters
+        $levels = LogEntry::query()
+            ->select('level_name')
+            ->distinct()
+            ->pluck('level_name')
+            ->sort()
+            ->values();
+
+        $channels = LogEntry::query()
+            ->select('channel')
+            ->distinct()
+            ->whereNotNull('channel')
+            ->pluck('channel')
+            ->sort()
+            ->values();
+
+        // Statistics
+        $stats = [
+            'total' => LogEntry::count(),
+            'error' => LogEntry::whereIn('level_name', ['ERROR', 'CRITICAL', 'ALERT', 'EMERGENCY'])->count(),
+            'warning' => LogEntry::level('WARNING')->count(),
+            'info' => LogEntry::level('INFO')->count(),
+        ];
+
+        $logs = $query->paginate(50)->withQueryString();
+
+        return view('admin.logs.index', compact('logs', 'levels', 'channels', 'stats'));
     }
 
-    // Show contents (tail) of a log file
-    public function show(Request $request, $file)
+    /**
+     * Display the specified log entry.
+     */
+    public function show(Request $request, $id)
     {
-        $logPath = storage_path('logs');
-        $full = realpath($logPath.DIRECTORY_SEPARATOR.$file);
-        if (!$full || strpos($full, realpath($logPath)) !== 0 || !is_file($full)) {
-            abort(404);
-        }
+        $log = LogEntry::findOrFail($id);
 
-        // Read tail (last 200 lines) to avoid huge responses
-        $lines = $this->tailFile($full, 200);
-
-        return view('admin.logs.show', ['file' => $file, 'lines' => $lines]);
+        return view('admin.logs.show', compact('log'));
     }
 
-    public function download(Request $request, $file)
+    /**
+     * Delete old log entries.
+     */
+    public function clear(Request $request)
     {
-        $logPath = storage_path('logs');
-        $full = realpath($logPath.DIRECTORY_SEPARATOR.$file);
-        if (!$full || strpos($full, realpath($logPath)) !== 0 || !is_file($full)) {
-            abort(404);
-        }
+        $request->validate([
+            'days' => 'nullable|integer|min:1|max:365',
+        ]);
 
-        return Response::download($full, $file);
+        $days = $request->input('days', 30);
+        $date = now()->subDays($days);
+
+        $deleted = LogEntry::where('created_at', '<', $date)->delete();
+
+        return redirect()->route('admin.logs.index')
+            ->with('success', __('Es wurden :count Log-Einträge gelöscht, die älter als :days Tage waren.', [
+                'count' => $deleted,
+                'days' => $days
+            ]));
     }
 
-    protected function tailFile($filepath, $lines = 100)
+    /**
+     * Export logs as JSON.
+     */
+    public function export(Request $request)
     {
-        $f = fopen($filepath, "rb");
-        if ($f === false) return [];
-        $buffer = '';
-        $chunk = 4096;
-        $pos = -1;
-        $lineCount = 0;
+        $query = LogEntry::query()->orderBy('created_at', 'desc');
 
-        fseek($f, 0, SEEK_END);
-        $filesize = ftell($f);
-
-        while ($filesize > 0 && $lineCount <= $lines) {
-            $seek = max(-$chunk, -$filesize);
-            fseek($f, $seek, SEEK_END);
-            $buffer = fread($f, -$seek) . $buffer;
-            $lineCount = substr_count($buffer, "\n");
-            $filesize += $seek;
-            if ($seek === -$filesize) break;
+        // Apply same filters as index
+        if ($request->filled('level') && $request->level !== 'all') {
+            $query->level($request->level);
         }
 
-        fclose($f);
+        if ($request->filled('channel') && $request->channel !== 'all') {
+            $query->channel($request->channel);
+        }
 
-        $allLines = explode("\n", trim($buffer));
-        $last = array_slice($allLines, max(0, count($allLines) - $lines));
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
 
-        return $last;
+        $logs = $query->limit(1000)->get();
+
+        $filename = 'logs-export-' . now()->format('Y-m-d-H-i-s') . '.json';
+
+        return Response::json($logs, 200, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }
 

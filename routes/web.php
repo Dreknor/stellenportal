@@ -269,15 +269,18 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             ->middleware('permission:admin view logs')
             ->name('search-analytics.index');
 
-        // Admin Logs (application log files)
+        // Admin Logs (application log entries from database)
         Route::prefix('logs')->name('logs.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])
                 ->middleware('permission:admin view logs')
                 ->name('index');
-            Route::get('/download/{file}', [\App\Http\Controllers\Admin\LogController::class, 'download'])
+            Route::get('/export', [\App\Http\Controllers\Admin\LogController::class, 'export'])
                 ->middleware('permission:admin view logs')
-                ->name('download');
-            Route::get('/{file}', [\App\Http\Controllers\Admin\LogController::class, 'show'])
+                ->name('export');
+            Route::delete('/clear', [\App\Http\Controllers\Admin\LogController::class, 'clear'])
+                ->middleware('permission:admin view logs')
+                ->name('clear');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\LogController::class, 'show'])
                 ->middleware('permission:admin view logs')
                 ->name('show');
         });
