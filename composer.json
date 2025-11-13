@@ -16,11 +16,13 @@
         "dantsu/php-osm-static-api": "^0.6.4",
         "josiasmontag/laravel-recaptchav3": "^1.0",
         "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "maennchen/zipstream-php": "3.1",
         "owen-it/laravel-auditing": "^14.0",
         "owenvoke/blade-fontawesome": "^2.9",
         "postare/blade-mdi": "^1.1",
+        "socialiteproviders/keycloak": "^5.3",
         "spatie/laravel-medialibrary": "^11.15",
         "spatie/laravel-permission": "^6.21",
         "spatie/laravel-sluggable": "*"

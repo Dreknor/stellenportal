@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -34,6 +35,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Keycloak Socialite Provider using Event Listener
+        Event::listen(function (SocialiteWasCalled $event) {
+            $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);
+        });
+
+        // Debug Keycloak configuration
+        if (config('app.debug')) {
+            Log::debug('Keycloak Service Configuration', [
+                'client_id' => config('services.keycloak.client_id'),
+                'redirect' => config('services.keycloak.redirect'),
+                'base_url' => config('services.keycloak.base_url'),
+                'realm' => config('services.keycloak.realms'),
+            ]);
+        }
+
         // Register Credit Policies
         Gate::policy(CreditPackage::class, CreditPackagePolicy::class);
 

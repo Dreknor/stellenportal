@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
+
+class KeycloakController extends Controller
+{
+    /**
+     * Redirect to Keycloak for authentication
+     */
+    public function redirect(): SymfonyRedirectResponse
+    {
+        // Debug: Log Keycloak configuration
+        Log::info('Keycloak Config', [
+            'base_url' => config('services.keycloak.base_url'),
+            'realm' => config('services.keycloak.realm'),
+            'realms' => config('services.keycloak.realms'),
+            'client_id' => config('services.keycloak.client_id'),
+            'redirect' => config('services.keycloak.redirect'),
+            'app_url' => config('app.url'),
+        ]);
+
+        try {
+            // Explicitly set the redirect URI
+            $redirect = Socialite::driver('keycloak')
+                ->redirectUrl(config('services.keycloak.redirect'))
+                ->redirect();
+
+            // Debug: Log redirect URL
+            Log::info('Keycloak Redirect URL', ['url' => $redirect->getTargetUrl()]);
+
+            return $redirect;
+        } catch (\Exception $e) {
+            Log::error('Keycloak Redirect Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect('/')
+                ->with('error', 'Fehler beim Weiterleiten zu Keycloak: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Handle the callback from Keycloak
+     */
+    public function callback(): RedirectResponse
+    {
+        try {
+            $keycloakUser = Socialite::driver('keycloak')->user();
+
+            // Try to find an existing user by email
+            $user = User::where('email', $keycloakUser->getEmail())->first();
+
+            // If no user exists, redirect to home page with message
+            if (!$user) {
+                return redirect('/')
+                    ->with('error', 'Kein Benutzerkonto für diese E-Mail-Adresse gefunden. Bitte kontaktieren Sie den Administrator.');
+            }
+
+            // Update keycloak_id if not already set
+            if (empty($user->keycloak_id) && !empty($keycloakUser->getId())) {
+                $user->keycloak_id = $keycloakUser->getId();
+                $user->save();
+            }
+
+            // Log the user in
+            Auth::login($user);
+
+            // Regenerate session to prevent fixation attacks
+            request()->session()->regenerate();
+
+            return redirect()->intended(route('dashboard', absolute: false));
+
+        } catch (\Exception $e) {
+            Log::error('Keycloak SSO Error: ' . $e->getMessage());
+
+            return redirect('/')
+                ->with('error', 'Fehler bei der Anmeldung über Keycloak. Bitte versuchen Sie es erneut.');
+        }
+    }
+}
+

@@ -32,6 +32,7 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         'email',
         'password',
         'change_password',
+        'keycloak_id',
     ];
 
     /**
