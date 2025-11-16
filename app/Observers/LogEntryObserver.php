@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\LogEntry;
 use App\Mail\CriticalLogNotificationMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,7 +39,7 @@ class LogEntryObserver
 
         if ($sentCount >= $rateLimit) {
             // Log that we're skipping notification due to rate limiting
-            \Log::channel('single')->warning('Critical log email notification skipped due to rate limiting', [
+            Log::channel('single')->warning('Critical log email notification skipped due to rate limiting', [
                 'log_entry_id' => $logEntry->id,
                 'sent_count' => $sentCount,
                 'rate_limit' => $rateLimit,
@@ -67,7 +68,7 @@ class LogEntryObserver
             Cache::put($dedupeKey, true, now()->addMinutes($dedupeMinutes));
 
             // Log the notification
-            \Log::channel('single')->info('Critical log email notification sent', [
+            Log::channel('single')->info('Critical log email notification sent', [
                 'log_entry_id' => $logEntry->id,
                 'level' => $logEntry->level_name,
                 'support_email' => $supportEmail,
@@ -75,7 +76,7 @@ class LogEntryObserver
             ]);
         } catch (\Exception $e) {
             // Don't fail the log entry creation if email fails
-            \Log::channel('single')->error('Failed to send critical log notification email', [
+            Log::channel('single')->error('Failed to send critical log notification email', [
                 'log_entry_id' => $logEntry->id,
                 'error' => $e->getMessage(),
             ]);
