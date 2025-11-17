@@ -86,4 +86,21 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
     {
         return $this->belongsToMany(Facility::class);
     }
+
+    /**
+     * Check if the user can be impersonated
+     */
+    public function canBeImpersonated(): bool
+    {
+        return !$this->hasRole(['Super Admin', 'Admin']);
+    }
+
+    /**
+     * Check if user is currently being impersonated
+     */
+    public function isBeingImpersonated(): bool
+    {
+        return session()->has('impersonate_original_user') &&
+               session('impersonate_original_user') !== $this->id;
+    }
 }

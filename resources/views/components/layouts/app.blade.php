@@ -68,6 +68,9 @@
     <!-- Main Container -->
     <div class="min-h-screen flex flex-col">
 
+        <!-- Impersonate Banner -->
+        <x-impersonate-banner />
+
         <x-layouts.app.header />
 
         <!-- Main Content Area -->

@@ -136,6 +136,17 @@
                                             <x-fas-edit class="w-3"/>
                                         </x-button>
                                     @endcan
+                                    @can('admin impersonate users')
+                                        @if($user->id !== auth()->id() && !$user->hasRole(['Super Admin', 'Admin']))
+                                            <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
+                                                @csrf
+                                                <x-button type="warning" size="sm" native-type="submit"
+                                                    onclick="return confirm('Möchten Sie sich als {{ $user->name }} anmelden?')">
+                                                    <x-fas-user-secret class="w-3"/>
+                                                </x-button>
+                                            </form>
+                                        @endif
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
