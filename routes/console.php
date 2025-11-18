@@ -16,6 +16,9 @@ Schedule::command('job-postings:mark-expired')->daily();
 // Schedule notification for expiring job postings (7 days before expiration)
 Schedule::command('job-postings:notify-expiring --days=7')->daily();
 
+// Delete unverified users after 5 days daily at 2 AM
+Schedule::command('users:delete-unverified --days=5')->dailyAt('02:00')->name('delete-unverified-users');
+
 // Clean up old log entries from database (older than 30 days) daily at 3 AM
 Schedule::call(function () {
     $days = config('logtodb.max_hours') ? config('logtodb.max_hours') / 24 : 30;
