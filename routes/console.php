@@ -33,5 +33,3 @@ if (env('QUEUE_WORKER_MODE', 'cronjob') === 'cronjob') {
     Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute();
 }
 
-// Schedule deletion of unverified users after 7 days
-Schedule::command('users:delete-unverified --days=7')->daily();
