@@ -24,6 +24,7 @@ class LoginController extends Controller
         $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => 'required|recaptchav3:login,0.7'
         ]);
 
         $this->ensureIsNotRateLimited($request);
