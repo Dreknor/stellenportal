@@ -81,6 +81,8 @@
                                                         :active="request()->routeIs('credits.packages*')">Guthaben-Pakete</x-layouts.sidebar-link>
                             @endcan
 
+
+
                             <!-- Rollen & Berechtigungen -->
                             @can('view roles')
                                 <x-layouts.sidebar-two-level-link-parent title="Berechtigungen" icon="fas-shield-halved"
@@ -95,6 +97,32 @@
                                     @endcan
                                 </x-layouts.sidebar-two-level-link-parent>
                             @endcan
+
+
+                            <!-- CMS Bereich -->
+            @canany(['admin view pages', 'admin manage menus'])
+            <li class="pt-4 pb-2">
+                <div x-show="sidebarOpen" class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    CMS
+                </div>
+                <div x-show="!sidebarOpen" class="border-t border-gray-300 dark:border-gray-600 mx-2"></div>
+            </li>
+
+            <x-layouts.sidebar-two-level-link-parent title="Content Management" icon="fas-file-lines"
+                :active="request()->routeIs('cms.pages*') || request()->routeIs('cms.menus*')">
+
+                @can('admin view pages')
+                <x-layouts.sidebar-two-level-link href="{{ route('cms.pages.index') }}" icon='fas-file-lines'
+                    :active="request()->routeIs('cms.pages*')">Seiten</x-layouts.sidebar-two-level-link>
+                @endcan
+
+                @can('admin manage menus')
+                <x-layouts.sidebar-two-level-link href="{{ route('cms.menus.index') }}" icon='fas-bars'
+                    :active="request()->routeIs('cms.menus*')">Menüs</x-layouts.sidebar-two-level-link>
+                @endcan
+            </x-layouts.sidebar-two-level-link-parent>
+            @endcanany
+
 
                             <!-- Hilfe -->
                             <li class="pt-4 pb-2">

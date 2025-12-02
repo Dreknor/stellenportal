@@ -40,9 +40,22 @@ class AppServiceProvider extends ServiceProvider
         // Register LogEntry Observer for critical log notifications
         LogEntry::observe(LogEntryObserver::class);
 
+        // Register Page Observer for image cleanup
+        \App\Models\Page::observe(\App\Observers\PageObserver::class);
+
+        // Register MenuItem Observer for cache invalidation
+        \App\Models\MenuItem::observe(\App\Observers\MenuItemObserver::class);
+
         // Register Keycloak Socialite Provider using Event Listener
         Event::listen(function (SocialiteWasCalled $event) {
             $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);
+        });
+
+        // Register View Composers for Menus
+        view()->composer('*', function ($view) {
+            $menuService = app(\App\Services\MenuService::class);
+            $view->with('headerMenu', $menuService->getMenu('header'));
+            $view->with('footerMenu', $menuService->getMenu('footer'));
         });
 
         // Debug Keycloak configuration

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
+use App\Models\Page;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
@@ -14,6 +15,9 @@ class SitemapController extends Controller
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
             ->get();
+
+        // CMS Pages
+        $pages = Page::published()->orderBy('updated_at', 'desc')->get();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"';
@@ -56,6 +60,16 @@ class SitemapController extends Controller
                 $xml .= '</image:image>';
             }
 
+            $xml .= '</url>';
+        }
+
+        // CMS Pages
+        foreach ($pages as $page) {
+            $xml .= '<url>';
+            $xml .= '<loc>' . htmlspecialchars(route('pages.show', $page->slug)) . '</loc>';
+            $xml .= '<lastmod>' . $page->updated_at->toAtomString() . '</lastmod>';
+            $xml .= '<changefreq>monthly</changefreq>';
+            $xml .= '<priority>0.7</priority>';
             $xml .= '</url>';
         }
 

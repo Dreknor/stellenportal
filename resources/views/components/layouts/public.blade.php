@@ -110,15 +110,78 @@
                         <span class="ml-3 text-xl sm:text-2xl font-bold text-gray-800 hidden sm:inline">{{ config('app.name') }}</span>
                     </a>
                 </div>
-
+                @if(isset($headerMenu) && $headerMenu->count() > 0)
+                    @foreach($headerMenu as $menuItem)
+                        @if($menuItem->children->count() > 0)
+                            <!-- Dropdown Menu Item -->
+                            <div class="relative" @click.away="openDropdown = null">
+                                <button @click="openDropdown = openDropdown === {{ $menuItem->id }} ? null : {{ $menuItem->id }}"
+                                        class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
+                                        :aria-expanded="openDropdown === {{ $menuItem->id }}">
+                                    {{ $menuItem->label }}
+                                    <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': openDropdown === {{ $menuItem->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div x-show="openDropdown === {{ $menuItem->id }}"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                                     style="display: none;">
+                                    <div class="py-1">
+                                        @foreach($menuItem->children as $child)
+                                            @if($child->is_active)
+                                                @php
+                                                    $childUrl = $child->url;
+                                                    if ($child->page_id && $child->page) {
+                                                        $childUrl = route('pages.show', $child->page->slug);
+                                                    }
+                                                @endphp
+                                                @if($childUrl)
+                                                    <a href="{{ $childUrl }}"
+                                                       target="{{ $child->target }}"
+                                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors">
+                                                        {{ $child->label }}
+                                                    </a>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Single Menu Item -->
+                            @php
+                                $menuUrl = $menuItem->url;
+                                if ($menuItem->page_id && $menuItem->page) {
+                                    $menuUrl = route('pages.show', $menuItem->page->slug);
+                                }
+                            @endphp
+                            @if($menuUrl)
+                                <a href="{{ $menuUrl }}"
+                                   target="{{ $menuItem->target }}"
+                                   class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                                    {{ $menuItem->label }}
+                                </a>
+                            @endif
+                        @endif
+                    @endforeach
+                @endif
                 <!-- Desktop Navigation -->
-                <div class="hidden lg:flex items-center gap-4">
+                <div class="hidden lg:flex items-center gap-4" x-data="{ openDropdown: null }">
                     <a href="{{ route('public.jobs.index') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Stellenangebote">
                         Stellenangebote
                     </a>
                     <a href="{{ route('public.pricing') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Preise">
                         Preise
                     </a>
+
+
+
                     @auth
                         <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Zum Dashboard">
                             Dashboard
@@ -151,7 +214,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div class="lg:hidden hidden" id="mobile-menu">
+        <div class="lg:hidden hidden" id="mobile-menu" x-data="{ openMobileDropdown: null }">
             <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
                 <a href="{{ route('public.jobs.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Stellenangebote">
                     Stellenangebote
@@ -159,6 +222,63 @@
                 <a href="{{ route('public.pricing') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Preise">
                     Preise
                 </a>
+
+                @if(isset($headerMenu) && $headerMenu->count() > 0)
+                    @foreach($headerMenu as $menuItem)
+                        @if($menuItem->children->count() > 0)
+                            <!-- Mobile Dropdown/Accordion Menu Item -->
+                            <div>
+                                <button @click="openMobileDropdown = openMobileDropdown === {{ $menuItem->id }} ? null : {{ $menuItem->id }}"
+                                        class="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors">
+                                    <span>{{ $menuItem->label }}</span>
+                                    <svg class="w-5 h-5 transition-transform" :class="{ 'rotate-180': openMobileDropdown === {{ $menuItem->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div x-show="openMobileDropdown === {{ $menuItem->id }}"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 -translate-y-1"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     class="pl-6 space-y-1"
+                                     style="display: none;">
+                                    @foreach($menuItem->children as $child)
+                                        @if($child->is_active)
+                                            @php
+                                                $childUrl = $child->url;
+                                                if ($child->page_id && $child->page) {
+                                                    $childUrl = route('pages.show', $child->page->slug);
+                                                }
+                                            @endphp
+                                            @if($childUrl)
+                                                <a href="{{ $childUrl }}"
+                                                   target="{{ $child->target }}"
+                                                   class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-colors">
+                                                    {{ $child->label }}
+                                                </a>
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            <!-- Single Mobile Menu Item -->
+                            @php
+                                $menuUrl = $menuItem->url;
+                                if ($menuItem->page_id && $menuItem->page) {
+                                    $menuUrl = route('pages.show', $menuItem->page->slug);
+                                }
+                            @endphp
+                            @if($menuUrl)
+                                <a href="{{ $menuUrl }}"
+                                   target="{{ $menuItem->target }}"
+                                   class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors">
+                                    {{ $menuItem->label }}
+                                </a>
+                            @endif
+                        @endif
+                    @endforeach
+                @endif
+
                 @auth
                     <a href="{{ url('/dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Zum Dashboard">
                         Dashboard

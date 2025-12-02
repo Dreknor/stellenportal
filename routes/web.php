@@ -319,6 +319,103 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
     });
 });
 
+// CMS Routes (separate from Admin, accessible with CMS permissions only)
+Route::prefix('cms')->middleware(['auth', 'verified'])->group(function () {
+    // CMS Pages Management
+    Route::prefix('pages')->name('cms.pages.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\PageController::class, 'index'])
+            ->middleware('permission:admin view pages')
+            ->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\PageController::class, 'create'])
+            ->middleware('permission:admin create pages')
+            ->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\PageController::class, 'store'])
+            ->middleware('permission:admin create pages')
+            ->name('store');
+        Route::get('/{page}', [\App\Http\Controllers\Admin\PageController::class, 'show'])
+            ->middleware('permission:admin view pages')
+            ->name('show');
+        Route::get('/{page}/edit', [\App\Http\Controllers\Admin\PageController::class, 'edit'])
+            ->middleware('permission:admin edit pages')
+            ->name('edit');
+        Route::put('/{page}', [\App\Http\Controllers\Admin\PageController::class, 'update'])
+            ->middleware('permission:admin edit pages')
+            ->name('update');
+        Route::delete('/{page}', [\App\Http\Controllers\Admin\PageController::class, 'destroy'])
+            ->middleware('permission:admin delete pages')
+            ->name('destroy');
+        Route::post('/{page}/publish', [\App\Http\Controllers\Admin\PageController::class, 'publish'])
+            ->middleware('permission:admin publish pages')
+            ->name('publish');
+        Route::post('/{page}/unpublish', [\App\Http\Controllers\Admin\PageController::class, 'unpublish'])
+            ->middleware('permission:admin publish pages')
+            ->name('unpublish');
+        Route::post('/{page}/duplicate', [\App\Http\Controllers\Admin\PageController::class, 'duplicate'])
+            ->middleware('permission:admin create pages')
+            ->name('duplicate');
+        Route::get('/{page}/preview', [\App\Http\Controllers\Admin\PageController::class, 'preview'])
+            ->middleware('permission:admin view pages')
+            ->name('preview');
+
+        // Page Images
+        Route::prefix('{page}/images')->name('images.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PageImageController::class, 'index'])
+                ->middleware('permission:admin manage page images')
+                ->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\PageImageController::class, 'store'])
+                ->middleware('permission:admin manage page images')
+                ->name('store');
+            Route::put('/{image}', [\App\Http\Controllers\Admin\PageImageController::class, 'update'])
+                ->middleware('permission:admin manage page images')
+                ->name('update');
+            Route::delete('/{image}', [\App\Http\Controllers\Admin\PageImageController::class, 'destroy'])
+                ->middleware('permission:admin manage page images')
+                ->name('destroy');
+            Route::post('/reorder', [\App\Http\Controllers\Admin\PageImageController::class, 'reorder'])
+                ->middleware('permission:admin manage page images')
+                ->name('reorder');
+        });
+
+        // Content Blocks
+        Route::prefix('{page}/blocks')->name('blocks.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\ContentBlockController::class, 'index'])
+                ->middleware('permission:admin edit pages')
+                ->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\ContentBlockController::class, 'store'])
+                ->middleware('permission:admin edit pages')
+                ->name('store');
+            Route::put('/{block}', [\App\Http\Controllers\Admin\ContentBlockController::class, 'update'])
+                ->middleware('permission:admin edit pages')
+                ->name('update');
+            Route::delete('/{block}', [\App\Http\Controllers\Admin\ContentBlockController::class, 'destroy'])
+                ->middleware('permission:admin edit pages')
+                ->name('destroy');
+            Route::post('/reorder', [\App\Http\Controllers\Admin\ContentBlockController::class, 'reorder'])
+                ->middleware('permission:admin edit pages')
+                ->name('reorder');
+        });
+    });
+
+    // CMS Menu Management
+    Route::prefix('menus')->name('cms.menus.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\MenuController::class, 'index'])
+            ->middleware('permission:admin manage menus')
+            ->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\MenuController::class, 'store'])
+            ->middleware('permission:admin manage menus')
+            ->name('store');
+        Route::put('/{menuItem}', [\App\Http\Controllers\Admin\MenuController::class, 'update'])
+            ->middleware('permission:admin manage menus')
+            ->name('update');
+        Route::delete('/{menuItem}', [\App\Http\Controllers\Admin\MenuController::class, 'destroy'])
+            ->middleware('permission:admin manage menus')
+            ->name('destroy');
+        Route::post('/reorder', [\App\Http\Controllers\Admin\MenuController::class, 'reorder'])
+            ->middleware('permission:admin manage menus')
+            ->name('reorder');
+    });
+});
+
 // Public job postings (no auth required)
 Route::prefix('jobs')->name('public.jobs.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');
@@ -331,3 +428,9 @@ Route::prefix('jobs')->name('public.jobs.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Public CMS pages (must be last to not interfere with other routes)
+Route::get('/{slug}', [\App\Http\Controllers\PageController::class, 'show'])
+    ->where('slug', '[a-zA-Z0-9\-]+')
+    ->name('pages.show');
+

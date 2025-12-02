@@ -130,13 +130,76 @@
                 </div>
 
                 <!-- Desktop Navigation -->
-                <div class="hidden lg:flex items-center gap-4">
+                <div class="hidden lg:flex items-center gap-4" x-data="{ openDropdown: null }">
                     <a href="{{ route('public.jobs.index') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Stellenangebote">
                         Stellenangebote
                     </a>
                     <a href="{{ route('public.pricing') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Preise">
                         Preise
                     </a>
+
+                    @if(isset($headerMenu) && $headerMenu->count() > 0)
+                        @foreach($headerMenu as $menuItem)
+                            @if($menuItem->children->count() > 0)
+                                <!-- Dropdown Menu Item -->
+                                <div class="relative" @click.away="openDropdown = null">
+                                    <button @click="openDropdown = openDropdown === {{ $menuItem->id }} ? null : {{ $menuItem->id }}"
+                                            class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
+                                            :aria-expanded="openDropdown === {{ $menuItem->id }}">
+                                        {{ $menuItem->label }}
+                                        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': openDropdown === {{ $menuItem->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div x-show="openDropdown === {{ $menuItem->id }}"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 scale-100"
+                                         x-transition:leave-end="opacity-0 scale-95"
+                                         class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                                         style="display: none;">
+                                        <div class="py-1">
+                                            @foreach($menuItem->children as $child)
+                                                @if($child->is_active)
+                                                    @php
+                                                        $childUrl = $child->url;
+                                                        if ($child->page_id && $child->page) {
+                                                            $childUrl = route('pages.show', $child->page->slug);
+                                                        }
+                                                    @endphp
+                                                    @if($childUrl)
+                                                        <a href="{{ $childUrl }}"
+                                                           target="{{ $child->target }}"
+                                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors">
+                                                            {{ $child->label }}
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Single Menu Item -->
+                                @php
+                                    $menuUrl = $menuItem->url;
+                                    if ($menuItem->page_id && $menuItem->page) {
+                                        $menuUrl = route('pages.show', $menuItem->page->slug);
+                                    }
+                                @endphp
+                                @if($menuUrl)
+                                    <a href="{{ $menuUrl }}"
+                                       target="{{ $menuItem->target }}"
+                                       class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                                        {{ $menuItem->label }}
+                                    </a>
+                                @endif
+                            @endif
+                        @endforeach
+                    @endif
+
                     @auth
                         <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Zum Dashboard">
                             Dashboard
@@ -283,39 +346,36 @@
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
-                <article class="feature-card bg-white p-8 rounded-xl shadow-lg">
-                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
-                        <x-mdi-human-male-child />
+                <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_schueler.jpg') }}');" aria-hidden="true"></div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">„Hauptfach Mensch"</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Schwerpunkt evangelischer Schulen ist es, individuelleres Lernen zu ermöglichen. Deshalb sind wir bemüht, verschiedenen Lerngeschwindigkeiten mehr Rechnung zu tragen. Unsere Lehrer*innen genießen aus diesem Grund mehr Freiheiten, Schule und Unterricht selbst zu gestalten. Eingeschlossen ist dabei explizit Freiraum für eigene Projekte. Im Blickpunkt steht jederzeit, Kinder und Jugendliche zu verantwortungsvollen Individuen zu befähigen, die an Ihre Mitmenschen und die Umwelt denken. Dabei dürfen sie Fehler machen und sollen genau darin erkennen, dass eigene Unzulänglichkeiten zum Leben dazu gehören und deshalb ganz normal sind.
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">„Hauptfach Mensch"</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Schwerpunkt evangelischer Schulen ist es, individuelleres Lernen zu ermöglichen. Deshalb sind wir bemüht, verschiedenen Lerngeschwindigkeiten mehr Rechnung zu tragen. Unsere Lehrer*innen genießen aus diesem Grund mehr Freiheiten, Schule und Unterricht selbst zu gestalten. Eingeschlossen ist dabei explizit Freiraum für eigene Projekte. Im Blickpunkt steht jederzeit, Kinder und Jugendliche zu verantwortungsvollen Individuen zu befähigen, die an Ihre Mitmenschen und die Umwelt denken. Dabei dürfen sie Fehler machen und sollen genau darin erkennen, dass eigene Unzulänglichkeiten zum Leben dazu gehören und deshalb ganz normal sind.
-                    </p>
                 </article>
 
                 <!-- Feature 2 -->
-                <article class="feature-card bg-white p-8 rounded-xl shadow-lg">
-                    <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+                <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_vorbereitungsdienst_2.jpg') }}');" aria-hidden="true"></div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Freie Wahl des Arbeitsplatzes</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Unsere 89 allgemeinbildenden und beruflichen Schulen sind über den gesamten Freistaat Sachsen verteilt. Sowohl hinsichtlich der Schularten als auch bezüglich Ihrer pädagogischen Ausrichtungen und ihrer Lage im städtischen oder ländlichen Bereich sind die einzelnen Einrichtungen völlig verschieden. Bei uns bewerben Sie sich direkt am jeweiligen Standort und entscheiden damit selbst, wo Sie arbeiten. Auf Wunsch sind auch Wechsel zwischen verschiedenen Schulen möglich.
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Freie Wahl des Arbeitsplatzes</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Unsere 89 allgemeinbildenden und beruflichen Schulen sind über den gesamten Freistaat Sachsen verteilt. Sowohl hinsichtlich der Schularten als auch bezüglich Ihrer pädagogischen Ausrichtungen und ihrer Lage im städtischen oder ländlichen Bereich sind die einzelnen Einrichtungen völlig verschieden. Bei uns bewerben Sie sich direkt am jeweiligen Standort und entscheiden damit selbst, wo Sie arbeiten. Auf Wunsch sind auch Wechsel zwischen verschiedenen Schulen möglich.
-                    </p>
                 </article>
 
                 <!-- Feature 3 -->
-                <article class="feature-card bg-white p-8 rounded-xl shadow-lg">
-                    <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
+                <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_studenten.jpg') }}');" aria-hidden="true"></div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Flexible Bedingungen</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Je nach Wunsch und Bedarf können unsere Schulträger*innen und Schulleiter*innen Sie auch in Teil- oder Vollzeit beschäftigen. Mancherorts wird sogar ein unterrichtsfreier Tag zur Vorbereitung von Schulstunden gewährt. Anders als im Staatsdienst sind Träger freier Schulen in der Lage, Arbeitsverträge flexibler gestalten zu können. Damit können beispielsweise Pendelstrecken pro Woche reduziert werden. Vieles ist denkbar, bewerben Sie sich einfach bei uns.
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Flexible Bedingungen</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Je nach Wunsch und Bedarf können unsere Schulträger*innen und Schulleiter*innen Sie auch in Teil- oder Vollzeit beschäftigen. Mancherorts wird sogar ein unterrichtsfreier Tag zur Vorbereitung von Schulstunden gewährt. Anders als im Staatsdienst sind Träger freier Schulen in der Lage, Arbeitsverträge flexibler gestalten zu können. Damit können beispielsweise Pendelstrecken pro Woche reduziert werden. Vieles ist denkbar, bewerben Sie sich einfach bei uns.                    </p>
                 </article>
             </div>
         </div>
