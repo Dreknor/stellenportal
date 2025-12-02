@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -50,7 +51,7 @@ class CooperativeMembershipTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function organization_has_is_cooperative_member_attribute_set_to_false_by_default(): void
     {
         $organization = Organization::factory()->create();
@@ -62,7 +63,7 @@ class CooperativeMembershipTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_set_organization_as_cooperative_member(): void
     {
         $organization = Organization::factory()->create([
@@ -89,7 +90,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertTrue($organization->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_remove_cooperative_membership_from_organization(): void
     {
         $organization = Organization::factory()->create([
@@ -116,7 +117,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertFalse($organization->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_has_for_cooperative_members_attribute_set_to_false_by_default(): void
     {
         $package = CreditPackage::factory()->create();
@@ -128,7 +129,7 @@ class CooperativeMembershipTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_create_package_for_cooperative_members(): void
     {
         $response = $this->actingAs($this->admin)
@@ -148,7 +149,7 @@ class CooperativeMembershipTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_create_package_for_non_cooperative_members(): void
     {
         $response = $this->actingAs($this->admin)
@@ -168,7 +169,7 @@ class CooperativeMembershipTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function cooperative_member_organization_only_sees_cooperative_packages(): void
     {
         $organization = Organization::factory()->create([
@@ -197,7 +198,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertDontSee($standardPackage->name);
     }
 
-    /** @test */
+    #[Test]
     public function non_cooperative_member_organization_only_sees_standard_packages(): void
     {
         $organization = Organization::factory()->create([
@@ -226,7 +227,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertSee($standardPackage->name);
     }
 
-    /** @test */
+    #[Test]
     public function facility_inherits_cooperative_status_from_organization(): void
     {
         $cooperativeOrg = Organization::factory()->create([
@@ -258,7 +259,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertDontSee($standardPackage->name);
     }
 
-    /** @test */
+    #[Test]
     public function scope_for_cooperative_members_filters_correctly(): void
     {
         CreditPackage::factory()->create(['for_cooperative_members' => true]);
@@ -271,7 +272,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertTrue($cooperativePackages->every(fn($p) => $p->for_cooperative_members === true));
     }
 
-    /** @test */
+    #[Test]
     public function scope_for_non_cooperative_members_filters_correctly(): void
     {
         CreditPackage::factory()->create(['for_cooperative_members' => true]);
@@ -284,7 +285,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertTrue($standardPackages->every(fn($p) => $p->for_cooperative_members === false));
     }
 
-    /** @test */
+    #[Test]
     public function scope_available_for_returns_cooperative_packages_for_cooperative_org(): void
     {
         $cooperativeOrg = Organization::factory()->create(['is_cooperative_member' => true]);
@@ -304,7 +305,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertEquals($cooperativePackage->id, $availablePackages->first()->id);
     }
 
-    /** @test */
+    #[Test]
     public function scope_available_for_returns_standard_packages_for_non_cooperative_org(): void
     {
         $standardOrg = Organization::factory()->create(['is_cooperative_member' => false]);
@@ -324,7 +325,7 @@ class CooperativeMembershipTest extends TestCase
         $this->assertEquals($standardPackage->id, $availablePackages->first()->id);
     }
 
-    /** @test */
+    #[Test]
     public function admin_organization_show_displays_cooperative_membership_status(): void
     {
         $cooperativeOrg = Organization::factory()->create([
@@ -338,7 +339,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertSee('Genossenschaftsmitglied');
     }
 
-    /** @test */
+    #[Test]
     public function admin_organization_show_displays_non_member_status(): void
     {
         $standardOrg = Organization::factory()->create([
@@ -352,7 +353,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertSee('Kein Mitglied');
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_see_cooperative_member_checkbox_in_edit_form(): void
     {
         $organization = Organization::factory()->create();
@@ -365,7 +366,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertSee('is_cooperative_member');
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_index_shows_cooperative_badge_for_cooperative_packages(): void
     {
         $cooperativePackage = CreditPackage::factory()->create([
@@ -380,7 +381,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertSee('Genossenschaft');
     }
 
-    /** @test */
+    #[Test]
     public function inactive_cooperative_packages_are_not_shown_to_cooperative_members(): void
     {
         $organization = Organization::factory()->create([
@@ -408,7 +409,7 @@ class CooperativeMembershipTest extends TestCase
         $response->assertDontSee($inactivePackage->name);
     }
 
-    /** @test */
+    #[Test]
     public function organization_can_be_created_without_cooperative_membership(): void
     {
         $user = User::factory()->create([

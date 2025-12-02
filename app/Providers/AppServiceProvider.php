@@ -51,12 +51,18 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);
         });
 
-        // Register View Composers for Menus
-        view()->composer('*', function ($view) {
-            $menuService = app(\App\Services\MenuService::class);
-            $view->with('headerMenu', $menuService->getMenu('header'));
-            $view->with('footerMenu', $menuService->getMenu('footer'));
-        });
+        // In Tests: teile leere Menüs, um DB-Abfragen in Views zu vermeiden
+        if ($this->app->runningUnitTests()) {
+            view()->share('headerMenu', collect());
+            view()->share('footerMenu', collect());
+        } else {
+            // Register View Composers for Menus
+            view()->composer('*', function ($view) {
+                $menuService = app(\App\Services\MenuService::class);
+                $view->with('headerMenu', $menuService->getMenu('header'));
+                $view->with('footerMenu', $menuService->getMenu('footer'));
+            });
+        }
 
         // Debug Keycloak configuration
         if (config('app.debug')) {

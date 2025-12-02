@@ -7,13 +7,14 @@ use App\Models\Facility;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FacilityCreditPurchaseAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function user_assigned_to_organization_can_purchase_credits_for_facility(): void
     {
         $organization = Organization::factory()->create([
@@ -42,7 +43,7 @@ class FacilityCreditPurchaseAuthorizationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_assigned_to_facility_can_purchase_credits_for_facility(): void
     {
         $organization = Organization::factory()->create([
@@ -71,7 +72,7 @@ class FacilityCreditPurchaseAuthorizationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_not_assigned_cannot_purchase_credits_for_facility(): void
     {
         $organization = Organization::factory()->create([
@@ -94,7 +95,7 @@ class FacilityCreditPurchaseAuthorizationTest extends TestCase
         $response->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_purchase_credits_if_organization_not_approved(): void
     {
         $organization = Organization::factory()->create([
@@ -118,7 +119,7 @@ class FacilityCreditPurchaseAuthorizationTest extends TestCase
         $response->assertSessionHas('error');
     }
 
-    /** @test */
+    #[Test]
     public function user_assigned_to_organization_can_view_facility_transactions(): void
     {
         $organization = Organization::factory()->create([

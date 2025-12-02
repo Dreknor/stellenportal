@@ -5,13 +5,14 @@ namespace Tests\Unit;
 use App\Models\CreditPackage;
 use App\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CooperativeMembershipUnitTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function organization_is_cooperative_member_attribute_is_boolean(): void
     {
         $organization = Organization::factory()->create([
@@ -22,7 +23,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertTrue($organization->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function organization_is_cooperative_member_defaults_to_false(): void
     {
         $organization = Organization::factory()->create();
@@ -30,7 +31,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertFalse($organization->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function organization_can_be_set_as_cooperative_member(): void
     {
         $organization = Organization::factory()->create([
@@ -42,7 +43,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertTrue($organization->fresh()->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_for_cooperative_members_attribute_is_boolean(): void
     {
         $package = CreditPackage::factory()->create([
@@ -53,7 +54,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertTrue($package->for_cooperative_members);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_for_cooperative_members_defaults_to_false(): void
     {
         $package = CreditPackage::factory()->create();
@@ -61,7 +62,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertFalse($package->for_cooperative_members);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_can_be_set_for_cooperative_members(): void
     {
         $package = CreditPackage::factory()->create([
@@ -73,7 +74,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertTrue($package->fresh()->for_cooperative_members);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_scope_for_cooperative_members_only_returns_cooperative_packages(): void
     {
         CreditPackage::factory()->count(3)->create(['for_cooperative_members' => true]);
@@ -87,7 +88,7 @@ class CooperativeMembershipUnitTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_scope_for_non_cooperative_members_only_returns_standard_packages(): void
     {
         CreditPackage::factory()->count(2)->create(['for_cooperative_members' => true]);
@@ -101,7 +102,7 @@ class CooperativeMembershipUnitTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_scope_available_for_filters_by_organization_cooperative_status(): void
     {
         $cooperativeOrg = Organization::factory()->create(['is_cooperative_member' => true]);
@@ -121,7 +122,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertEquals($standardPackage->id, $packagesForStandardOrg->first()->id);
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_scope_available_for_returns_empty_when_no_matching_packages(): void
     {
         $cooperativeOrg = Organization::factory()->create(['is_cooperative_member' => true]);
@@ -134,7 +135,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertCount(0, $availablePackages);
     }
 
-    /** @test */
+    #[Test]
     public function organization_is_cooperative_member_attribute_is_mass_assignable(): void
     {
         $organization = Organization::factory()->make();
@@ -142,7 +143,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertContains('is_cooperative_member', $organization->getFillable());
     }
 
-    /** @test */
+    #[Test]
     public function credit_package_for_cooperative_members_attribute_is_mass_assignable(): void
     {
         $package = CreditPackage::factory()->make();
@@ -150,7 +151,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertContains('for_cooperative_members', $package->getFillable());
     }
 
-    /** @test */
+    #[Test]
     public function multiple_organizations_can_have_different_cooperative_statuses(): void
     {
         $cooperativeOrg1 = Organization::factory()->create(['is_cooperative_member' => true]);
@@ -164,7 +165,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertFalse($standardOrg2->is_cooperative_member);
     }
 
-    /** @test */
+    #[Test]
     public function multiple_packages_can_have_different_cooperative_targeting(): void
     {
         $cooperativePkg1 = CreditPackage::factory()->create(['for_cooperative_members' => true]);
@@ -178,7 +179,7 @@ class CooperativeMembershipUnitTest extends TestCase
         $this->assertFalse($standardPkg2->for_cooperative_members);
     }
 
-    /** @test */
+    #[Test]
     public function changing_organization_cooperative_status_persists_to_database(): void
     {
         $organization = Organization::factory()->create(['is_cooperative_member' => false]);
@@ -192,7 +193,7 @@ class CooperativeMembershipUnitTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function changing_package_cooperative_targeting_persists_to_database(): void
     {
         $package = CreditPackage::factory()->create(['for_cooperative_members' => false]);
