@@ -38,4 +38,33 @@ class CreditBalance extends Model implements Auditable
             ->where('creditable_type', $this->creditable_type)
             ->orderBy('created_at', 'desc');
     }
+
+    /**
+     * Get credits that will expire soon
+     * @param int $days Number of days to look ahead
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getExpiringCredits(int $days = 30)
+    {
+        $expirationDate = now()->addDays($days);
+
+        return CreditTransaction::where('creditable_id', $this->creditable_id)
+            ->where('creditable_type', $this->creditable_type)
+            ->where('type', CreditTransaction::TYPE_PURCHASE)
+            ->whereNotNull('expires_at')
+            ->where('expires_at', '<=', $expirationDate)
+            ->whereDoesntHave('expirationTransaction')
+            ->orderBy('expires_at', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get total amount of credits expiring soon
+     * @param int $days Number of days to look ahead
+     * @return int
+     */
+    public function getExpiringCreditsAmount(int $days = 30): int
+    {
+        return $this->getExpiringCredits($days)->sum('amount');
+    }
 }

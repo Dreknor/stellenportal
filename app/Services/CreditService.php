@@ -12,6 +12,7 @@ use App\Mail\CreditPurchasedInvoiceMail;
 use App\Mail\CreditPurchasedConfirmationMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class CreditService
 {
@@ -41,6 +42,7 @@ class CreditService
                 'balance_after' => $balance->balance + $package->credits,
                 'price_paid' => $package->price,
                 'note' => $note,
+                'expires_at' => now()->addYears(CreditTransaction::EXPIRATION_YEARS),
             ]);
 
             // Update balance
@@ -202,6 +204,66 @@ class CreditService
 
         // Bestätigungs-Email an den Käufer
         Mail::to($user->email)->queue(new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package));
+    }
+
+    /**
+     * Process expired credits
+     * Returns the number of credits expired
+     */
+    public function processExpiredCredits(): int
+    {
+        $totalExpired = 0;
+
+        // Finde alle abgelaufenen Kauftransaktionen, die noch nicht verarbeitet wurden
+        $expiredPurchases = CreditTransaction::expiredPurchases()->get();
+
+        foreach ($expiredPurchases as $purchase) {
+            try {
+                DB::transaction(function () use ($purchase, &$totalExpired) {
+                    $creditable = $purchase->creditable;
+                    if (!$creditable) {
+                        return;
+                    }
+
+                    $balance = $creditable->creditBalance;
+                    if (!$balance) {
+                        return;
+                    }
+
+                    // Berechne verfügbare Credits aus diesem Kauf
+                    // (ursprünglicher Betrag minus alle bereits verwendeten/abgelaufenen)
+                    $availableAmount = min($purchase->amount, $balance->balance);
+
+                    if ($availableAmount > 0) {
+                        // Erstelle Ablauf-Transaktion
+                        CreditTransaction::create([
+                            'creditable_id' => $creditable->id,
+                            'creditable_type' => get_class($creditable),
+                            'user_id' => $purchase->user_id,
+                            'type' => CreditTransaction::TYPE_EXPIRATION,
+                            'amount' => -$availableAmount,
+                            'balance_after' => $balance->balance - $availableAmount,
+                            'note' => 'Automatischer Verfall von Credits (gekauft am ' . $purchase->created_at->format('d.m.Y') . ', abgelaufen am ' . $purchase->expires_at->format('d.m.Y') . ')',
+                            'related_transaction_id' => $purchase->id,
+                        ]);
+
+                        // Aktualisiere Balance
+                        $balance->balance -= $availableAmount;
+                        $balance->save();
+
+                        $totalExpired += $availableAmount;
+                    }
+                });
+            } catch (\Exception $e) {
+                // Logge den Fehler und fahre mit dem nächsten fort
+                Log::error('Fehler beim Verarbeiten abgelaufener Credits', [
+                    'transaction_id' => $purchase->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return $totalExpired;
     }
 }
 

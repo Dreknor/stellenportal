@@ -19,6 +19,12 @@ Schedule::command('job-postings:notify-expiring --days=7')->daily();
 // Delete unverified users after 5 days daily at 2 AM
 Schedule::command('users:delete-unverified --days=5')->dailyAt('02:00')->name('delete-unverified-users');
 
+// Process expired credits daily at 1 AM
+Schedule::command('credits:expire')->dailyAt('01:00')->name('expire-credits');
+
+// Notify about expiring credits 30 days before expiration
+Schedule::command('credits:notify-expiring --days=30')->dailyAt('08:00')->name('notify-expiring-credits');
+
 // Clean up old log entries from database (older than 30 days) daily at 3 AM
 Schedule::call(function () {
     $days = config('logtodb.max_hours') ? config('logtodb.max_hours') / 24 : 30;
