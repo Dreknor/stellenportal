@@ -25,9 +25,8 @@ class RegistrationController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults(),
-            'g-recaptcha-response' => 'required|recaptchav3:register,0.7'
-            ],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'g-recaptcha-response' => 'required|recaptchav3:register,0.7',
         ]);
 
 
