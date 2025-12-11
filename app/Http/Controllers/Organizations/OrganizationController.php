@@ -50,7 +50,7 @@ class OrganizationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'website' => 'nullable|url|max:255',
+            'website' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
             'street' => 'required|string|max:255',
             'number' => 'required|string|max:20',
@@ -146,7 +146,7 @@ class OrganizationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'website' => 'nullable|url|max:255',
+            'website' => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i'],
             'description' => 'nullable|string|max:1000',
             'street' => 'required|string|max:255',
             'number' => 'required|string|max:20',
@@ -154,6 +154,8 @@ class OrganizationController extends Controller
             'zip_code' => 'required|string|max:20',
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
+        ], [
+            'website.regex' => 'Bitte geben Sie eine gültige Website-URL ein (z.B. example.com oder https://example.com).',
         ]);
 
         $organization->update($request->only([
