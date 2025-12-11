@@ -46,25 +46,6 @@ class CreditPurchasedInvoiceMail extends Mailable implements ShouldQueue
         ]);
     }
 
-    /**
-     * Determine the models that should be restored with their relationships.
-     */
-    public function restoreModel($value)
-    {
-        try {
-            return parent::restoreModel($value);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // If the model is a CreditPackage and not found, we can handle it gracefully
-            if (isset($value->class) && $value->class === CreditPackage::class) {
-                Log::warning('CreditPackage not found during mail queue processing', [
-                    'package_id' => $value->id ?? 'unknown',
-                ]);
-                // Return null or a default value
-                return null;
-            }
-            throw $e;
-        }
-    }
 
     /**
      * Get the message envelope.
