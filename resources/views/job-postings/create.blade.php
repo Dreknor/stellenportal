@@ -7,6 +7,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="job-postings" />
+
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Neue Stellenausschreibung erstellen') }}</h1>
     </div>

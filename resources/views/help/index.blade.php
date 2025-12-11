@@ -26,6 +26,36 @@
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('So starten Sie mit dem Portal') }}</p>
         </a>
 
+        <a href="#organizations" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center mb-3">
+                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                    <x-icon name="fas-building" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Trägerverwaltung') }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Träger anlegen und verwalten') }}</p>
+        </a>
+
+        <a href="#facilities" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center mb-3">
+                <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                    <x-icon name="fas-school" class="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Einrichtungsverwaltung') }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Einrichtungen erstellen und bearbeiten') }}</p>
+        </a>
+
+        <a href="#job-postings" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center mb-3">
+                <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+                    <x-icon name="fas-briefcase" class="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Stellenausschreibungen') }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Stellenanzeigen erstellen und verwalten') }}</p>
+        </a>
+
         <a href="#faq" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
             <div class="flex items-center mb-3">
                 <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
@@ -176,6 +206,103 @@
                         {{ __('Prüfen Sie Ihre Stellenanzeige und veröffentlichen Sie diese. Pro Veröffentlichung wird 1 Credit vom Guthaben abgezogen.') }}
                     </p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organisationen Section -->
+    <div id="organizations" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+            <x-icon name="fas-building" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+            {{ __('Trägerverwaltung') }}
+        </h2>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Ein Träger ist die oberste Organisationsebene. Hier verwalten Sie grundlegende Informationen Ihrer Organisation.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Träger anlegen') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Um einen neuen Träger anzulegen, gehen Sie zu "Träger" im Hauptmenü und füllen Sie das Formular aus. Nach der Erstellung muss der Träger vom Administrator genehmigt werden, bevor Sie Credits kaufen und Einrichtungen erstellen können.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Träger bearbeiten') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('In der Träger-Übersicht können Sie Ihre Trägerdaten wie Name, Kontaktinformationen, Logo und Header-Bild bearbeiten. Diese Informationen werden auch auf den öffentlichen Seiten angezeigt.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Benutzer verwalten') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Sie können weitere Benutzer zu Ihrem Träger hinzufügen. Diese erhalten dann Zugriff auf alle Einrichtungen des Trägers. Die neuen Benutzer erhalten eine E-Mail mit ihren Zugangsdaten.') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Einrichtungen Section -->
+    <div id="facilities" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+            <x-icon name="fas-school" class="h-6 w-6 mr-2 text-green-600 dark:text-green-400" />
+            {{ __('Einrichtungsverwaltung') }}
+        </h2>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Einrichtungen gehören zu einem Träger und sind die konkreten Standorte, für die Sie Stellenanzeigen veröffentlichen.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Einrichtung anlegen') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Klicken Sie auf "Einrichtungen" → "Neue Einrichtung". Wählen Sie den zugehörigen Träger aus und geben Sie Name, Adresse und Kontaktdaten ein. Sie können auch ein Logo und Header-Bild hochladen.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Einrichtung bearbeiten') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('In der Einrichtungs-Detailansicht können Sie alle Daten Ihrer Einrichtung bearbeiten, einschließlich Bilder und Beschreibung.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Guthaben verwalten') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Jede Einrichtung kann ein eigenes Guthaben haben. Sie können Credits direkt für die Einrichtung kaufen oder vom Träger-Guthaben übertragen.') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Stellenausschreibungen Section -->
+    <div id="job-postings" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+            <x-icon name="fas-briefcase" class="h-6 w-6 mr-2 text-purple-600 dark:text-purple-400" />
+            {{ __('Stellenausschreibungen') }}
+        </h2>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Stellenausschreibungen sind die Hauptfunktion des Portals. Hier erstellen und verwalten Sie Ihre Stellenanzeigen.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Stellenanzeige erstellen') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Gehen Sie zu "Stellenausschreibungen" → "Neue Stellenausschreibung". Wählen Sie die Einrichtung aus und füllen Sie alle Felder aus (Titel, Beschreibung, Anforderungen, etc.). Sie können die Anzeige zunächst als Entwurf speichern.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Stellenanzeige veröffentlichen') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Um eine Stellenanzeige zu veröffentlichen, benötigen Sie mindestens 1 Credit. Nach dem Veröffentlichen wird die Anzeige sofort auf der öffentlichen Seite sichtbar.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Stellenanzeige bearbeiten') }}</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                {{ __('Sie können veröffentlichte Stellenanzeigen jederzeit bearbeiten. Die Änderungen werden sofort übernommen.') }}
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Status-Verwaltung') }}</h3>
+            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 mb-4">
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>{{ __('Entwurf:') }}</strong> {{ __('Die Anzeige ist nicht öffentlich sichtbar') }}</li>
+                    <li><strong>{{ __('Aktiv:') }}</strong> {{ __('Die Anzeige ist veröffentlicht und öffentlich sichtbar') }}</li>
+                    <li><strong>{{ __('Pausiert:') }}</strong> {{ __('Die Anzeige ist vorübergehend nicht sichtbar') }}</li>
+                    <li><strong>{{ __('Abgelaufen:') }}</strong> {{ __('Die Laufzeit der Anzeige ist abgelaufen') }}</li>
+                </ul>
             </div>
         </div>
     </div>

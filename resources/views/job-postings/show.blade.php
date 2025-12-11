@@ -20,6 +20,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="job-postings" />
+
     <!-- Facility Header Image Banner -->
     @if($headerImage)
         <div class="mb-6 rounded-lg overflow-hidden shadow-lg">

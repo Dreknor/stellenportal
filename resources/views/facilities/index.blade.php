@@ -9,6 +9,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="facilities" />
+
     <div class="mb-6 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Einrichtungen') }}</h1>
         @if($userHasApprovedOrganizations)

@@ -7,6 +7,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="organizations" />
+
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Träger') }}</h1>
     </div>
