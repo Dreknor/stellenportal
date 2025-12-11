@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified', ])->group(function () {
 Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(function () {
     // Hilfe-Seite
     Route::get('help', [HelpController::class, 'index'])->name('help');
+    Route::post('help/contact', [HelpController::class, 'sendContact'])->name('help.contact');
 
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');

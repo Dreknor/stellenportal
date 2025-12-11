@@ -5,7 +5,7 @@
     </div>
 
     <!-- Quick Links -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <a href="#overview" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
             <div class="flex items-center mb-3">
                 <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
@@ -65,6 +65,18 @@
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('FAQ') }}</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Häufig gestellte Fragen') }}</p>
         </a>
+
+        @if(config('mail.support_email'))
+        <a href="#contact" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center mb-3">
+                <div class="bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
+                    <x-icon name="fas-envelope" class="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Kontakt') }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ __('Direkt Kontakt aufnehmen') }}</p>
+        </a>
+        @endif
     </div>
 
     <!-- Überblick Section -->
@@ -490,19 +502,146 @@
 
     <!-- Kontakt Section -->
     @if(config('mail.support_email'))
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-md p-6 border border-blue-200 dark:border-gray-600">
-        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-            {{ __('Weitere Fragen?') }}
+    <div id="contact" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+            <x-icon name="fas-envelope" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+            {{ __('Kontakt & Support') }}
         </h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">
-            {{ __('Wenn Sie weitere Fragen haben oder Unterstützung benötigen, kontaktieren Sie uns gerne.') }}
+
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            {{ __('Haben Sie eine Frage, die hier nicht beantwortet wurde? Nutzen Sie das Kontaktformular, um uns direkt zu erreichen. Wir werden uns so schnell wie möglich bei Ihnen melden.') }}
         </p>
-        <div class="flex flex-wrap gap-4">
-            <a href="mailto:{{ config('mail.support_email') }}"
-               class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                <x-icon name="fas-envelope" class="h-4 w-4 mr-2" />
-                {{ __('E-Mail Support') }}
-            </a>
+
+        @if(session('success'))
+            <div class="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded-r-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700 dark:text-green-200">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded-r-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700 dark:text-red-200">
+                            {{ session('error') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('help.contact') }}" class="space-y-6">
+            @csrf
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('Ihr Name') }} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           value="{{ old('name', auth()->user()->name ?? '') }}"
+                           required
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror">
+                    @error('name')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('Ihre E-Mail-Adresse') }} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           value="{{ old('email', auth()->user()->email ?? '') }}"
+                           required
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('email') border-red-500 @enderror">
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Subject -->
+            <div>
+                <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ __('Betreff') }} <span class="text-red-500">*</span>
+                </label>
+                <input type="text"
+                       id="subject"
+                       name="subject"
+                       value="{{ old('subject') }}"
+                       required
+                       placeholder="{{ __('z.B. Frage zur Trägerverwaltung') }}"
+                       class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('subject') border-red-500 @enderror">
+                @error('subject')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Message -->
+            <div>
+                <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ __('Ihre Nachricht') }} <span class="text-red-500">*</span>
+                </label>
+                <textarea id="message"
+                          name="message"
+                          rows="6"
+                          required
+                          placeholder="{{ __('Bitte beschreiben Sie Ihr Anliegen so detailliert wie möglich...') }}"
+                          class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
+                @error('message')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {{ __('Maximal 5000 Zeichen') }}
+                </p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    <span class="text-red-500">*</span> {{ __('Pflichtfelder') }}
+                </p>
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <x-icon name="fas-paper-plane" class="h-4 w-4 mr-2" />
+                    {{ __('Nachricht senden') }}
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                <strong>{{ __('Alternativ können Sie uns auch direkt per E-Mail kontaktieren:') }}</strong>
+            </p>
+            <p class="mt-2">
+                <a href="mailto:{{ config('mail.support_email') }}"
+                   class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                    {{ config('mail.support_email') }}
+                </a>
+            </p>
         </div>
     </div>
     @endif
