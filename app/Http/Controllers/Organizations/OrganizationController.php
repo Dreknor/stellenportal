@@ -67,6 +67,18 @@ class OrganizationController extends Controller
             'street', 'number', 'city', 'zip_code'
         ]));
 
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $organization->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $organization->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
         $user = auth()->user();
         $user->organizations()->attach($organization->id);
 
@@ -177,10 +189,21 @@ class OrganizationController extends Controller
             $organization->clearMediaCollection('header_image');
         }
 
+        // Handle logo removal
+        if ($request->input('remove_logo')) {
+            $organization->clearMediaCollection('logo');
+        }
+
         // Handle header image upload
         if ($request->hasFile('header_image')) {
             $organization->addMediaFromRequest('header_image')
                 ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $organization->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
         }
 
         return redirect()->route('organizations.edit', $organization)

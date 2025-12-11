@@ -93,6 +93,8 @@
 
                 <x-forms.header-image-upload />
 
+                <x-forms.logo-upload />
+
                 <div class="flex gap-4">
                     <x-button type="primary">{{ __('Speichern') }}</x-button>
                     <x-button type="secondary" tag="a" :href="route('facilities.index')">

@@ -414,6 +414,17 @@
                 <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Einrichtung') }}</h3>
 
                 <div class="space-y-3">
+                    @php
+                        // Für die Einrichtung: Logo bevorzugt, Header-Bild als Fallback
+                        $facilityLogo = $jobPosting->facility->getFirstMediaUrl('logo') ?: $jobPosting->facility->getFirstMediaUrl('header_image');
+                    @endphp
+
+                    @if($facilityLogo)
+                        <div class="mb-3">
+                            <img src="{{ $facilityLogo }}" alt="{{ $jobPosting->facility->name }}" class="w-full h-auto rounded-lg max-h-32 object-contain bg-gray-50 dark:bg-gray-700 p-2">
+                        </div>
+                    @endif
+
                     <div>
                         <p class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $jobPosting->facility->name }}</p>
                         @if($jobPosting->facility->address)

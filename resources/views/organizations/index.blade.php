@@ -68,6 +68,8 @@
 
                             <x-forms.header-image-upload />
 
+                            <x-forms.logo-upload />
+
                             <div>
                                 <x-button type="primary">{{ __('Speichern') }}</x-button>
                             </div>

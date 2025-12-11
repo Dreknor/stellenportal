@@ -45,6 +45,10 @@ class Organization extends Model implements HasMedia, \OwenIt\Auditing\Contracts
         $this->addMediaCollection('header_image')
             ->singleFile()
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']);
+
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']);
     }
 
     public function address()

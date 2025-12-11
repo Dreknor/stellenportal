@@ -263,9 +263,13 @@
                 <div class="space-y-4">
                     <!-- Facility Image -->
                     <div class="flex items-start gap-3">
-                        @if($headerImage)
+                        @php
+                            // Für die Einrichtung: Logo bevorzugt, Header-Bild als Fallback
+                            $facilityLogo = $jobPosting->facility->getFirstMediaUrl('logo') ?: $jobPosting->facility->getFirstMediaUrl('header_image');
+                        @endphp
+                        @if($facilityLogo)
                             <div class="flex-shrink-0">
-                                <img src="{{ $headerImage }}" alt="{{ $jobPosting->facility->name }} Logo" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
+                                <img src="{{ $facilityLogo }}" alt="{{ $jobPosting->facility->name }} Logo" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
                             </div>
                         @else
                             <div class="flex-shrink-0">

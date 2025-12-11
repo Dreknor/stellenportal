@@ -64,9 +64,35 @@ class FacilityController extends Controller
             'phone' => ['nullable', 'string', 'max:255'],
             'website' => ['nullable', 'url', 'max:255'],
             'description' => ['nullable', 'string'],
+            'header_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'remove_header_image' => ['nullable', 'boolean'],
+            'remove_logo' => ['nullable', 'boolean'],
         ]);
 
         $facility->update($validated);
+
+        // Handle header image removal
+        if ($request->input('remove_header_image')) {
+            $facility->clearMediaCollection('header_image');
+        }
+
+        // Handle logo removal
+        if ($request->input('remove_logo')) {
+            $facility->clearMediaCollection('logo');
+        }
+
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $facility->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $facility->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
 
         return redirect()->route('admin.facilities.show', $facility)
             ->with('success', 'Einrichtung erfolgreich aktualisiert.');
