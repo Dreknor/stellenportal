@@ -95,6 +95,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
     Route::get('facilities/{facility}/credits/transactions', [CreditController::class, 'facilityTransactions'])
         ->name('credits.facility.transactions');
 
+    // Übertragung von Einrichtung zu Organisation
+    Route::get('facilities/{facility}/credits/transfer-to-organization', [CreditController::class, 'showFacilityTransfer'])
+        ->name('credits.facility.transfer-to-organization');
+    Route::post('facilities/{facility}/credits/transfer-to-organization', [CreditController::class, 'transferToOrganization'])
+        ->name('credits.facility.transfer-to-organization.store');
+
     // Guthaben für Organisationen
     Route::get('organizations/{organization}/credits/purchase', [CreditController::class, 'showOrganizationPurchase'])
         ->name('credits.organization.purchase');

@@ -12,8 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Ändern des ENUM-Typs um 'expiration' hinzuzufügen
-        DB::statement("ALTER TABLE credit_transactions MODIFY COLUMN type ENUM('purchase', 'transfer_in', 'transfer_out', 'usage', 'adjustment', 'expiration') NOT NULL");
+        // SQLite doesn't support MODIFY COLUMN, so we just skip for SQLite (type is already string)
+        if (DB::getDriverName() !== 'sqlite') {
+            // Ändern des ENUM-Typs um 'expiration' hinzuzufügen
+            DB::statement("ALTER TABLE credit_transactions MODIFY COLUMN type ENUM('purchase', 'transfer_in', 'transfer_out', 'usage', 'adjustment', 'expiration') NOT NULL");
+        }
     }
 
     /**
@@ -21,8 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Entfernen von 'expiration' aus dem ENUM
-        DB::statement("ALTER TABLE credit_transactions MODIFY COLUMN type ENUM('purchase', 'transfer_in', 'transfer_out', 'usage', 'adjustment') NOT NULL");
+        // SQLite doesn't support MODIFY COLUMN, so we just skip for SQLite
+        if (DB::getDriverName() !== 'sqlite') {
+            // Entfernen von 'expiration' aus dem ENUM
+            DB::statement("ALTER TABLE credit_transactions MODIFY COLUMN type ENUM('purchase', 'transfer_in', 'transfer_out', 'usage', 'adjustment') NOT NULL");
+        }
     }
 };
 

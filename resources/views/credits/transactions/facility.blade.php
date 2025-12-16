@@ -7,9 +7,14 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-900">Transaktionshistorie</h2>
-                        <a href="{{ route('credits.facility.purchase', $facility) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                            Guthaben aufladen
-                        </a>
+                        <div class="flex space-x-2">
+                                <a href="{{ route('credits.facility.transfer-to-organization', $facility) }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                    An Träger übertragen
+                                </a>
+                            <a href="{{ route('credits.facility.purchase', $facility) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                Guthaben aufladen
+                            </a>
+                        </div>
                     </div>
 
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">

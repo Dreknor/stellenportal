@@ -166,5 +166,72 @@ class CreditServiceTest extends TestCase
             'amount' => 5,
         ]);
     }
+
+    public function test_transfer_credits_from_facility_to_organization(): void
+    {
+        $organization = Organization::factory()->create();
+        $facility = Facility::factory()->create(['organization_id' => $organization->id]);
+        $user = User::factory()->create();
+
+        // Give facility credits
+        $facility->creditBalance()->create(['balance' => 30]);
+
+        $result = $this->creditService->transferCreditsToOrganization($facility, 15, $user, 'Return unused credits');
+
+        $this->assertEquals(15, $facility->getCurrentCreditBalance());
+        $this->assertEquals(15, $organization->getCurrentCreditBalance());
+
+        $this->assertDatabaseHas('credit_transactions', [
+            'creditable_id' => $facility->id,
+            'creditable_type' => Facility::class,
+            'type' => CreditTransaction::TYPE_TRANSFER_OUT,
+            'amount' => -15,
+        ]);
+
+        $this->assertDatabaseHas('credit_transactions', [
+            'creditable_id' => $organization->id,
+            'creditable_type' => Organization::class,
+            'type' => CreditTransaction::TYPE_TRANSFER_IN,
+            'amount' => 15,
+        ]);
+    }
+
+    public function test_transfer_credits_to_organization_fails_when_insufficient_balance(): void
+    {
+        $organization = Organization::factory()->create();
+        $facility = Facility::factory()->create(['organization_id' => $organization->id]);
+        $user = User::factory()->create();
+
+        $facility->creditBalance()->create(['balance' => 5]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Insufficient credits');
+
+        $this->creditService->transferCreditsToOrganization($facility, 10, $user);
+    }
+
+    public function test_transfer_credits_to_organization_creates_linked_transactions(): void
+    {
+        $organization = Organization::factory()->create();
+        $facility = Facility::factory()->create(['organization_id' => $organization->id]);
+        $user = User::factory()->create();
+
+        $facility->creditBalance()->create(['balance' => 20]);
+
+        $result = $this->creditService->transferCreditsToOrganization($facility, 10, $user);
+
+        $transferOut = $result['transfer_out'];
+        $transferIn = $result['transfer_in'];
+
+        // Verify transactions are linked
+        $this->assertEquals($transferIn->id, $transferOut->related_transaction_id);
+        $this->assertEquals($transferOut->id, $transferIn->related_transaction_id);
+
+        // Verify related entities
+        $this->assertEquals($organization->id, $transferOut->related_creditable_id);
+        $this->assertEquals(Organization::class, $transferOut->related_creditable_type);
+        $this->assertEquals($facility->id, $transferIn->related_creditable_id);
+        $this->assertEquals(Facility::class, $transferIn->related_creditable_type);
+    }
 }
 

@@ -80,6 +80,7 @@ class AppServiceProvider extends ServiceProvider
         // Register gates for credit operations
         Gate::define('purchaseCredits', [CreditPolicy::class, 'purchaseCredits']);
         Gate::define('transferCredits', [CreditPolicy::class, 'transferCredits']);
+        Gate::define('transferCreditsToOrganization', [CreditPolicy::class, 'transferCreditsToOrganization']);
         Gate::define('viewTransactions', [CreditPolicy::class, 'viewTransactions']);
 
         // Register Role and Permission Policies
