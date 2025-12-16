@@ -791,7 +791,7 @@
                         {{ __('Ja, das ist problemlos möglich! Jedes Mitglied einer Einrichtung kann Credits an den Träger zurückübertragen, ohne dass dafür zusätzliche Berechtigungen erforderlich sind.') }}
                     </p>
                     <ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-gray-400 ml-4">
-                        <li>{{ __('Gehen Sie zur Einrichtungs-Detailansicht → Reiter "Guthaben"') }}</li>
+                        <li>{{ __('Gehen Sie zur Einrichtungs-Detailansicht → Transaktionshistorie"') }}</li>
                         <li>{{ __('Klicken Sie auf "An Träger übertragen"') }}</li>
                         <li>{{ __('Geben Sie die Anzahl ein und bestätigen Sie') }}</li>
                     </ol>
