@@ -99,6 +99,22 @@
                     @enderror
                 </div>
 
+                <!-- SEO Keywords -->
+                <div>
+                    <label for="seo_keywords" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('SEO-Suchbegriffe') }}
+                    </label>
+                    <input type="text" id="seo_keywords" name="seo_keywords" value="{{ old('seo_keywords', $jobPosting->seo_keywords) }}"
+                           placeholder="{{ __('z.B. Grundschullehrer, Mathematik, Sachsen') }}"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('seo_keywords') border-red-500 @enderror">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Kommagetrennte Suchbegriffe für bessere Auffindbarkeit in Suchmaschinen. Der Ort der Einrichtung und typische Schul-Begriffe werden automatisch hinzugefügt.') }}
+                    </p>
+                    @error('seo_keywords')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Contact Information -->
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Kontaktinformationen') }}</h3>

@@ -1,12 +1,16 @@
 <x-layouts.public>
     <x-slot:title>{{ $jobPosting->title }} - {{ $jobPosting->facility->name }}</x-slot:title>
-    <x-slot:metaDescription>{{ Str::limit(strip_tags($jobPosting->description), 155) }}</x-slot:metaDescription>
+    <x-slot:metaDescription>{{ $jobPosting->getSeoMetaDescription() }}</x-slot:metaDescription>
     <x-slot:ogType>article</x-slot:ogType>
     <x-slot:ogTitle>{{ $jobPosting->title }}</x-slot:ogTitle>
-    <x-slot:ogDescription>{{ Str::limit(strip_tags($jobPosting->description), 200) }}</x-slot:ogDescription>
+    <x-slot:ogDescription>{{ $jobPosting->getSeoMetaDescription() }}</x-slot:ogDescription>
     @if($jobPosting->facility->getFirstMediaUrl('header_image'))
         <x-slot:ogImage>{{ $jobPosting->facility->getFirstMediaUrl('header_image') }}</x-slot:ogImage>
     @endif
+
+    @push('head')
+    <meta name="keywords" content="{{ implode(', ', $jobPosting->getSeoKeywordsArray()) }}">
+    @endpush
 
     @push('structured-data')
 
