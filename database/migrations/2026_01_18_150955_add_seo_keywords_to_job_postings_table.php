@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('job_postings', function (Blueprint $table) {
-            //
+            $table->text('seo_keywords')->nullable()->after('benefits');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('job_postings', function (Blueprint $table) {
-            //
+            $table->dropColumn('seo_keywords');
         });
     }
 };
