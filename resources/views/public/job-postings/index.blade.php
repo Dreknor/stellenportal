@@ -236,9 +236,13 @@
                         <div class="flex-1">
                             <!-- Facility Image and Info -->
                             <div class="flex items-start gap-3 mb-3">
-                                @if($headerImage)
+                                @php
+                                    // Logo bevorzugt für das kleine Icon, Header-Bild als Fallback
+                                    $facilityLogo = $jobPosting->facility->getFirstMediaUrl('logo') ?: $jobPosting->facility->getFirstMediaUrl('header_image');
+                                @endphp
+                                @if($facilityLogo)
                                     <div class="flex-shrink-0">
-                                        <img src="{{ $headerImage }}" alt="{{ $jobPosting->facility->name }} Logo" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
+                                        <img src="{{ $facilityLogo }}" alt="{{ $jobPosting->facility->name }} Logo" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
                                     </div>
                                 @else
                                     <div class="flex-shrink-0">

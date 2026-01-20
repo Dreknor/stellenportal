@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('search_queries', function (Blueprint $table) {
             $table->id();
-            $table->string('query'); // Der Suchbegriff
+            $table->string('query')->nullable(); // Der Suchbegriff (optional, da auch nur nach Standort/Typ gesucht werden kann)
             $table->string('location')->nullable(); // Standortsuche (optional)
             $table->integer('radius')->nullable(); // Suchradius in km
             $table->string('employment_type')->nullable(); // Beschäftigungsart-Filter

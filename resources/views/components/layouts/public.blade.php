@@ -32,6 +32,7 @@
     <meta name="twitter:description" content="{{ $metaDescription ?? 'Aktuelle Stellenangebote für Lehrkräfte und pädagogisches Personal.' }}">
     <meta name="twitter:image" content="{{ $ogImage ?? asset('img/Stellenportal-Logo.png') }}">
 
+    @stack('head')
     @stack('structured-data')
 
     {!! RecaptchaV3::initJs() !!}

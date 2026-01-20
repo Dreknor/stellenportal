@@ -198,6 +198,7 @@ class JobPostingController extends Controller
             'job_category' => 'nullable|string|max:255',
             'requirements' => 'nullable|string',
             'benefits' => 'nullable|string',
+            'seo_keywords' => 'nullable|string|max:500',
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',

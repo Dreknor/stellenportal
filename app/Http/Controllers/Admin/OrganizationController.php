@@ -58,9 +58,35 @@ class OrganizationController extends Controller
             'website' => ['nullable', 'url', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_cooperative_member' => ['boolean'],
+            'header_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'remove_header_image' => ['nullable', 'boolean'],
+            'remove_logo' => ['nullable', 'boolean'],
         ]);
 
         $organization->update($validated);
+
+        // Handle header image removal
+        if ($request->input('remove_header_image')) {
+            $organization->clearMediaCollection('header_image');
+        }
+
+        // Handle logo removal
+        if ($request->input('remove_logo')) {
+            $organization->clearMediaCollection('logo');
+        }
+
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $organization->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $organization->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
 
         return redirect()->route('admin.organizations.show', $organization)
             ->with('success', 'Organisation erfolgreich aktualisiert.');

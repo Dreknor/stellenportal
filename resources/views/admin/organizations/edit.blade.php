@@ -14,7 +14,7 @@
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <form method="POST" action="{{ route('admin.organizations.update', $organization) }}">
+        <form method="POST" action="{{ route('admin.organizations.update', $organization) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -66,6 +66,56 @@
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Optionale Beschreibung der Organisation') }}</p>
+                </div>
+
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('Bilder') }}</h3>
+
+                    <div class="mb-4">
+                        <label for="header_image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {{ __('Headerbild') }}
+                        </label>
+                        @if($organization->getFirstMediaUrl('header_image'))
+                            <div class="mb-4">
+                                <img src="{{ $organization->getFirstMediaUrl('header_image') }}" alt="Header Image" class="max-w-md rounded-lg shadow-md">
+                                <div class="mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="remove_header_image" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Headerbild entfernen') }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
+                        <input type="file" name="header_image" id="header_image" accept="image/jpeg,image/png,image/jpg,image/webp"
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300">
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Großes Bild für die Anzeige bei Stellenausschreibungen. Erlaubte Formate: JPG, PNG, WEBP. Maximale Größe: 5 MB') }}</p>
+                        @error('header_image')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="logo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {{ __('Logo') }}
+                        </label>
+                        @if($organization->getFirstMediaUrl('logo'))
+                            <div class="mb-4">
+                                <img src="{{ $organization->getFirstMediaUrl('logo') }}" alt="Logo" class="max-w-xs rounded-lg shadow-md">
+                                <div class="mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="remove_logo" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Logo entfernen') }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
+                        <input type="file" name="logo" id="logo" accept="image/jpeg,image/png,image/jpg,image/webp"
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300">
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Logo als Icon für die Anzeige. Erlaubte Formate: JPG, PNG, WEBP. Maximale Größe: 5 MB') }}</p>
+                        @error('logo')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6">

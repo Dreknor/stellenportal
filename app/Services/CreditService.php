@@ -120,6 +120,71 @@ class CreditService
     }
 
     /**
+     * Transfer credits from facility back to organization
+     */
+    public function transferCreditsToOrganization(Facility $facility, int $amount, User $user, ?string $note = null)
+    {
+        $organization = $facility->organization;
+
+        if (!$organization) {
+            throw new \Exception('Facility does not belong to any organization');
+        }
+
+        if ($facility->getCurrentCreditBalance() < $amount) {
+            throw new \Exception('Insufficient credits');
+        }
+
+        return DB::transaction(function () use ($facility, $organization, $amount, $user, $note) {
+            // Get balances
+            $facilityBalance = $facility->creditBalance()->firstOrCreate([]);
+            $orgBalance = $organization->creditBalance()->firstOrCreate([]);
+
+            // Create transfer out transaction for facility
+            $transferOut = CreditTransaction::create([
+                'creditable_id' => $facility->id,
+                'creditable_type' => Facility::class,
+                'user_id' => $user->id,
+                'type' => CreditTransaction::TYPE_TRANSFER_OUT,
+                'amount' => -$amount,
+                'balance_after' => $facilityBalance->balance - $amount,
+                'note' => $note,
+                'related_creditable_id' => $organization->id,
+                'related_creditable_type' => Organization::class,
+            ]);
+
+            // Create transfer in transaction for organization
+            $transferIn = CreditTransaction::create([
+                'creditable_id' => $organization->id,
+                'creditable_type' => Organization::class,
+                'user_id' => $user->id,
+                'type' => CreditTransaction::TYPE_TRANSFER_IN,
+                'amount' => $amount,
+                'balance_after' => $orgBalance->balance + $amount,
+                'note' => $note,
+                'related_creditable_id' => $facility->id,
+                'related_creditable_type' => Facility::class,
+                'related_transaction_id' => $transferOut->id,
+            ]);
+
+            // Link transactions
+            $transferOut->related_transaction_id = $transferIn->id;
+            $transferOut->save();
+
+            // Update balances
+            $facilityBalance->balance -= $amount;
+            $facilityBalance->save();
+
+            $orgBalance->balance += $amount;
+            $orgBalance->save();
+
+            return [
+                'transfer_out' => $transferOut,
+                'transfer_in' => $transferIn,
+            ];
+        });
+    }
+
+    /**
      * Use credits
      */
     public function useCredits($creditable, int $amount, User $user, ?string $note = null)

@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified', ])->group(function () {
 Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(function () {
     // Hilfe-Seite
     Route::get('help', [HelpController::class, 'index'])->name('help');
+    Route::post('help/contact', [HelpController::class, 'sendContact'])->name('help.contact');
 
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');
@@ -93,6 +94,12 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         ->name('credits.facility.purchase.store');
     Route::get('facilities/{facility}/credits/transactions', [CreditController::class, 'facilityTransactions'])
         ->name('credits.facility.transactions');
+
+    // Übertragung von Einrichtung zu Organisation
+    Route::get('facilities/{facility}/credits/transfer-to-organization', [CreditController::class, 'showFacilityTransfer'])
+        ->name('credits.facility.transfer-to-organization');
+    Route::post('facilities/{facility}/credits/transfer-to-organization', [CreditController::class, 'transferToOrganization'])
+        ->name('credits.facility.transfer-to-organization.store');
 
     // Guthaben für Organisationen
     Route::get('organizations/{organization}/credits/purchase', [CreditController::class, 'showOrganizationPurchase'])

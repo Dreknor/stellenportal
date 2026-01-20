@@ -39,6 +39,7 @@ class JobPosting extends Model implements Auditable
         'job_category',
         'requirements',
         'benefits',
+        'seo_keywords',
         'contact_email',
         'contact_phone',
         'contact_person',
@@ -228,5 +229,81 @@ class JobPosting extends Model implements Auditable
         $organization = $this->facility->organization;
         return JobPostingCreditExemption::hasExemption($this->employment_type, $organization);
     }
+
+    /**
+     * Get all SEO keywords including custom and auto-generated ones
+     */
+    public function getSeoKeywordsArray(): array
+    {
+        $keywords = [];
+
+        // Add custom SEO keywords if provided
+        if ($this->seo_keywords) {
+            $customKeywords = array_map('trim', explode(',', $this->seo_keywords));
+            $keywords = array_merge($keywords, $customKeywords);
+        }
+
+        // Add location from facility
+        if ($this->facility && $this->facility->address) {
+            $keywords[] = $this->facility->address->city;
+        }
+
+        // Add common education/school-related terms
+        $commonTerms = [
+            'Stelle',
+            'Job',
+            'Stellenangebot',
+            'Stellenanzeige',
+            'Bewerbung',
+            'Karriere',
+            'Schule',
+            'Bildung',
+            'Pädagogik',
+            'Lehrkraft',
+            'Lehrer',
+            'Schuljob',
+            'Schulstelle',
+        ];
+        $keywords = array_merge($keywords, $commonTerms);
+
+        // Add employment type
+        $keywords[] = $this->getEmploymentTypeLabel();
+
+        // Add job category if available
+        if ($this->job_category) {
+            $keywords[] = $this->job_category;
+        }
+
+        // Remove duplicates and empty values
+        $keywords = array_unique(array_filter($keywords));
+
+        return $keywords;
+    }
+
+    /**
+     * Get SEO meta description
+     */
+    public function getSeoMetaDescription(): string
+    {
+        $location = $this->facility && $this->facility->address ? $this->facility->address->city : '';
+        $employmentType = $this->getEmploymentTypeLabel();
+
+        $description = "{$this->title} ({$employmentType})";
+
+        if ($location) {
+            $description .= " in {$location}";
+        }
+
+        $description .= " bei {$this->facility->name}. ";
+
+        // Add snippet from job description
+        $descSnippet = strip_tags($this->description);
+        $descSnippet = mb_substr($descSnippet, 0, 120);
+        $description .= $descSnippet;
+
+        // Limit to 155 characters for SEO best practices
+        return mb_substr($description, 0, 155);
+    }
 }
+
 

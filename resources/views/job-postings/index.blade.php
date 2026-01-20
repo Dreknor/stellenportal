@@ -7,6 +7,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="job-postings" />
+
     <div class="mb-6">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Stellenausschreibungen') }}</h1>
@@ -97,17 +99,17 @@
                             </div>
                         @endif
                     </div>
+                </div>
 
-                    <div class="ml-4 flex flex-col gap-2">
-                        <x-button tag="a" :href="route('job-postings.show', $jobPosting)" type="secondary" size="sm">
-                            {{ __('Details') }}
+                <div class="mt-4 flex gap-2">
+                    <x-button tag="a" :href="route('job-postings.show', $jobPosting)" type="secondary" size="sm">
+                        {{ __('Details') }}
+                    </x-button>
+                    @can('update', $jobPosting)
+                        <x-button tag="a" :href="route('job-postings.edit', $jobPosting)" type="secondary" size="sm">
+                            {{ __('Bearbeiten') }}
                         </x-button>
-                        @can('update', $jobPosting)
-                            <x-button tag="a" :href="route('job-postings.edit', $jobPosting)" type="secondary" size="sm">
-                                {{ __('Bearbeiten') }}
-                            </x-button>
-                        @endcan
-                    </div>
+                    @endcan
                 </div>
             </div>
         @empty

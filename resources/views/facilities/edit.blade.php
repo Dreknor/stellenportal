@@ -8,6 +8,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="facilities" />
+
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Einrichtung bearbeiten') }}</h1>
     </div>
@@ -93,6 +95,8 @@
                 </div>
 
                 <x-forms.header-image-upload :model="$facility" />
+
+                <x-forms.logo-upload :model="$facility" />
 
                 <div class="flex gap-4">
                     <x-button type="primary">{{ __('Speichern') }}</x-button>

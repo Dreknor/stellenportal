@@ -81,7 +81,7 @@
         }
 
         .hero-bg {
-            background: linear-gradient(rgb(0 50 100 / 10%), rgb(0 50 100 / 55%)), url('/img/header_04.jpg');
+            background: linear-gradient(rgb(0 50 100 / 10%), rgb(0 50 100 / 55%)), url('/img/header_01.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -273,11 +273,8 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     @guest
-                    <a href="{{ route('register') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
-                        Jetzt kostenlos starten
-                    </a>
-                    <a href="{{ route('login') }}" class="px-8 py-4 bg-white text-blue-900 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors inline-block">
-                        Anmelden
+                    <a href="{{ route('public.jobs.index') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
+                        Zu den Stellenangeboten
                     </a>
                     @else
                     <a href="{{ url('/dashboard') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
@@ -497,7 +494,7 @@
     <section class="py-20 bg-white" aria-labelledby="how-it-works-heading">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 id="how-it-works-heading" class="text-4xl font-bold text-gray-900 mb-4">So funktioniert's</h2>
+                <h2 id="how-it-works-heading" class="text-4xl font-bold text-gray-900 mb-4">So funktioniert's als Schulträger</h2>
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">
                     In zwei einfachen Schritten zur erfolgreichen Stellenanzeige
                 </p>
@@ -519,9 +516,6 @@
                             </p>
                         </div>
                     </div>
-
-
-
                     <!-- Step 2 -->
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="flex-shrink-0">
@@ -535,6 +529,20 @@
                                 Erstellen Sie professionelle Stellenanzeigen und veröffentlichen Sie diese für 3 Monate. Verwalten Sie den Status jederzeit.
                             </p>
                         </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        @guest
+                            <a href="{{ route('register') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
+                                Jetzt kostenlos starten
+                            </a>
+                            <a href="{{ route('login') }}" class="px-8 py-4 bg-white text-blue-900 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors inline-block">
+                                Anmelden
+                            </a>
+                        @else
+                            <a href="{{ url('/dashboard') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
+                                Zum Dashboard
+                            </a>
+                        @endguest
                     </div>
                 </div>
             </div>

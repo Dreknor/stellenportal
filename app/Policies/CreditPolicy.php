@@ -19,8 +19,8 @@ class CreditPolicy
                 return false;
             }
             // User must be assigned to the facility OR to the facility's organization
-            return $user->facilities->contains($creditable)
-                || $user->organizations->contains($creditable->organization);
+            return $user->facilities()->where('facilities.id', $creditable->id)->exists()
+                || $user->organizations()->where('organizations.id', $creditable->organization_id)->exists();
         }
 
         if ($creditable instanceof Organization) {
@@ -29,7 +29,7 @@ class CreditPolicy
                 return false;
             }
             // User must be assigned to the organization
-            return $user->organizations->contains($creditable);
+            return $user->organizations()->where('organizations.id', $creditable->id)->exists();
         }
 
         return false;
@@ -45,7 +45,21 @@ class CreditPolicy
             return false;
         }
         // User must be assigned to the organization
-        return $user->organizations->contains($organization);
+        return $user->organizations()->where('organizations.id', $organization->id)->exists();
+    }
+
+    /**
+     * Determine whether the user can transfer credits from facility to organization.
+     */
+    public function transferCreditsToOrganization(User $user, Facility $facility): bool
+    {
+        // Organization must be approved
+        if (!$facility->organization->canUseFeatures()) {
+            return false;
+        }
+        // User must be assigned to the facility OR to the facility's organization
+        return $user->facilities()->where('facilities.id', $facility->id)->exists()
+            || $user->organizations()->where('organizations.id', $facility->organization_id)->exists();
     }
 
     /**
@@ -59,8 +73,8 @@ class CreditPolicy
                 return false;
             }
             // User must be assigned to the facility or its organization
-            return $user->facilities->contains($creditable)
-                || $user->organizations->contains($creditable->organization);
+            return $user->facilities()->where('facilities.id', $creditable->id)->exists()
+                || $user->organizations()->where('organizations.id', $creditable->organization_id)->exists();
         }
 
         if ($creditable instanceof Organization) {
@@ -69,7 +83,7 @@ class CreditPolicy
                 return false;
             }
             // User must be assigned to the organization
-            return $user->organizations->contains($creditable);
+            return $user->organizations()->where('organizations.id', $creditable->id)->exists();
         }
 
         return false;

@@ -100,6 +100,18 @@ class FacilityController extends Controller
             'street', 'number', 'city', 'zip_code'
         ]));
 
+        // Handle header image upload
+        if ($request->hasFile('header_image')) {
+            $facility->addMediaFromRequest('header_image')
+                ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $facility->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
+        }
+
         return redirect()->route('facilities.show', $facility)
             ->with('success', 'Einrichtung erfolgreich erstellt.');
     }
@@ -198,10 +210,21 @@ class FacilityController extends Controller
             $facility->clearMediaCollection('header_image');
         }
 
+        // Handle logo removal
+        if ($request->input('remove_logo')) {
+            $facility->clearMediaCollection('logo');
+        }
+
         // Handle header image upload
         if ($request->hasFile('header_image')) {
             $facility->addMediaFromRequest('header_image')
                 ->toMediaCollection('header_image');
+        }
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $facility->addMediaFromRequest('logo')
+                ->toMediaCollection('logo');
         }
 
         return redirect()->route('facilities.edit', $facility)

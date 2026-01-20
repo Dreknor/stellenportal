@@ -8,6 +8,8 @@
     @endphp
     <x-breadcrumbs :breadcrumbs="$crumbs"/>
 
+    <x-help-link section="job-postings" />
+
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ __('Stellenausschreibung bearbeiten') }}</h1>
     </div>
@@ -93,6 +95,22 @@
                     <textarea id="benefits" name="benefits" rows="4"
                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('benefits') border-red-500 @enderror">{{ old('benefits', $jobPosting->benefits) }}</textarea>
                     @error('benefits')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- SEO Keywords -->
+                <div>
+                    <label for="seo_keywords" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('SEO-Suchbegriffe') }}
+                    </label>
+                    <input type="text" id="seo_keywords" name="seo_keywords" value="{{ old('seo_keywords', $jobPosting->seo_keywords) }}"
+                           placeholder="{{ __('z.B. Grundschullehrer, Mathematik, Sachsen') }}"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 @error('seo_keywords') border-red-500 @enderror">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Kommagetrennte Suchbegriffe für bessere Auffindbarkeit in Suchmaschinen. Der Ort der Einrichtung und typische Schul-Begriffe werden automatisch hinzugefügt.') }}
+                    </p>
+                    @error('seo_keywords')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>

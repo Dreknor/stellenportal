@@ -215,6 +215,59 @@ class CreditController extends Controller
     }
 
     /**
+     * Show transfer form for facility to organization
+     */
+    public function showFacilityTransfer(Facility $facility)
+    {
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie Guthaben umbuchen können.');
+        }
+
+        $this->authorize('transferCreditsToOrganization', $facility);
+
+        $organization = $facility->organization;
+        $balance = $facility->getCurrentCreditBalance();
+        $organizationBalance = $organization->getCurrentCreditBalance();
+
+        return view('credits.transfer-to-organization', compact('facility', 'organization', 'balance', 'organizationBalance'));
+    }
+
+    /**
+     * Transfer credits from facility to organization
+     */
+    public function transferToOrganization(Request $request, Facility $facility)
+    {
+        if (!$facility->organization->canUseFeatures()) {
+            return redirect()->route('organizations.show', $facility->organization)
+                ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden, bevor Sie Guthaben umbuchen können.');
+        }
+
+        $this->authorize('transferCreditsToOrganization', $facility);
+
+        $validated = $request->validate([
+            'amount' => 'required|integer|min:1',
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            /** @var \App\Models\User $user */
+            $user = auth()->user();
+            $transactions = $this->creditService->transferCreditsToOrganization(
+                $facility,
+                $validated['amount'],
+                $user,
+                $validated['note'] ?? null
+            );
+
+            return redirect()->route('credits.facility.transactions', $facility)
+                ->with('success', 'Guthaben wurden erfolgreich an den Träger übertragen!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Fehler bei der Übertragung: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Show facility transactions
      */
     public function facilityTransactions(Facility $facility)
