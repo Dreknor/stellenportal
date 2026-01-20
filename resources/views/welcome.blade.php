@@ -268,9 +268,12 @@
                 <h2 class="text-xl md:text-2xl mb-8 text-blue-100">
                     Fachkräfte finden für das Hauptfach: Mensch
                 </h2>
+
                 <p class="text-lg mb-12 text-blue-50 max-w-2xl mx-auto">
                     Ob Lehrkräfte, Schulbegleiterinnen, Referendarinnen oder Praktikanten – das Stellenportal, ursprünglich entwickelt für evangelische Schulen, bringt jede Einrichtung mit passenden Mitarbeitenden zusammen.
                 </p>
+                <img src="{{ asset('img/Hauptfach_Mensch_logo.png') }}" alt="Hauptfach Mensch Logo" class="mx-auto h-30 mb-6 w-auto">
+
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     @guest
                     <a href="{{ route('public.jobs.index') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
