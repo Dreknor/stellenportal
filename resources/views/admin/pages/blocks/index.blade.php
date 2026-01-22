@@ -88,59 +88,7 @@
             @else
                 <div class="space-y-4" id="blocks-container">
                     @foreach($page->contentBlocks as $block)
-                        <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors" data-block-id="{{ $block->id }}">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-5 h-5 text-gray-400 cursor-move drag-handle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
-                                    </svg>
-                                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs font-semibold">
-                                        {{ $blockTypes[$block->type] ?? $block->type }}
-                                    </span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('Reihenfolge') }}: {{ $block->order }}</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="toggleEdit({{ $block->id }})" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                        </svg>
-                                    </button>
-                                    <form method="POST" action="{{ route('cms.pages.blocks.destroy', [$page, $block]) }}" class="inline" onsubmit="return confirm('{{ __('Wirklich löschen?') }}')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <!-- Block Content Preview -->
-                            <div class="mb-4">
-                                @include('admin.pages.blocks.partials.block-preview', ['block' => $block, 'images' => $images])
-                            </div>
-
-                            <!-- Edit Form (Hidden by default) -->
-                            <div id="edit-{{ $block->id }}" class="hidden mt-4 pt-4 border-t dark:border-gray-600">
-                                <form method="POST" action="{{ route('cms.pages.blocks.update', [$page, $block]) }}">
-                                    @csrf
-                                    @method('PUT')
-
-                                    @include('admin.pages.blocks.partials.block-edit-form', ['block' => $block, 'page' => $page, 'images' => $images])
-
-                                    <div class="flex justify-end gap-2">
-                                        <button type="button" onclick="toggleEdit({{ $block->id }})" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-lg">
-                                            {{ __('Abbrechen') }}
-                                        </button>
-                                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                                            {{ __('Speichern') }}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        @include('admin.pages.blocks.partials.block-item', ['block' => $block, 'blockTypes' => $blockTypes, 'images' => $images, 'page' => $page, 'level' => 0])
                     @endforeach
                 </div>
             @endif
@@ -150,49 +98,183 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
+        // Color picker sync
+        function setColor(blockId, color) {
+            const colorInput = document.getElementById('bg_color_' + blockId);
+            const textInput = document.getElementById('bg_color_text_' + blockId);
+
+            if (color === 'transparent') {
+                colorInput.value = '#ffffff';
+                textInput.value = 'transparent';
+                document.querySelector('input[name="background_color"]').value = 'transparent';
+            } else {
+                colorInput.value = color;
+                textInput.value = color;
+                document.querySelector('input[name="background_color"]').value = color;
+            }
+        }
+
+        // Sync color input with text input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[type="color"]').forEach(colorInput => {
+                const blockId = colorInput.id.replace('bg_color_', '');
+                const textInput = document.getElementById('bg_color_text_' + blockId);
+
+                if (textInput) {
+                    colorInput.addEventListener('input', function() {
+                        textInput.value = this.value;
+                        document.querySelector('input[name="background_color"]').value = this.value;
+                    });
+
+                    textInput.addEventListener('input', function() {
+                        if (this.value !== 'transparent' && this.value.match(/^#[0-9A-Fa-f]{6}$/)) {
+                            colorInput.value = this.value;
+                            document.querySelector('input[name="background_color"]').value = this.value;
+                        } else if (this.value === 'transparent') {
+                            document.querySelector('input[name="background_color"]').value = 'transparent';
+                        }
+                    });
+                }
+            });
+        });
+
         function toggleEdit(blockId) {
             const editForm = document.getElementById('edit-' + blockId);
             editForm.classList.toggle('hidden');
         }
 
+        // Modal for adding child blocks
+        function showAddChildModal(parentId) {
+            const url = '{{ route("cms.pages.blocks.store", $page) }}';
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+            form.innerHTML = `
+                @csrf
+                <input type="hidden" name="parent_id" value="${parentId}">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Block-Typ wählen</label>
+                    <select name="type" required class="w-full px-4 py-2 rounded border">
+                        @foreach($blockTypes as $key => $label)
+                            @if($key !== 'row' && $key !== 'columns')
+                                <option value="{{ $key }}">{{ $label }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="this.closest('.modal-overlay').remove()" class="px-4 py-2 bg-gray-200 rounded">Abbrechen</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Hinzufügen</button>
+                </div>
+            `;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
+                    <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Block zum Container hinzufügen</h3>
+                    ${form.outerHTML}
+                </div>
+            `;
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) modal.remove();
+            });
+
+            document.body.appendChild(modal);
+        }
+
         // Initialize Sortable for drag & drop
         @if($page->contentBlocks->isNotEmpty())
-        const container = document.getElementById('blocks-container');
-        Sortable.create(container, {
-            handle: '.drag-handle',
-            animation: 150,
-            onEnd: function(evt) {
-                // Collect new order
-                const blocks = [];
-                container.querySelectorAll('[data-block-id]').forEach((el, index) => {
-                    blocks.push({
-                        id: el.dataset.blockId,
-                        order: index
-                    });
-                });
-
-                // Send to server
-                fetch('{{ route('cms.pages.blocks.reorder', $page) }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ blocks })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Reload page to show updated order
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating order:', error);
-                    alert('Fehler beim Aktualisieren der Reihenfolge');
-                });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Main container
+            const container = document.getElementById('blocks-container');
+            if (container) {
+                initSortable(container, null);
             }
+
+            // Nested containers
+            document.querySelectorAll('.nested-blocks-container').forEach(nestedContainer => {
+                const parentId = nestedContainer.dataset.parentId;
+                initSortable(nestedContainer, parentId);
+            });
         });
+
+        function initSortable(element, parentId) {
+            Sortable.create(element, {
+                group: 'blocks',
+                handle: '.drag-handle',
+                animation: 150,
+                fallbackOnBody: true,
+                swapThreshold: 0.65,
+                ghostClass: 'bg-blue-100',
+                chosenClass: 'bg-blue-50',
+                dragClass: 'opacity-50',
+                filter: '.no-drag',
+                onEnd: function(evt) {
+                    // Collect new order and parent relationships
+                    const updates = [];
+
+                    // Update all blocks in main container
+                    document.querySelectorAll('#blocks-container > .block-item').forEach((el, index) => {
+                        updates.push({
+                            id: el.dataset.blockId,
+                            order: index,
+                            parent_id: null
+                        });
+                    });
+
+                    // Update all blocks in nested containers
+                    document.querySelectorAll('.nested-blocks-container').forEach(container => {
+                        const parentId = container.dataset.parentId;
+                        container.querySelectorAll('.block-item').forEach((el, index) => {
+                            // Only direct children, not nested-nested blocks
+                            if (el.parentElement === container || el.parentElement.parentElement === container) {
+                                updates.push({
+                                    id: el.dataset.blockId,
+                                    order: index,
+                                    parent_id: parentId
+                                });
+                            }
+                        });
+                    });
+
+                    // Send to server
+                    fetch('{{ route('cms.pages.blocks.reorder', $page) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ blocks: updates })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            showToast('Reihenfolge aktualisiert', 'success');
+                            // Reload to update UI
+                            setTimeout(() => window.location.reload(), 500);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating order:', error);
+                        showToast('Fehler beim Aktualisieren der Reihenfolge', 'error');
+                    });
+                }
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-600' :
+                type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
         @endif
     </script>
     @endpush

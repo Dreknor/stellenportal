@@ -12,9 +12,11 @@ class ContentBlock extends Model
 
     protected $fillable = [
         'page_id',
+        'parent_id',
         'type',
         'content',
         'settings',
+        'background_color',
         'order',
         'is_visible',
     ];
@@ -30,6 +32,30 @@ class ContentBlock extends Model
     public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class);
+    }
+
+    /**
+     * Get the parent block (for nested blocks).
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(ContentBlock::class, 'parent_id');
+    }
+
+    /**
+     * Get child blocks (blocks nested within this block).
+     */
+    public function children()
+    {
+        return $this->hasMany(ContentBlock::class, 'parent_id')->orderBy('order');
+    }
+
+    /**
+     * Scope for top-level blocks (no parent).
+     */
+    public function scopeTopLevel($query)
+    {
+        return $query->whereNull('parent_id');
     }
 
     /**
@@ -61,6 +87,10 @@ class ContentBlock extends Model
             'quote' => 'Zitat',
             'button' => 'Button/CTA',
             'divider' => 'Trennlinie',
+            'row' => 'Reihe/Container',
+            'columns' => 'Spalten-Layout',
+            'card' => 'Card',
+            'card_image' => 'Card mit Header-Bild',
         ];
     }
 }

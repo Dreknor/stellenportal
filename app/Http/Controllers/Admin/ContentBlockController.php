@@ -16,7 +16,7 @@ class ContentBlockController extends Controller
     {
         $page->load([
             'contentBlocks' => function($query) {
-                $query->orderBy('order', 'asc');
+                $query->topLevel()->with('children')->orderBy('order', 'asc');
             },
             'images'
         ]);
@@ -36,10 +36,18 @@ class ContentBlockController extends Controller
             'content' => 'nullable|string',
             'settings' => 'nullable|array',
             'order' => 'nullable|integer',
+            'parent_id' => 'nullable|integer|exists:content_blocks,id',
+            'background_color' => 'nullable|string|max:20',
         ]);
 
         $validated['page_id'] = $page->id;
-        $validated['order'] = $validated['order'] ?? $page->contentBlocks()->count();
+
+        // Determine order based on parent
+        if (isset($validated['parent_id'])) {
+            $validated['order'] = $validated['order'] ?? ContentBlock::where('parent_id', $validated['parent_id'])->count();
+        } else {
+            $validated['order'] = $validated['order'] ?? $page->contentBlocks()->topLevel()->count();
+        }
 
         $block = ContentBlock::create($validated);
 
@@ -58,6 +66,8 @@ class ContentBlockController extends Controller
             'settings' => 'nullable|array',
             'settings.*' => 'nullable',
             'is_visible' => 'nullable|boolean',
+            'background_color' => 'nullable|string|max:20',
+            'parent_id' => 'nullable|integer|exists:content_blocks,id',
         ]);
 
         $block->update($validated);
@@ -88,11 +98,15 @@ class ContentBlockController extends Controller
             'blocks' => 'required|array',
             'blocks.*.id' => 'required|exists:content_blocks,id',
             'blocks.*.order' => 'required|integer',
+            'blocks.*.parent_id' => 'nullable|integer|exists:content_blocks,id',
         ]);
 
         foreach ($validated['blocks'] as $blockData) {
             ContentBlock::where('id', $blockData['id'])
-                ->update(['order' => $blockData['order']]);
+                ->update([
+                    'order' => $blockData['order'],
+                    'parent_id' => $blockData['parent_id'] ?? null,
+                ]);
         }
 
         return response()->json(['success' => true]);

@@ -14,9 +14,17 @@ class PageController extends Controller
     {
         $page = Page::where('slug', $slug)
             ->published()
-            ->with(['images', 'contentBlocks' => function($query) {
-                $query->where('is_visible', true)->orderBy('order', 'asc');
-            }])
+            ->with([
+                'images',
+                'contentBlocks' => function($query) {
+                    $query->where('is_visible', true)
+                          ->whereNull('parent_id')
+                          ->orderBy('order', 'asc');
+                },
+                'contentBlocks.children' => function($query) {
+                    $query->where('is_visible', true)->orderBy('order', 'asc');
+                }
+            ])
             ->firstOrFail();
 
         return view('public.pages.show', compact('page'));

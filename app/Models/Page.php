@@ -24,6 +24,7 @@ class Page extends Model implements Auditable
         'title',
         'slug',
         'content',
+        'settings',
         'meta_title',
         'meta_description',
         'is_published',
@@ -42,6 +43,7 @@ class Page extends Model implements Auditable
         return [
             'is_published' => 'boolean',
             'published_at' => 'datetime',
+            'settings' => 'array',
         ];
     }
 

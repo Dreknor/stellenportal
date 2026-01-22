@@ -195,7 +195,17 @@ class PageController extends Controller
      */
     public function preview(Page $page)
     {
-        $page->load(['images']);
+        $page->load([
+            'images',
+            'contentBlocks' => function($query) {
+                $query->where('is_visible', true)
+                      ->whereNull('parent_id')
+                      ->orderBy('order', 'asc');
+            },
+            'contentBlocks.children' => function($query) {
+                $query->where('is_visible', true)->orderBy('order', 'asc');
+            }
+        ]);
 
         return view('public.pages.show', compact('page'));
     }

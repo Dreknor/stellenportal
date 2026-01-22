@@ -1,3 +1,78 @@
+@php
+    // Block-Einstellungen extrahieren
+    $blockSettings = $block->settings ?? [];
+
+    // Breite
+    $blockMaxWidth = $blockSettings['block_max_width'] ?? '';
+    $widthClasses = [
+        'sm' => 'max-w-3xl',
+        'md' => 'max-w-5xl',
+        'lg' => 'max-w-7xl',
+        'xl' => 'max-w-screen-2xl',
+    ];
+    $widthClass = $widthClasses[$blockMaxWidth] ?? '';
+
+    // Margin
+    $blockMargin = $blockSettings['block_margin'] ?? '';
+    $marginClasses = [
+        'none' => 'my-0',
+        'sm' => 'my-2',
+        'md' => 'my-4',
+        'lg' => 'my-8',
+        'xl' => 'my-12',
+    ];
+    $marginClass = $marginClasses[$blockMargin] ?? 'my-6';
+
+    // Padding
+    $blockPadding = $blockSettings['block_padding'] ?? '';
+    $paddingClasses = [
+        'none' => 'p-0',
+        'sm' => 'p-2',
+        'md' => 'p-4',
+        'lg' => 'p-8',
+        'xl' => 'p-12',
+    ];
+    $paddingClass = $paddingClasses[$blockPadding] ?? '';
+
+    // Border Radius
+    $blockRounded = $blockSettings['block_rounded'] ?? '';
+    $roundedClasses = [
+        'none' => 'rounded-none',
+        'sm' => 'rounded-sm',
+        'md' => 'rounded-md',
+        'lg' => 'rounded-lg',
+        'full' => 'rounded-full',
+    ];
+    $roundedClass = $roundedClasses[$blockRounded] ?? '';
+
+    // Hintergrundfarbe
+    $blockBgColor = $blockSettings['block_background_color'] ?? 'transparent';
+    $bgStyle = '';
+    if ($blockBgColor && $blockBgColor !== 'transparent') {
+        $bgStyle = 'background-color: ' . e($blockBgColor) . ';';
+    }
+
+    // Custom CSS Class
+    $customClass = $blockSettings['block_css_class'] ?? '';
+
+    // Custom CSS
+    $customCss = $blockSettings['block_custom_css'] ?? '';
+    $blockIdClass = 'content-block-' . $block->id;
+
+    // Alle Klassen zusammenführen
+    $wrapperClasses = trim("$widthClass $marginClass $paddingClass $roundedClass $customClass $blockIdClass");
+@endphp
+
+@if(!empty($customCss))
+    <style>
+        .{{ $blockIdClass }} {
+            {!! $customCss !!}
+        }
+    </style>
+@endif
+
+<div class="{{ $wrapperClasses }}" @if($bgStyle) style="{{ $bgStyle }}" @endif>
+
 {{-- Text Block --}}
 @if($block->type === 'text' && $block->content)
     <div class="prose dark:prose-invert lg:prose-lg max-w-none mb-6">
@@ -120,3 +195,235 @@
     <hr class="{{ $styleClass }} {{ $spacingClass }} border-t-2 border-gray-300 dark:border-gray-600">
 @endif
 
+{{-- Row/Container Block --}}
+@if($block->type === 'row')
+    @php
+        $width = $block->settings['width'] ?? 'container';
+        $padding = $block->settings['padding'] ?? 'medium';
+        $bgColor = $block->background_color ?? 'transparent';
+
+        $widthClasses = [
+            'full' => 'w-full',
+            'container' => 'container mx-auto',
+            'narrow' => 'max-w-4xl mx-auto',
+        ];
+
+        $paddingClasses = [
+            'none' => '',
+            'small' => 'py-4 px-4',
+            'medium' => 'py-8 px-6',
+            'large' => 'py-12 px-8',
+        ];
+
+        $widthClass = $widthClasses[$width] ?? $widthClasses['container'];
+        $paddingClass = $paddingClasses[$padding] ?? $paddingClasses['medium'];
+
+        // Handle background color
+        $bgStyle = '';
+        if ($bgColor !== 'transparent') {
+            $bgStyle = 'background-color: ' . $bgColor . ';';
+        }
+    @endphp
+    <div class="{{ $paddingClass }} my-6" style="{{ $bgStyle }}">
+        <div class="{{ $widthClass }}">
+            @if(isset($block->children) && $block->children->count() > 0)
+                {{-- Render nested blocks --}}
+                @foreach($block->children->where('is_visible', true) as $childBlock)
+                    @include('public.pages.partials.content-block', ['block' => $childBlock, 'page' => $page])
+                @endforeach
+            @elseif($block->content)
+                {{-- Fallback: render content if no children --}}
+                {!! $block->content !!}
+            @endif
+        </div>
+    </div>
+@endif
+
+{{-- Columns Block --}}
+@if($block->type === 'columns')
+    @php
+        $columns = $block->settings['columns'] ?? '2';
+        $gap = $block->settings['gap'] ?? 'medium';
+        $equalHeight = $block->settings['equal_height'] ?? false;
+
+        $columnClasses = [
+            '1' => 'md:grid-cols-1',
+            '2' => 'md:grid-cols-2',
+            '3' => 'md:grid-cols-3',
+            '4' => 'md:grid-cols-4',
+        ];
+
+        $gapClasses = [
+            'small' => 'gap-4',
+            'medium' => 'gap-6',
+            'large' => 'gap-8',
+        ];
+
+        $columnClass = $columnClasses[$columns] ?? $columnClasses['2'];
+        $gapClass = $gapClasses[$gap] ?? $gapClasses['medium'];
+        $heightClass = $equalHeight ? 'items-stretch' : '';
+    @endphp
+    <div class="grid grid-cols-1 {{ $columnClass }} {{ $gapClass }} {{ $heightClass }} my-8">
+        @if(isset($block->children) && $block->children->count() > 0)
+            {{-- Render nested blocks as columns --}}
+            @foreach($block->children->where('is_visible', true) as $childBlock)
+                <div class="@if($equalHeight) flex flex-col @endif">
+                    @include('public.pages.partials.content-block', ['block' => $childBlock, 'page' => $page])
+                </div>
+            @endforeach
+        @elseif($block->content)
+            {{-- Fallback: Parse content into column divs for legacy support --}}
+            @php
+                preg_match_all('/<div[^>]*>(.*?)<\/div>/s', $block->content, $matches);
+                $columnContents = $matches[0] ?? [];
+            @endphp
+            @if(count($columnContents) > 0)
+                @foreach($columnContents as $columnContent)
+                    <div class="@if($equalHeight) flex flex-col @endif">
+                        {!! $columnContent !!}
+                    </div>
+                @endforeach
+            @else
+                {{-- Fallback if no proper divs found --}}
+                <div class="col-span-full">
+                    {!! $block->content !!}
+                </div>
+            @endif
+        @endif
+    </div>
+@endif
+
+{{-- Card Block --}}
+@if($block->type === 'card')
+    @php
+        $title = $block->settings['title'] ?? '';
+        $icon = $block->settings['icon'] ?? '';
+        $buttonText = $block->settings['button_text'] ?? '';
+        $buttonUrl = $block->settings['button_url'] ?? '';
+        $style = $block->settings['style'] ?? 'default';
+
+        $styleClasses = [
+            'default' => 'bg-white dark:bg-gray-800 rounded-lg p-6',
+            'bordered' => 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg p-6',
+            'shadow' => 'bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg',
+            'elevated' => 'bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl transform hover:scale-105 transition-transform',
+        ];
+
+        $cardClass = $styleClasses[$style] ?? $styleClasses['default'];
+    @endphp
+    <div class="{{ $cardClass }} my-6">
+        @if($icon)
+            <div class="mb-4">
+                <i class="fas {{ $icon }} text-4xl text-blue-600 dark:text-blue-400"></i>
+            </div>
+        @endif
+
+        @if($title)
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
+        @endif
+
+        @if($block->content)
+            <div class="prose dark:prose-invert max-w-none mb-4 text-gray-600 dark:text-gray-300">
+                {!! nl2br(e($block->content)) !!}
+            </div>
+        @endif
+
+        @if($buttonText && $buttonUrl)
+            <a href="{{ $buttonUrl }}"
+               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105">
+                {{ $buttonText }}
+            </a>
+        @endif
+    </div>
+@endif
+
+{{-- Card with Image Block --}}
+@if($block->type === 'card_image' && isset($block->settings['image_id']) && isset($page))
+    @php
+        $image = $page->images->firstWhere('id', $block->settings['image_id']);
+        $title = $block->settings['title'] ?? '';
+        $buttonText = $block->settings['button_text'] ?? '';
+        $buttonUrl = $block->settings['button_url'] ?? '';
+        $imagePosition = $block->settings['image_position'] ?? 'top';
+    @endphp
+
+    @if($image)
+        @if($imagePosition === 'top')
+            {{-- Image on top --}}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6 max-w-2xl mx-auto">
+                <img src="{{ $image->url }}"
+                     alt="{{ $image->alt_text }}"
+                     class="w-full h-64 object-cover">
+                <div class="p-6">
+                    @if($title)
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
+                    @endif
+                    @if($block->content)
+                        <div class="prose dark:prose-invert max-w-none mb-4 text-gray-600 dark:text-gray-300">
+                            {!! nl2br(e($block->content)) !!}
+                        </div>
+                    @endif
+                    @if($buttonText && $buttonUrl)
+                        <a href="{{ $buttonUrl }}"
+                           class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                            {{ $buttonText }}
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @elseif($imagePosition === 'left')
+            {{-- Image on left --}}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+                    <img src="{{ $image->url }}"
+                         alt="{{ $image->alt_text }}"
+                         class="w-full h-full object-cover min-h-[300px]">
+                    <div class="p-6 flex flex-col justify-center">
+                        @if($title)
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
+                        @endif
+                        @if($block->content)
+                            <div class="prose dark:prose-invert max-w-none mb-4 text-gray-600 dark:text-gray-300">
+                                {!! nl2br(e($block->content)) !!}
+                            </div>
+                        @endif
+                        @if($buttonText && $buttonUrl)
+                            <a href="{{ $buttonUrl }}"
+                               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
+                                {{ $buttonText }}
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @else
+            {{-- Image on right --}}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+                    <div class="p-6 flex flex-col justify-center">
+                        @if($title)
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
+                        @endif
+                        @if($block->content)
+                            <div class="prose dark:prose-invert max-w-none mb-4 text-gray-600 dark:text-gray-300">
+                                {!! nl2br(e($block->content)) !!}
+                            </div>
+                        @endif
+                        @if($buttonText && $buttonUrl)
+                            <a href="{{ $buttonUrl }}"
+                               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
+                                {{ $buttonText }}
+                            </a>
+                        @endif
+                    </div>
+                    <img src="{{ $image->url }}"
+                         alt="{{ $image->alt_text }}"
+                         class="w-full h-full object-cover min-h-[300px]">
+                </div>
+            </div>
+        @endif
+    @endif
+@endif
+
+</div>
+{{-- End Block Wrapper --}}

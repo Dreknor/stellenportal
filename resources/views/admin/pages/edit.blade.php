@@ -182,6 +182,85 @@
                 </div>
             </div>
 
+            <!-- Seiten-Einstellungen (Layout & Design) -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-y-2 border-gray-200 dark:border-gray-600">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                    </svg>
+                    {{ __('Seiten-Einstellungen') }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ __('Layout, Design und individuelle Anpassungen') }}</p>
+            </div>
+
+            <div class="p-6 space-y-6">
+                @php
+                    $settings = $page->settings ?? [];
+                    $maxWidth = $settings['max_width'] ?? 'container';
+                    $backgroundColor = $settings['background_color'] ?? '#ffffff';
+                    $customCss = $settings['custom_css'] ?? '';
+                @endphp
+
+                <!-- Max Width -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <label for="max_width" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('Maximale Seitenbreite') }}
+                    </label>
+                    <select name="settings[max_width]" id="max_width"
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                        <option value="container" {{ $maxWidth === 'container' ? 'selected' : '' }}>Standard Container (max-w-7xl, ~1280px)</option>
+                        <option value="container-sm" {{ $maxWidth === 'container-sm' ? 'selected' : '' }}>Klein (max-w-3xl, ~768px)</option>
+                        <option value="container-md" {{ $maxWidth === 'container-md' ? 'selected' : '' }}>Mittel (max-w-5xl, ~1024px)</option>
+                        <option value="container-lg" {{ $maxWidth === 'container-lg' ? 'selected' : '' }}>Groß (max-w-7xl, ~1280px)</option>
+                        <option value="container-xl" {{ $maxWidth === 'container-xl' ? 'selected' : '' }}>Extra Groß (max-w-screen-2xl, ~1536px)</option>
+                        <option value="full" {{ $maxWidth === 'full' ? 'selected' : '' }}>Volle Breite (100%)</option>
+                    </select>
+                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Definiert die maximale Breite des Seiteninhalts') }}
+                    </p>
+                </div>
+
+                <!-- Background Color -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <label for="background_color" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('Hintergrundfarbe') }}
+                    </label>
+                    <div class="flex gap-3 items-start">
+                        <div class="flex-1">
+                            <input type="color" name="settings[background_color]" id="background_color"
+                                   value="{{ $backgroundColor }}"
+                                   class="w-full h-12 rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-pointer">
+                        </div>
+                        <div class="flex-1">
+                            <input type="text" id="background_color_text"
+                                   value="{{ $backgroundColor }}"
+                                   placeholder="#ffffff"
+                                   class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all font-mono">
+                        </div>
+                        <button type="button" onclick="setPageBackgroundColor('transparent')"
+                                class="px-4 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-lg transition-all">
+                            {{ __('Transparent') }}
+                        </button>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Die Hintergrundfarbe der gesamten Seite') }}
+                    </p>
+                </div>
+
+                <!-- Custom CSS -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <label for="custom_css" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        {{ __('Individuelles CSS') }}
+                    </label>
+                    <textarea name="settings[custom_css]" id="custom_css" rows="10"
+                              class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all font-mono text-sm"
+                              placeholder="/* Ihr individuelles CSS hier */&#10;.my-custom-class {&#10;    color: #333;&#10;    padding: 1rem;&#10;}">{{ $customCss }}</textarea>
+                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Fügen Sie individuelles CSS hinzu, das nur auf dieser Seite angewendet wird') }}
+                    </p>
+                </div>
+            </div>
+
             <!-- Veröffentlichung -->
             <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-y-2 border-gray-200 dark:border-gray-600">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
@@ -268,6 +347,7 @@
     <!-- TinyMCE Local -->
     <script src="{{ asset('js/tinymce/js/tinymce/tinymce.min.js') }}"></script>
     <script>
+        // TinyMCE
         tinymce.init({
             selector: '#content',
             license_key: 'gpl',
@@ -285,6 +365,37 @@
             skin: document.documentElement.classList.contains('dark') ? 'oxide-dark' : 'oxide',
             content_css: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
             promotion: false
+        });
+
+        // Color Picker Sync
+        function setPageBackgroundColor(color) {
+            const colorInput = document.getElementById('background_color');
+            const textInput = document.getElementById('background_color_text');
+
+            if (color === 'transparent') {
+                colorInput.value = '#ffffff';
+                textInput.value = 'transparent';
+            } else {
+                colorInput.value = color;
+                textInput.value = color;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorInput = document.getElementById('background_color');
+            const textInput = document.getElementById('background_color_text');
+
+            if (colorInput && textInput) {
+                colorInput.addEventListener('input', function() {
+                    textInput.value = this.value;
+                });
+
+                textInput.addEventListener('input', function() {
+                    if (this.value !== 'transparent' && this.value.match(/^#[0-9A-Fa-f]{6}$/)) {
+                        colorInput.value = this.value;
+                    }
+                });
+            }
         });
     </script>
     @endpush

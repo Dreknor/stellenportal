@@ -29,6 +29,10 @@ class StorePageRequest extends FormRequest
             'meta_description' => ['nullable', 'string', 'max:500'],
             'is_published' => ['boolean'],
             'published_at' => ['nullable', 'date'],
+            'settings' => ['nullable', 'array'],
+            'settings.max_width' => ['nullable', 'string', 'in:container,container-sm,container-md,container-lg,container-xl,full'],
+            'settings.background_color' => ['nullable', 'string', 'max:50'],
+            'settings.custom_css' => ['nullable', 'string', 'max:10000'],
         ];
     }
 
