@@ -23,7 +23,7 @@
     ];
     $marginClass = $marginClasses[$blockMargin] ?? 'my-6';
 
-    // Padding
+    // Padding (nur für Wrapper, nicht für Card-Blöcke)
     $blockPadding = $blockSettings['block_padding'] ?? '';
     $paddingClasses = [
         'none' => 'p-0',
@@ -34,7 +34,7 @@
     ];
     $paddingClass = $paddingClasses[$blockPadding] ?? '';
 
-    // Border Radius
+    // Border Radius (nur für Wrapper, nicht für Card-Blöcke)
     $blockRounded = $blockSettings['block_rounded'] ?? '';
     $roundedClasses = [
         'none' => 'rounded-none',
@@ -47,9 +47,21 @@
 
     // Hintergrundfarbe
     $blockBgColor = $blockSettings['block_background_color'] ?? 'transparent';
+
+    // Für Card-Blöcke: Hintergrundfarbe wird auf die Card angewendet, nicht auf den Wrapper
+    $isCardBlock = in_array($block->type, ['card', 'card_image']);
+
     $bgStyle = '';
+    $wrapperBgStyle = '';
+
     if ($blockBgColor && $blockBgColor !== 'transparent') {
-        $bgStyle = 'background-color: ' . e($blockBgColor) . ';';
+        if ($isCardBlock) {
+            // Bei Card-Blöcken: Farbe für die Card speichern, nicht für Wrapper
+            $bgStyle = 'background-color: ' . e($blockBgColor) . ';';
+        } else {
+            // Bei anderen Blöcken: Normal auf Wrapper anwenden
+            $wrapperBgStyle = 'background-color: ' . e($blockBgColor) . ';';
+        }
     }
 
     // Custom CSS Class
@@ -60,7 +72,12 @@
     $blockIdClass = 'content-block-' . $block->id;
 
     // Alle Klassen zusammenführen
-    $wrapperClasses = trim("$widthClass $marginClass $paddingClass $roundedClass $customClass $blockIdClass");
+    // Bei Card-Blöcken: Kein Padding/Rounded auf Wrapper
+    if ($isCardBlock) {
+        $wrapperClasses = trim("$widthClass $marginClass $customClass $blockIdClass");
+    } else {
+        $wrapperClasses = trim("$widthClass $marginClass $paddingClass $roundedClass $customClass $blockIdClass");
+    }
 @endphp
 
 @if(!empty($customCss))
@@ -71,7 +88,7 @@
     </style>
 @endif
 
-<div class="{{ $wrapperClasses }}" @if($bgStyle) style="{{ $bgStyle }}" @endif>
+<div class="{{ $wrapperClasses }}" @if($wrapperBgStyle) style="{{ $wrapperBgStyle }}" @endif>
 
 {{-- Text Block --}}
 @if($block->type === 'text' && $block->content)
@@ -310,8 +327,17 @@
         ];
 
         $cardClass = $styleClasses[$style] ?? $styleClasses['default'];
+
+        // Wende Block-Padding und Rounded auf die Card an (wenn gesetzt)
+        if (!empty($paddingClass)) {
+            $cardClass .= ' ' . $paddingClass;
+        }
+        if (!empty($roundedClass)) {
+            // Ersetze das Standard rounded-lg mit der benutzerdefinierten Rundung
+            $cardClass = preg_replace('/rounded-\w+/', $roundedClass, $cardClass);
+        }
     @endphp
-    <div class="{{ $cardClass }} my-6">
+    <div class="{{ $cardClass }} my-6" @if($bgStyle) style="{{ $bgStyle }}" @endif>
         @if($icon)
             <div class="mb-4">
                 <i class="fas {{ $icon }} text-4xl text-blue-600 dark:text-blue-400"></i>
@@ -345,16 +371,31 @@
         $buttonText = $block->settings['button_text'] ?? '';
         $buttonUrl = $block->settings['button_url'] ?? '';
         $imagePosition = $block->settings['image_position'] ?? 'top';
+
+        // Standard Card-Klassen
+        $cardImageClass = 'bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6';
+
+        // Wende Block-Rounded auf die Card an (wenn gesetzt)
+        if (!empty($roundedClass)) {
+            $cardImageClass = preg_replace('/rounded-\w+/', $roundedClass, $cardImageClass);
+        }
+
+        // Standard Padding für Card-Body
+        $cardBodyClass = 'p-6';
+        // Wende Block-Padding auf Card-Body an (wenn gesetzt)
+        if (!empty($paddingClass)) {
+            $cardBodyClass = $paddingClass;
+        }
     @endphp
 
     @if($image)
         @if($imagePosition === 'top')
             {{-- Image on top --}}
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6 max-w-2xl mx-auto">
+            <div class="{{ $cardImageClass }} max-w-2xl mx-auto" @if($bgStyle) style="{{ $bgStyle }}" @endif>
                 <img src="{{ $image->url }}"
                      alt="{{ $image->alt_text }}"
                      class="w-full h-64 object-cover">
-                <div class="p-6">
+                <div class="{{ $cardBodyClass }}">
                     @if($title)
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
                     @endif
@@ -373,12 +414,12 @@
             </div>
         @elseif($imagePosition === 'left')
             {{-- Image on left --}}
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6">
+            <div class="{{ $cardImageClass }}" @if($bgStyle) style="{{ $bgStyle }}" @endif>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
                     <img src="{{ $image->url }}"
                          alt="{{ $image->alt_text }}"
                          class="w-full h-full object-cover min-h-[300px]">
-                    <div class="p-6 flex flex-col justify-center">
+                    <div class="{{ $cardBodyClass }} flex flex-col justify-center">
                         @if($title)
                             <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
                         @endif
@@ -398,9 +439,9 @@
             </div>
         @else
             {{-- Image on right --}}
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6">
+            <div class="{{ $cardImageClass }}" @if($bgStyle) style="{{ $bgStyle }}" @endif>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-                    <div class="p-6 flex flex-col justify-center">
+                    <div class="{{ $cardBodyClass }} flex flex-col justify-center">
                         @if($title)
                             <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
                         @endif
