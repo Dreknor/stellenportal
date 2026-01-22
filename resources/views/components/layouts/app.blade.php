@@ -47,6 +47,9 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 
+    <!-- FontAwesome (local) -->
+    <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/fontawesome-basic.css') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 

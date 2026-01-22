@@ -156,14 +156,17 @@
 
 {{-- Card Block Preview --}}
 @if($block->type === 'card')
-    <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 shadow-md max-w-sm">
+    <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-lg shadow-md max-w-sm p-4">
         @if(isset($block->settings['icon']))
-            <div class="mb-3">
-                <i class="fas {{ $block->settings['icon'] }} text-3xl text-blue-600"></i>
+            {{-- Icon innerhalb der Card --}}
+            <div class="flex justify-center mb-3">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-800">
+                    <i class="fas {{ $block->settings['icon'] }} text-2xl text-white"></i>
+                </div>
             </div>
         @endif
         @if(isset($block->settings['title']))
-            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{{ $block->settings['title'] }}</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 text-center">{{ $block->settings['title'] }}</h3>
         @endif
         @if($block->content)
             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ Str::limit($block->content, 100) }}</p>

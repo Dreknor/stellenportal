@@ -71,10 +71,18 @@
     $customCss = $blockSettings['block_custom_css'] ?? '';
     $blockIdClass = 'content-block-' . $block->id;
 
+    // Extra Margin-Top für Cards mit Icon (damit das Icon Platz hat)
+    $iconSpacing = '';
+    $relativePosition = '';
+    if ($isCardBlock && !empty($block->settings['icon'] ?? '')) {
+        $iconSpacing = 'mt-16'; // Extra Platz für das herausragende Icon
+        $relativePosition = 'relative'; // Damit absolute Positionierung des Icons funktioniert
+    }
+
     // Alle Klassen zusammenführen
     // Bei Card-Blöcken: Kein Padding/Rounded auf Wrapper
     if ($isCardBlock) {
-        $wrapperClasses = trim("$widthClass $marginClass $customClass $blockIdClass");
+        $wrapperClasses = trim("$widthClass $marginClass $iconSpacing $relativePosition $customClass $blockIdClass");
     } else {
         $wrapperClasses = trim("$widthClass $marginClass $paddingClass $roundedClass $customClass $blockIdClass");
     }
@@ -317,7 +325,30 @@
         $icon = $block->settings['icon'] ?? '';
         $buttonText = $block->settings['button_text'] ?? '';
         $buttonUrl = $block->settings['button_url'] ?? '';
+        $buttonLinkType = $block->settings['button_link_type'] ?? 'url';
+        $buttonPageId = $block->settings['button_page_id'] ?? null;
         $style = $block->settings['style'] ?? 'default';
+
+        // Determine final button URL and visibility
+        $showButton = false;
+        $finalButtonUrl = '';
+
+        if ($buttonText) {
+            if ($buttonLinkType === 'page' && $buttonPageId) {
+                // CMS Page Link
+                $targetPage = \App\Models\Page::find($buttonPageId);
+                if ($targetPage) {
+                    $finalButtonUrl = route('pages.show', $targetPage->slug);
+                    // Show button only if target page is published (in public view)
+                    // In preview mode, always show
+                    $showButton = $targetPage->is_published || request()->is('admin/*');
+                }
+            } elseif ($buttonLinkType === 'url' && $buttonUrl) {
+                // External URL
+                $finalButtonUrl = $buttonUrl;
+                $showButton = true;
+            }
+        }
 
         $styleClasses = [
             'default' => 'bg-white dark:bg-gray-800 rounded-lg p-6',
@@ -336,17 +367,25 @@
             // Ersetze das Standard rounded-lg mit der benutzerdefinierten Rundung
             $cardClass = preg_replace('/rounded-\w+/', $roundedClass, $cardClass);
         }
-    @endphp
-    <div class="{{ $cardClass }} my-6" @if($bgStyle) style="{{ $bgStyle }}" @endif>
-        @if($icon)
-            <div class="mb-4">
-                <i class="fas {{ $icon }} text-4xl text-blue-600 dark:text-blue-400"></i>
-            </div>
-        @endif
 
-        @if($title)
-            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ $title }}</h3>
-        @endif
+        // Icon wird innerhalb der Card platziert, kein spezielles Padding nötig
+    @endphp
+
+    {{-- Card mit Icon --}}
+    <div class="my-6">
+        <div class="{{ $cardClass }}" @if($bgStyle) style="{{ $bgStyle }}" @endif>
+            {{-- Icon innerhalb der Card, über dem Titel --}}
+            @if($icon)
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 flex items-center justify-center shadow-xl border-4 border-white dark:border-gray-800">
+                        <i class="fas {{ $icon }} text-3xl text-white"></i>
+                    </div>
+                </div>
+            @endif
+
+            @if($title)
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 text-center">{{ $title }}</h3>
+            @endif
 
         @if($block->content)
             <div class="prose dark:prose-invert max-w-none mb-4 text-gray-600 dark:text-gray-300">
@@ -354,12 +393,13 @@
             </div>
         @endif
 
-        @if($buttonText && $buttonUrl)
-            <a href="{{ $buttonUrl }}"
+        @if($showButton && $finalButtonUrl)
+            <a href="{{ $finalButtonUrl }}"
                class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105">
                 {{ $buttonText }}
             </a>
         @endif
+        </div>
     </div>
 @endif
 
@@ -370,7 +410,30 @@
         $title = $block->settings['title'] ?? '';
         $buttonText = $block->settings['button_text'] ?? '';
         $buttonUrl = $block->settings['button_url'] ?? '';
+        $buttonLinkType = $block->settings['button_link_type'] ?? 'url';
+        $buttonPageId = $block->settings['button_page_id'] ?? null;
         $imagePosition = $block->settings['image_position'] ?? 'top';
+
+        // Determine final button URL and visibility
+        $showButton = false;
+        $finalButtonUrl = '';
+
+        if ($buttonText) {
+            if ($buttonLinkType === 'page' && $buttonPageId) {
+                // CMS Page Link
+                $targetPage = \App\Models\Page::find($buttonPageId);
+                if ($targetPage) {
+                    $finalButtonUrl = route('pages.show', $targetPage->slug);
+                    // Show button only if target page is published (in public view)
+                    // In preview mode, always show
+                    $showButton = $targetPage->is_published || request()->is('admin/*');
+                }
+            } elseif ($buttonLinkType === 'url' && $buttonUrl) {
+                // External URL
+                $finalButtonUrl = $buttonUrl;
+                $showButton = true;
+            }
+        }
 
         // Standard Card-Klassen
         $cardImageClass = 'bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden my-6';
@@ -404,8 +467,8 @@
                             {!! nl2br(e($block->content)) !!}
                         </div>
                     @endif
-                    @if($buttonText && $buttonUrl)
-                        <a href="{{ $buttonUrl }}"
+                    @if($showButton && $finalButtonUrl)
+                        <a href="{{ $finalButtonUrl }}"
                            class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                             {{ $buttonText }}
                         </a>
@@ -428,8 +491,8 @@
                                 {!! nl2br(e($block->content)) !!}
                             </div>
                         @endif
-                        @if($buttonText && $buttonUrl)
-                            <a href="{{ $buttonUrl }}"
+                        @if($showButton && $finalButtonUrl)
+                            <a href="{{ $finalButtonUrl }}"
                                class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
                                 {{ $buttonText }}
                             </a>
@@ -450,8 +513,8 @@
                                 {!! nl2br(e($block->content)) !!}
                             </div>
                         @endif
-                        @if($buttonText && $buttonUrl)
-                            <a href="{{ $buttonUrl }}"
+                        @if($showButton && $finalButtonUrl)
+                            <a href="{{ $finalButtonUrl }}"
                                class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
                                 {{ $buttonText }}
                             </a>

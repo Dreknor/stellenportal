@@ -277,7 +277,17 @@
             {{ __('Icon-Klasse (optional)') }}
         </label>
         <input type="text" name="settings[icon]" value="{{ $block->settings['icon'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="z.B. fa-check-circle">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('FontAwesome Icon-Klasse') }}</p>
+        <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+            <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="text-xs text-blue-800 dark:text-blue-200">
+                    <p class="font-semibold">{{ __('Logo-Design') }}</p>
+                    <p>{{ __('Das Icon wird als rundes Logo oben in der Card zentriert angezeigt. Geben Sie die vollständige Icon-Klasse ein (z.B. fa-check-circle).') }}</p>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -285,12 +295,70 @@
         </label>
         <input type="text" name="settings[button_text]" value="{{ $block->settings['button_text'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="z.B. Mehr erfahren">
     </div>
+
+    {{-- Button Link Type Selection --}}
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {{ __('Button-URL (optional)') }}
+            {{ __('Button-Ziel Typ') }}
         </label>
-        <input type="url" name="settings[button_url]" value="{{ $block->settings['button_url'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="https://...">
+        <select name="settings[button_link_type]" id="button_link_type_card_{{ $block->id }}"
+                class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                onchange="toggleCardButtonLinkType({{ $block->id }})">
+            <option value="url" {{ ($block->settings['button_link_type'] ?? 'url') === 'url' ? 'selected' : '' }}>Externe URL</option>
+            <option value="page" {{ ($block->settings['button_link_type'] ?? 'url') === 'page' ? 'selected' : '' }}>CMS-Seite</option>
+        </select>
     </div>
+
+    {{-- External URL Field --}}
+    <div class="mb-4" id="button_url_field_card_{{ $block->id }}" style="display: {{ ($block->settings['button_link_type'] ?? 'url') === 'url' ? 'block' : 'none' }};">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ __('Button-URL') }}
+        </label>
+        <input type="url" name="settings[button_url]" value="{{ $block->settings['button_url'] ?? '' }}"
+               class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+               placeholder="https://...">
+    </div>
+
+    {{-- CMS Page Selection --}}
+    <div class="mb-4" id="button_page_field_card_{{ $block->id }}" style="display: {{ ($block->settings['button_link_type'] ?? 'url') === 'page' ? 'block' : 'none' }};">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ __('CMS-Seite auswählen') }}
+        </label>
+        <select name="settings[button_page_id]" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+            <option value="">{{ __('-- Seite wählen --') }}</option>
+            @php
+                $allPages = \App\Models\Page::orderBy('title')->get();
+            @endphp
+            @foreach($allPages as $pageOption)
+                <option value="{{ $pageOption->id }}"
+                        {{ ($block->settings['button_page_id'] ?? '') == $pageOption->id ? 'selected' : '' }}>
+                    {{ $pageOption->title }}
+                    @if(!$pageOption->is_published)
+                        ({{ __('Entwurf') }})
+                    @endif
+                </option>
+            @endforeach
+        </select>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {{ __('Der Button wird in der öffentlichen Ansicht nur angezeigt, wenn die Zielseite veröffentlicht ist.') }}
+        </p>
+    </div>
+
+    <script>
+    function toggleCardButtonLinkType(blockId) {
+        const linkType = document.getElementById('button_link_type_card_' + blockId).value;
+        const urlField = document.getElementById('button_url_field_card_' + blockId);
+        const pageField = document.getElementById('button_page_field_card_' + blockId);
+
+        if (linkType === 'url') {
+            urlField.style.display = 'block';
+            pageField.style.display = 'none';
+        } else {
+            urlField.style.display = 'none';
+            pageField.style.display = 'block';
+        }
+    }
+    </script>
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {{ __('Card-Stil') }}
@@ -348,12 +416,70 @@
         </label>
         <input type="text" name="settings[button_text]" value="{{ $block->settings['button_text'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="z.B. Mehr erfahren">
     </div>
+
+    {{-- Button Link Type Selection --}}
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {{ __('Button-URL (optional)') }}
+            {{ __('Button-Ziel Typ') }}
         </label>
-        <input type="url" name="settings[button_url]" value="{{ $block->settings['button_url'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="https://...">
+        <select name="settings[button_link_type]" id="button_link_type_cardimg_{{ $block->id }}"
+                class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                onchange="toggleCardImgButtonLinkType({{ $block->id }})">
+            <option value="url" {{ ($block->settings['button_link_type'] ?? 'url') === 'url' ? 'selected' : '' }}>Externe URL</option>
+            <option value="page" {{ ($block->settings['button_link_type'] ?? 'url') === 'page' ? 'selected' : '' }}>CMS-Seite</option>
+        </select>
     </div>
+
+    {{-- External URL Field --}}
+    <div class="mb-4" id="button_url_field_cardimg_{{ $block->id }}" style="display: {{ ($block->settings['button_link_type'] ?? 'url') === 'url' ? 'block' : 'none' }};">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ __('Button-URL') }}
+        </label>
+        <input type="url" name="settings[button_url]" value="{{ $block->settings['button_url'] ?? '' }}"
+               class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+               placeholder="https://...">
+    </div>
+
+    {{-- CMS Page Selection --}}
+    <div class="mb-4" id="button_page_field_cardimg_{{ $block->id }}" style="display: {{ ($block->settings['button_link_type'] ?? 'url') === 'page' ? 'block' : 'none' }};">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ __('CMS-Seite auswählen') }}
+        </label>
+        <select name="settings[button_page_id]" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+            <option value="">{{ __('-- Seite wählen --') }}</option>
+            @php
+                $allPages = \App\Models\Page::orderBy('title')->get();
+            @endphp
+            @foreach($allPages as $pageOption)
+                <option value="{{ $pageOption->id }}"
+                        {{ ($block->settings['button_page_id'] ?? '') == $pageOption->id ? 'selected' : '' }}>
+                    {{ $pageOption->title }}
+                    @if(!$pageOption->is_published)
+                        ({{ __('Entwurf') }})
+                    @endif
+                </option>
+            @endforeach
+        </select>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {{ __('Der Button wird in der öffentlichen Ansicht nur angezeigt, wenn die Zielseite veröffentlicht ist.') }}
+        </p>
+    </div>
+
+    <script>
+    function toggleCardImgButtonLinkType(blockId) {
+        const linkType = document.getElementById('button_link_type_cardimg_' + blockId).value;
+        const urlField = document.getElementById('button_url_field_cardimg_' + blockId);
+        const pageField = document.getElementById('button_page_field_cardimg_' + blockId);
+
+        if (linkType === 'url') {
+            urlField.style.display = 'block';
+            pageField.style.display = 'none';
+        } else {
+            urlField.style.display = 'none';
+            pageField.style.display = 'block';
+        }
+    }
+    </script>
     <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {{ __('Bild-Position') }}

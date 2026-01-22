@@ -1,0 +1,209 @@
+/*!
+ * Font Awesome Free 6.5.1 - Local Version
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../webfonts/fa-regular-400.woff2") format("woff2");
+}
+.fa-regular,
+.far {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("../webfonts/fa-solid-900.woff2") format("woff2");
+}
+.fa-solid,
+.fas,
+.fa {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+}
+.fa {
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  font-size: inherit;
+  text-rendering: optimizeLegibility;
+}
+
+/* Core Icons */
+.fa-check:before { content: "\f00c"; }
+.fa-check-circle:before { content: "\f058"; }
+.fa-times:before { content: "\f00d"; }
+.fa-times-circle:before { content: "\f057"; }
+.fa-info:before { content: "\f129"; }
+.fa-info-circle:before { content: "\f05a"; }
+.fa-question:before { content: "\f128"; }
+.fa-question-circle:before { content: "\f059"; }
+.fa-exclamation:before { content: "\f12a"; }
+.fa-exclamation-circle:before { content: "\f06a"; }
+.fa-exclamation-triangle:before { content: "\f071"; }
+
+/* Business & Office */
+.fa-briefcase:before { content: "\f0b1"; }
+.fa-file:before { content: "\f15b"; }
+.fa-file-alt:before { content: "\f15c"; }
+.fa-folder:before { content: "\f07b"; }
+.fa-folder-open:before { content: "\f07c"; }
+.fa-clipboard:before { content: "\f328"; }
+.fa-chart-line:before { content: "\f201"; }
+.fa-chart-bar:before { content: "\f080"; }
+.fa-chart-pie:before { content: "\f200"; }
+
+/* Communication */
+.fa-envelope:before { content: "\f0e0"; }
+.fa-comment:before { content: "\f075"; }
+.fa-comments:before { content: "\f086"; }
+.fa-phone:before { content: "\f095"; }
+.fa-mobile:before { content: "\f10b"; }
+.fa-mobile-alt:before { content: "\f3cd"; }
+
+/* Navigation */
+.fa-home:before { content: "\f015"; }
+.fa-arrow-left:before { content: "\f060"; }
+.fa-arrow-right:before { content: "\f061"; }
+.fa-arrow-up:before { content: "\f062"; }
+.fa-arrow-down:before { content: "\f063"; }
+.fa-angle-left:before { content: "\f104"; }
+.fa-angle-right:before { content: "\f105"; }
+.fa-angle-up:before { content: "\f106"; }
+.fa-angle-down:before { content: "\f107"; }
+.fa-chevron-left:before { content: "\f053"; }
+.fa-chevron-right:before { content: "\f054"; }
+.fa-chevron-up:before { content: "\f077"; }
+.fa-chevron-down:before { content: "\f078"; }
+.fa-bars:before { content: "\f0c9"; }
+.fa-ellipsis-v:before { content: "\f142"; }
+.fa-ellipsis-h:before { content: "\f141"; }
+
+/* Actions */
+.fa-plus:before { content: "\f067"; }
+.fa-plus-circle:before { content: "\f055"; }
+.fa-minus:before { content: "\f068"; }
+.fa-minus-circle:before { content: "\f056"; }
+.fa-edit:before { content: "\f044"; }
+.fa-trash:before { content: "\f1f8"; }
+.fa-trash-alt:before { content: "\f2ed"; }
+.fa-save:before { content: "\f0c7"; }
+.fa-download:before { content: "\f019"; }
+.fa-upload:before { content: "\f093"; }
+.fa-search:before { content: "\f002"; }
+.fa-filter:before { content: "\f0b0"; }
+.fa-sort:before { content: "\f0dc"; }
+.fa-copy:before { content: "\f0c5"; }
+.fa-clone:before { content: "\f24d"; }
+
+/* Users & People */
+.fa-user:before { content: "\f007"; }
+.fa-user-circle:before { content: "\f2bd"; }
+.fa-users:before { content: "\f0c0"; }
+.fa-user-plus:before { content: "\f234"; }
+.fa-user-minus:before { content: "\f503"; }
+.fa-user-check:before { content: "\f4fc"; }
+
+/* Security */
+.fa-lock:before { content: "\f023"; }
+.fa-unlock:before { content: "\f09c"; }
+.fa-key:before { content: "\f084"; }
+.fa-shield:before { content: "\f132"; }
+.fa-shield-alt:before { content: "\f3ed"; }
+.fa-eye:before { content: "\f06e"; }
+.fa-eye-slash:before { content: "\f070"; }
+
+/* Status & Indicators */
+.fa-heart:before { content: "\f004"; }
+.fa-star:before { content: "\f005"; }
+.fa-flag:before { content: "\f024"; }
+.fa-bookmark:before { content: "\f02e"; }
+.fa-thumbs-up:before { content: "\f164"; }
+.fa-thumbs-down:before { content: "\f165"; }
+.fa-bell:before { content: "\f0f3"; }
+.fa-calendar:before { content: "\f133"; }
+.fa-calendar-alt:before { content: "\f073"; }
+.fa-clock:before { content: "\f017"; }
+
+/* Technology & Tools */
+.fa-cog:before { content: "\f013"; }
+.fa-cogs:before { content: "\f085"; }
+.fa-wrench:before { content: "\f0ad"; }
+.fa-tools:before { content: "\f7d9"; }
+.fa-sliders-h:before { content: "\f1de"; }
+.fa-database:before { content: "\f1c0"; }
+.fa-server:before { content: "\f233"; }
+.fa-laptop:before { content: "\f109"; }
+.fa-desktop:before { content: "\f108"; }
+.fa-tablet:before { content: "\f10a"; }
+
+/* Media */
+.fa-image:before { content: "\f03e"; }
+.fa-images:before { content: "\f302"; }
+.fa-camera:before { content: "\f030"; }
+.fa-video:before { content: "\f03d"; }
+.fa-play:before { content: "\f04b"; }
+.fa-pause:before { content: "\f04c"; }
+.fa-stop:before { content: "\f04d"; }
+
+/* Features & Benefits */
+.fa-rocket:before { content: "\f135"; }
+.fa-bolt:before { content: "\f0e7"; }
+.fa-magic:before { content: "\f0d0"; }
+.fa-fire:before { content: "\f06d"; }
+.fa-lightbulb:before { content: "\f0eb"; }
+.fa-gift:before { content: "\f06b"; }
+.fa-trophy:before { content: "\f091"; }
+.fa-award:before { content: "\f559"; }
+.fa-medal:before { content: "\f5a2"; }
+
+/* Location & Maps */
+.fa-map:before { content: "\f279"; }
+.fa-map-marker:before { content: "\f041"; }
+.fa-map-marker-alt:before { content: "\f3c5"; }
+.fa-location-arrow:before { content: "\f124"; }
+.fa-globe:before { content: "\f0ac"; }
+.fa-compass:before { content: "\f14e"; }
+
+/* Shopping & Commerce */
+.fa-shopping-cart:before { content: "\f07a"; }
+.fa-shopping-bag:before { content: "\f290"; }
+.fa-credit-card:before { content: "\f09d"; }
+.fa-money-bill:before { content: "\f0d6"; }
+.fa-tag:before { content: "\f02b"; }
+.fa-tags:before { content: "\f02c"; }
+
+/* Education & Learning */
+.fa-book:before { content: "\f02d"; }
+.fa-graduation-cap:before { content: "\f19d"; }
+.fa-school:before { content: "\f549"; }
+.fa-university:before { content: "\f19c"; }
+.fa-chalkboard:before { content: "\f51b"; }
+.fa-chalkboard-teacher:before { content: "\f51c"; }
+
+/* Size classes */
+.fa-xs { font-size: .75em; line-height: .08333em; vertical-align: .125em; }
+.fa-sm { font-size: .875em; line-height: .07143em; vertical-align: .05357em; }
+.fa-lg { font-size: 1.25em; line-height: .05em; vertical-align: -.075em; }
+.fa-2x { font-size: 2em; }
+.fa-3x { font-size: 3em; }
+.fa-4x { font-size: 4em; }
+.fa-5x { font-size: 5em; }
+
+/* Utilities */
+.fa-fw { text-align: center; width: 1.25em; }
+.fa-spin { animation: fa-spin 2s infinite linear; }
+@keyframes fa-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

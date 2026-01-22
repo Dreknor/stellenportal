@@ -1,0 +1,18 @@
+=== CMS System Check ===
+
+1. Pages in Database:
+   Total: 1
+   - Test-Seite (slug: test-seite, published: Yes)
+
+2. Menu Items in Database:
+   Total: 1
+   - Test (location: header, active: Yes, page_id: 1)
+
+3. Header Menu from Service:
+   Total: 1
+   - Test
+
+4. Cache Status:
+   Header menu cached: No
+
+=== Check Complete ===
