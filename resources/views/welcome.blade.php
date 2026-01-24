@@ -68,6 +68,9 @@
 
     {!! RecaptchaV3::initJs() !!}
 
+    <!-- Preload critical images -->
+    <link rel="preload" as="image" href="{{ asset('img/header_01.jpg') }}" type="image/jpeg">
+    <link rel="preload" as="image" href="{{ asset('img/Stellenportal-Logo.png') }}" type="image/png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -114,7 +117,16 @@
             position: relative;
         }
 
+        /* Lazy Loading für Hintergrundbilder */
+        .lazy-bg {
+            background-color: #f3f4f6;
+            transition: background-image 0.3s ease-in-out;
+        }
 
+        .lazy-bg[data-bg-loaded="true"] {
+            background-size: cover;
+            background-position: center;
+        }
     </style>
 </head>
 
@@ -125,7 +137,12 @@
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="{{ config('app.name') }} Logo" class="h-12">
+                    <img src="{{ asset('img/Stellenportal-Logo.png') }}"
+                         alt="{{ config('app.name') }} Logo"
+                         class="h-12"
+                         width="48"
+                         height="48"
+                         fetchpriority="high">
                     <span class="ml-3 text-xl sm:text-2xl font-bold text-gray-800 hidden sm:inline">{{ config('app.name') }}</span>
                 </div>
 
@@ -272,7 +289,12 @@
                 <p class="text-lg mb-12 text-blue-50 max-w-2xl mx-auto">
                     Ob Lehrkräfte, Schulbegleiterinnen, Referendarinnen oder Praktikanten – das Stellenportal, ursprünglich entwickelt für evangelische Schulen, bringt jede Einrichtung mit passenden Mitarbeitenden zusammen.
                 </p>
-                <img src="{{ asset('img/Hauptfach_Mensch_logo.png') }}" alt="Hauptfach Mensch Logo" class="mx-auto h-30 mb-6 w-auto">
+                <img src="{{ asset('img/Hauptfach_Mensch_logo.png') }}"
+                     alt="Hauptfach Mensch Logo"
+                     class="mx-auto h-30 mb-6 w-auto"
+                     loading="eager"
+                     width="auto"
+                     height="120">
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     @guest
@@ -347,7 +369,10 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
                 <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_schueler.jpg') }}');" aria-hidden="true"></div>
+                    <div class="h-48 bg-cover bg-center"
+                         style="background-image: url('{{ asset('img/bg_schueler.jpg') }}');"
+                         aria-hidden="true"
+                         role="img"></div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold text-gray-900 mb-4">„Hauptfach Mensch"</h3>
                         <p class="text-gray-600 leading-relaxed">
@@ -358,7 +383,10 @@
 
                 <!-- Feature 2 -->
                 <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_vorbereitungsdienst_2.jpg') }}');" aria-hidden="true"></div>
+                    <div class="h-48 bg-cover bg-center"
+                         style="background-image: url('{{ asset('img/bg_vorbereitungsdienst_2.jpg') }}');"
+                         aria-hidden="true"
+                         role="img"></div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold text-gray-900 mb-4">Freie Wahl des Arbeitsplatzes</h3>
                         <p class="text-gray-600 leading-relaxed">
@@ -369,7 +397,10 @@
 
                 <!-- Feature 3 -->
                 <article class="feature-card bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ asset('img/bg_studenten.jpg') }}');" aria-hidden="true"></div>
+                    <div class="h-48 bg-cover bg-center"
+                         style="background-image: url('{{ asset('img/bg_studenten.jpg') }}');"
+                         aria-hidden="true"
+                         role="img"></div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold text-gray-900 mb-4">Flexible Bedingungen</h3>
                         <p class="text-gray-600 leading-relaxed">
@@ -577,9 +608,10 @@
     <!-- Footer -->
     <x-layouts.app.footer />
 
-    <!-- Mobile Menu Toggle Script -->
+    <!-- Mobile Menu Toggle & Image Optimization Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIconClosed = document.getElementById('menu-icon-closed');
@@ -609,6 +641,38 @@
                         menuIconOpen.classList.add('hidden');
                         mobileMenuButton.setAttribute('aria-expanded', 'false');
                     });
+                });
+            }
+
+            // Lazy Loading für Hintergrundbilder mit Intersection Observer
+            if ('IntersectionObserver' in window) {
+                const lazyBgObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            const bgElement = entry.target;
+                            const bgUrl = bgElement.getAttribute('data-bg-src');
+
+                            if (bgUrl) {
+                                // Bild vorladen
+                                const img = new Image();
+                                img.onload = function() {
+                                    bgElement.style.backgroundImage = `url('${bgUrl}')`;
+                                    bgElement.setAttribute('data-bg-loaded', 'true');
+                                };
+                                img.src = bgUrl;
+
+                                lazyBgObserver.unobserve(bgElement);
+                            }
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px',
+                    threshold: 0.01
+                });
+
+                // Alle Elemente mit data-bg-src beobachten
+                document.querySelectorAll('[data-bg-src]').forEach(function(element) {
+                    lazyBgObserver.observe(element);
                 });
             }
         });
