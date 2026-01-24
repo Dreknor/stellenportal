@@ -34,19 +34,23 @@ class PublicJobPostingController extends Controller
         // Full-text search across all relevant fields
         if ($request->filled('search')) {
             $search = $request->search;
-            $searchPerformed = true;
-            $searchData['query'] = $search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('job_postings.title', 'like', "%{$search}%")
-                    ->orWhere('job_postings.description', 'like', "%{$search}%")
-                    ->orWhere('job_postings.job_category', 'like', "%{$search}%")
-                    ->orWhere('job_postings.requirements', 'like', "%{$search}%")
-                    ->orWhere('job_postings.benefits', 'like', "%{$search}%")
-                    ->orWhereHas('facility', function ($fq) use ($search) {
-                        $fq->where('name', 'like', "%{$search}%");
-                    });
-            });
+            // If search term is the Google placeholder, show all active jobs
+            if ($search !== '{search_term_string}') {
+                $searchPerformed = true;
+                $searchData['query'] = $search;
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('job_postings.title', 'like', "%{$search}%")
+                        ->orWhere('job_postings.description', 'like', "%{$search}%")
+                        ->orWhere('job_postings.job_category', 'like', "%{$search}%")
+                        ->orWhere('job_postings.requirements', 'like', "%{$search}%")
+                        ->orWhere('job_postings.benefits', 'like', "%{$search}%")
+                        ->orWhereHas('facility', function ($fq) use ($search) {
+                            $fq->where('name', 'like', "%{$search}%");
+                        });
+                });
+            }
         }
 
         // Filter by employment type
@@ -128,15 +132,12 @@ class PublicJobPostingController extends Controller
      */
     public function show(JobPosting $jobPosting)
     {
-        if (!$jobPosting->isActive()) {
-            abort(404);
-        }
-
         $jobPosting->load(['facility.address', 'facility.organization']);
 
+        // Check if job posting is expired or inactive
+        $isExpired = !$jobPosting->isActive();
 
-
-        return view('public.job-postings.show', compact('jobPosting'));
+        return view('public.job-postings.show', compact('jobPosting', 'isExpired'));
     }
 
     /**
@@ -144,11 +145,10 @@ class PublicJobPostingController extends Controller
      */
     public function exportPdf(JobPosting $jobPosting)
     {
-        if (!$jobPosting->isActive()) {
-            abort(404);
-        }
-
         $jobPosting->load(['facility.address', 'facility.organization']);
+
+        // Check if job posting is expired or inactive
+        $isExpired = !$jobPosting->isActive();
 
         // Get header image from facility
         $headerImage = $jobPosting->facility->getFirstMediaUrl('header_image') ?:
@@ -156,7 +156,7 @@ class PublicJobPostingController extends Controller
                       $jobPosting->facility->getFirstMediaUrl('cover') ?:
                       $jobPosting->facility->getFirstMediaUrl('logo');
 
-        $pdf = Pdf::loadView('public.job-postings.pdf', compact('jobPosting', 'headerImage'));
+        $pdf = Pdf::loadView('public.job-postings.pdf', compact('jobPosting', 'headerImage', 'isExpired'));
 
         $filename = 'stellenangebot-' . $jobPosting->slug . '.pdf';
 

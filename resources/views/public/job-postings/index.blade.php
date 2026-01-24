@@ -256,34 +256,28 @@
                                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300" itemprop="name">{{ $jobPosting->facility->name }}</span>
                                     </div>
                                     @if($jobPosting->facility->address)
-                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400" itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
+                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
-                                            <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                                                <span itemprop="addressLocality">{{ $jobPosting->facility->address->city }}</span>
-                                                @if($jobPosting->facility->address->zip_code)
-                                                    , <span itemprop="postalCode">{{ $jobPosting->facility->address->zip_code }}</span>
-                                                @endif
-                                                @if($jobPosting->facility->address->street)
-                                                    , <span itemprop="streetAddress">
-                                                        {{ $jobPosting->facility->address->street }}
-                                                        @if($jobPosting->facility->address->number)
-                                                            {{ ' ' . $jobPosting->facility->address->number }}
-                                                        @endif
-                                                    </span>
-                                                @endif
-                                            </span>
-                                            @if($jobPosting->facility->address)
-                                                <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place">
-                                                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                                                        <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
-                                                        <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
-                                                        <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
-                                                        <meta itemprop="addressCountry" content="DE">
-                                                    </div>
-                                                </div>
+                                            <span>{{ $jobPosting->facility->address->city }}</span>
+                                            @if($jobPosting->facility->address->zip_code)
+                                                , {{ $jobPosting->facility->address->zip_code }}
+                                            @endif
+                                        </div>
+                                        <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place" style="display:none;">
+                                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                                                <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
+                                                <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
+                                                <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
+                                                <meta itemprop="addressCountry" content="DE">
+                                            </div>
+                                            @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
+                                            <div itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                                                <meta itemprop="latitude" content="{{ $jobPosting->facility->address->latitude }}">
+                                                <meta itemprop="longitude" content="{{ $jobPosting->facility->address->longitude }}">
+                                            </div>
                                             @endif
                                         </div>
                                     @endif

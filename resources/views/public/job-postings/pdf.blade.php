@@ -170,6 +170,14 @@
         </div>
     </div>
 
+    <!-- Expired Notice -->
+    @if(isset($isExpired) && $isExpired)
+        <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
+            <h3 style="color: #92400e; margin: 0 0 10px 0;">⚠️ Dieses Stellenangebot ist nicht mehr verfügbar</h3>
+            <p style="color: #78350f; margin: 0;">Diese Stellenausschreibung wurde beendet oder ist abgelaufen.</p>
+        </div>
+    @endif
+
     <!-- Meta Information -->
     <div class="meta-info">
         <div class="meta-row">

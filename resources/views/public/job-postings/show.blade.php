@@ -109,6 +109,7 @@
             {{ __('Zurück zur Übersicht') }}
         </a>
 
+        @if(!$isExpired)
         <a href="{{ route('public.jobs.pdf', $jobPosting) }}"
            id="pdfDownloadBtn"
            class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors"
@@ -119,7 +120,10 @@
             </svg>
             {{ __('Als PDF herunterladen') }}
         </a>
+        @endif
     </div>
+
+    <!-- Expired Job Notice -->
 
     <!-- Facility Header Image Banner -->
     @if($headerImage)
@@ -168,6 +172,34 @@
             </div>
         </div>
     @endif
+
+    @if($isExpired)
+        <div class="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                        {{ __('Dieses Stellenangebot ist nicht mehr verfügbar') }}
+                    </h3>
+                    <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                        <p>{{ __('Diese Stellenausschreibung wurde beendet oder ist abgelaufen. Bitte schauen Sie sich unsere aktuellen Stellenangebote an.') }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{{ route('public.jobs.index') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 transition-colors">
+                            {{ __('Zu den aktuellen Stellenangeboten') }}
+                            <svg class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @else
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Content -->
@@ -238,6 +270,12 @@
                         <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
                         <meta itemprop="addressCountry" content="DE">
                     </div>
+                    @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
+                    <div itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="{{ $jobPosting->facility->address->latitude }}">
+                        <meta itemprop="longitude" content="{{ $jobPosting->facility->address->longitude }}">
+                    </div>
+                    @endif
                 </div>
                 @endif
             </div>
@@ -246,6 +284,7 @@
         <!-- Sidebar -->
         <aside class="space-y-6">
             <!-- Apply Card -->
+            @if(!$isExpired)
             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg shadow-sm border border-blue-200 dark:border-blue-800 p-6">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{{ __('Interesse geweckt?') }}</h3>
                 <p class="text-gray-700 dark:text-gray-300 mb-6">{{ __('Bewerben Sie sich jetzt für diese Stelle!') }}</p>
@@ -259,6 +298,7 @@
                     </button>
                 @endif
             </div>
+            @endif
 
             <!-- Facility Info -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -463,7 +503,7 @@
         </aside>
     </div>
 
-    @if($jobPosting->facility->address && $jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
+         @if($jobPosting->facility->address && $jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
         @push('scripts')
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -479,7 +519,7 @@
             </script>
         @endpush
     @endif
-
+    @endif
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
