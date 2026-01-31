@@ -23,11 +23,11 @@
         'datePosted' => $jobPosting->published_at->toIso8601String(),
         'validThrough' => ($jobPosting->expires_at ?? $jobPosting->published_at->addMonths(3))->toIso8601String(),
         'employmentType' => strtoupper(str_replace('_', '_', $jobPosting->employment_type)),
-        'hiringOrganization' => array_filter([
+        'hiringOrganization' => [
             '@type' => 'Organization',
             'name' => $jobPosting->facility->name,
             'logo' => $jobPosting->facility->getFirstMediaUrl('logo') ?: null,
-        ]),
+        ],
         'url' => route('public.jobs.show', $jobPosting),
     ];
 
@@ -35,14 +35,14 @@
         $streetAddress = trim($jobPosting->facility->address->street . ' ' . $jobPosting->facility->address->number);
         $jobPostingSchema['jobLocation'] = [
             '@type' => 'Place',
-            'address' => array_filter([
+            'address' => [
                 '@type' => 'PostalAddress',
-                'streetAddress' => $streetAddress ?: null,
+                'streetAddress' => $streetAddress,
                 'addressLocality' => $jobPosting->facility->address->city,
                 'addressRegion' => $jobPosting->facility->address->getStateOrDefault(),
                 'postalCode' => $jobPosting->facility->address->zip_code,
                 'addressCountry' => 'DE',
-            ]),
+            ],
         ];
 
         if ($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude) {
@@ -94,12 +94,12 @@
     }
 
     if ($jobPosting->contact_email) {
-        $jobPostingSchema['applicationContact'] = array_filter([
+        $jobPostingSchema['applicationContact'] = [
             '@type' => 'ContactPoint',
             'email' => $jobPosting->contact_email,
             'telephone' => $jobPosting->contact_phone ?: null,
             'name' => $jobPosting->contact_person ?: null,
-        ]);
+        ];
     }
     @endphp
     <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>

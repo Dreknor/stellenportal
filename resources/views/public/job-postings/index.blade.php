@@ -16,11 +16,11 @@
                     'datePosted' => $job->published_at->toIso8601String(),
                     'validThrough' => ($job->expires_at ?? $job->published_at->addMonths(3))->toIso8601String(),
                     'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
-                    'hiringOrganization' => array_filter([
+                    'hiringOrganization' => [
                         '@type' => 'Organization',
                         'name' => $job->facility->name,
                         'logo' => $job->facility->getFirstMediaUrl('logo') ?: null,
-                    ]),
+                    ],
                     'url' => route('public.jobs.show', $job),
                 ],
             ];
@@ -29,21 +29,21 @@
                 $streetAddress = trim($job->facility->address->street . ' ' . $job->facility->address->number);
                 $item['item']['jobLocation'] = [
                     '@type' => 'Place',
-                    'address' => array_filter([
+                    'address' => [
                         '@type' => 'PostalAddress',
-                        'streetAddress' => $streetAddress ?: null,
+                        'streetAddress' => $streetAddress,
                         'addressLocality' => $job->facility->address->city,
                         'addressRegion' => $job->facility->address->getStateOrDefault(),
                         'postalCode' => $job->facility->address->zip_code,
                         'addressCountry' => 'DE',
-                    ]),
+                    ],
                 ];
 
                 if ($job->facility->address->latitude && $job->facility->address->longitude) {
                     $item['item']['jobLocation']['geo'] = [
                         '@type' => 'GeoCoordinates',
-                        'latitude' => $job->facility->address->latitude,
-                        'longitude' => $job->facility->address->longitude,
+                        'latitude' => (string) $job->facility->address->latitude,
+                        'longitude' => (string) $job->facility->address->longitude,
                     ];
                 }
             }
@@ -88,12 +88,12 @@
             }
 
             if ($job->contact_email) {
-                $item['item']['applicationContact'] = array_filter([
+                $item['item']['applicationContact'] = [
                     '@type' => 'ContactPoint',
                     'email' => $job->contact_email,
                     'telephone' => $job->contact_phone ?: null,
                     'name' => $job->contact_person ?: null,
-                ]);
+                ];
             }
 
             $itemListElements[] = $item;
