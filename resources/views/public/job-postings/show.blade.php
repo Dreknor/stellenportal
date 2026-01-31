@@ -103,6 +103,100 @@
     }
     @endphp
     <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+
+    {{-- Separate Organization structured data for better Google visibility --}}
+    @php
+        // Verwende Einrichtungsdaten, falls vorhanden, sonst Trägerdaten
+        $orgData = $jobPosting->facility;
+        $parentOrg = $jobPosting->facility->organization;
+
+        $organizationSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $orgData->name,
+        ];
+
+        // URL
+        if ($orgData->website) {
+            $organizationSchema['url'] = $orgData->website;
+        } elseif ($parentOrg && $parentOrg->website) {
+            $organizationSchema['url'] = $parentOrg->website;
+        }
+
+        // Logo
+        $logo = $orgData->getFirstMediaUrl('logo') ?: ($parentOrg ? $parentOrg->getFirstMediaUrl('logo') : null);
+        if ($logo) {
+            $organizationSchema['logo'] = $logo;
+        }
+
+        // Image/Photo
+        $image = $orgData->getFirstMediaUrl('header_image') ?: ($parentOrg ? $parentOrg->getFirstMediaUrl('header_image') : null);
+        if ($image) {
+            $organizationSchema['image'] = $image;
+        }
+
+        // Description
+        if ($orgData->description) {
+            $organizationSchema['description'] = strip_tags($orgData->description);
+        } elseif ($parentOrg && $parentOrg->description) {
+            $organizationSchema['description'] = strip_tags($parentOrg->description);
+        }
+
+        // Address - bevorzuge Einrichtungsadresse, sonst Trägeradresse
+        $address = $orgData->address ?: ($parentOrg ? $parentOrg->address : null);
+        if ($address) {
+            $streetAddress = trim($address->street . ' ' . $address->number);
+            $organizationSchema['address'] = [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $streetAddress,
+                'addressLocality' => $address->city,
+                'addressRegion' => $address->getStateOrDefault(),
+                'postalCode' => $address->zip_code,
+                'addressCountry' => 'DE',
+            ];
+
+            // Geo-Koordinaten
+            if ($address->latitude && $address->longitude) {
+                $organizationSchema['geo'] = [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => (string) $address->latitude,
+                    'longitude' => (string) $address->longitude,
+                ];
+            }
+        }
+
+        // Contact Point - E-Mail und Telefon
+        $email = $orgData->email ?: ($parentOrg ? $parentOrg->email : null);
+        $phone = $orgData->phone ?: ($parentOrg ? $parentOrg->phone : null);
+
+        if ($email || $phone) {
+            $organizationSchema['contactPoint'] = [
+                '@type' => 'ContactPoint',
+                'contactType' => 'customer service',
+            ];
+            if ($email) {
+                $organizationSchema['contactPoint']['email'] = $email;
+            }
+            if ($phone) {
+                $organizationSchema['contactPoint']['telephone'] = $phone;
+            }
+        }
+
+        // Parent Organization - falls die Einrichtung zu einem Träger gehört
+        if ($parentOrg && $orgData->id !== $parentOrg->id) {
+            $organizationSchema['parentOrganization'] = [
+                '@type' => 'Organization',
+                'name' => $parentOrg->name,
+            ];
+            if ($parentOrg->website) {
+                $organizationSchema['parentOrganization']['url'] = $parentOrg->website;
+            }
+            if ($parentOrg->getFirstMediaUrl('logo')) {
+                $organizationSchema['parentOrganization']['logo'] = $parentOrg->getFirstMediaUrl('logo');
+            }
+        }
+    @endphp
+    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @endpush
 
     @php
