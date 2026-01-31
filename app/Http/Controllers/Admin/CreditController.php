@@ -19,13 +19,15 @@ class CreditController extends Controller
 
     public function index(Request $request)
     {
-        // Get all credit balances
+        // Get all credit balances with existing creditable entities
         $organizationBalances = CreditBalance::where('creditable_type', 'App\Models\Organization')
             ->with('creditable')
+            ->whereHas('creditable')
             ->get();
 
         $facilityBalances = CreditBalance::where('creditable_type', 'App\Models\Facility')
-            ->with('creditable')
+            ->with('creditable.organization')
+            ->whereHas('creditable')
             ->get();
 
         return view('admin.credits.index', compact('organizationBalances', 'facilityBalances'));
