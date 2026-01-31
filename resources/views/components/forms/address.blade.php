@@ -79,4 +79,34 @@
             @enderror
         </div>
     </div>
+
+    {{-- Dritte Reihe: Bundesland --}}
+    <div style="margin-top:0.5rem;">
+        <label for="{{ $idPref }}state" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Bundesland') }}</label>
+        <select
+            name="{{ $pref }}state"
+            id="{{ $idPref }}state"
+            class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+        >
+            <option value="Sachsen" {{ old($pref.'state', $address?->state) == 'Sachsen' || old($pref.'state', $address?->state) === null ? 'selected' : '' }}>Sachsen</option>
+            <option value="Baden-Württemberg" {{ old($pref.'state', $address?->state) == 'Baden-Württemberg' ? 'selected' : '' }}>Baden-Württemberg</option>
+            <option value="Bayern" {{ old($pref.'state', $address?->state) == 'Bayern' ? 'selected' : '' }}>Bayern</option>
+            <option value="Berlin" {{ old($pref.'state', $address?->state) == 'Berlin' ? 'selected' : '' }}>Berlin</option>
+            <option value="Brandenburg" {{ old($pref.'state', $address?->state) == 'Brandenburg' ? 'selected' : '' }}>Brandenburg</option>
+            <option value="Bremen" {{ old($pref.'state', $address?->state) == 'Bremen' ? 'selected' : '' }}>Bremen</option>
+            <option value="Hamburg" {{ old($pref.'state', $address?->state) == 'Hamburg' ? 'selected' : '' }}>Hamburg</option>
+            <option value="Hessen" {{ old($pref.'state', $address?->state) == 'Hessen' ? 'selected' : '' }}>Hessen</option>
+            <option value="Mecklenburg-Vorpommern" {{ old($pref.'state', $address?->state) == 'Mecklenburg-Vorpommern' ? 'selected' : '' }}>Mecklenburg-Vorpommern</option>
+            <option value="Niedersachsen" {{ old($pref.'state', $address?->state) == 'Niedersachsen' ? 'selected' : '' }}>Niedersachsen</option>
+            <option value="Nordrhein-Westfalen" {{ old($pref.'state', $address?->state) == 'Nordrhein-Westfalen' ? 'selected' : '' }}>Nordrhein-Westfalen</option>
+            <option value="Rheinland-Pfalz" {{ old($pref.'state', $address?->state) == 'Rheinland-Pfalz' ? 'selected' : '' }}>Rheinland-Pfalz</option>
+            <option value="Saarland" {{ old($pref.'state', $address?->state) == 'Saarland' ? 'selected' : '' }}>Saarland</option>
+            <option value="Sachsen-Anhalt" {{ old($pref.'state', $address?->state) == 'Sachsen-Anhalt' ? 'selected' : '' }}>Sachsen-Anhalt</option>
+            <option value="Schleswig-Holstein" {{ old($pref.'state', $address?->state) == 'Schleswig-Holstein' ? 'selected' : '' }}>Schleswig-Holstein</option>
+            <option value="Thüringen" {{ old($pref.'state', $address?->state) == 'Thüringen' ? 'selected' : '' }}>Thüringen</option>
+        </select>
+        @error($pref.'state')
+            <p class="mt-1 text-sm text-red-500" id="error_{{ $idPref }}state">{{ $message }}</p>
+        @enderror
+    </div>
 </div>

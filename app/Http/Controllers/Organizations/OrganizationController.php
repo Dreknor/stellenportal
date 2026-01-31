@@ -56,6 +56,7 @@ class OrganizationController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+            'state' => 'nullable|string|max:100',
         ]);
 
 
@@ -64,7 +65,7 @@ class OrganizationController extends Controller
         ]) + ['is_approved' => false]);
 
         $organization->address()->create($request->only([
-            'street', 'number', 'city', 'zip_code'
+            'street', 'number', 'city', 'zip_code', 'state'
         ]));
 
         // Handle header image upload
@@ -164,6 +165,7 @@ class OrganizationController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+           'state' => 'nullable|string|max:100',
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
         ], [
@@ -176,11 +178,11 @@ class OrganizationController extends Controller
 
         if ($organization->address) {
             $organization->address->update($request->only([
-                'street', 'number', 'city', 'zip_code'
+                'street', 'number', 'city', 'zip_code', 'state'
             ]));
         } else {
             $organization->address()->create($request->only([
-                'street', 'number', 'city', 'zip_code'
+                'street', 'number', 'city', 'zip_code', 'state'
             ]));
         }
 

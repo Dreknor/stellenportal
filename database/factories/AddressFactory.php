@@ -19,6 +19,7 @@ class AddressFactory extends Factory
             'number' => fake()->buildingNumber(),
             'city' => fake()->city(),
             'zip_code' => fake()->postcode(),
+            'state' => fake()->randomElement(['Sachsen', 'Bayern', 'Berlin', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Niedersachsen', 'Nordrhein-Westfalen', 'Rheinland-Pfalz', 'Saarland', 'Sachsen-Anhalt', 'Schleswig-Holstein', 'Thüringen', 'Baden-Württemberg']),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
         ];

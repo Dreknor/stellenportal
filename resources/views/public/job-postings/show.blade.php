@@ -39,6 +39,7 @@
                 '@type' => 'PostalAddress',
                 'streetAddress' => $streetAddress ?: null,
                 'addressLocality' => $jobPosting->facility->address->city,
+                'addressRegion' => $jobPosting->facility->address->getStateOrDefault(),
                 'postalCode' => $jobPosting->facility->address->zip_code,
                 'addressCountry' => 'DE',
             ]),
@@ -59,6 +60,37 @@
 
     if ($jobPosting->benefits) {
         $jobPostingSchema['benefits'] = strip_tags($jobPosting->benefits);
+    }
+
+    // Add baseSalary if salary information is available
+    if ($jobPosting->salary_min || $jobPosting->salary_max) {
+        $baseSalary = [
+            '@type' => 'MonetaryAmount',
+            'currency' => 'EUR',
+        ];
+
+        if ($jobPosting->salary_min && $jobPosting->salary_max) {
+            $baseSalary['value'] = [
+                '@type' => 'QuantitativeValue',
+                'minValue' => $jobPosting->salary_min,
+                'maxValue' => $jobPosting->salary_max,
+                'unitText' => 'YEAR'
+            ];
+        } elseif ($jobPosting->salary_min) {
+            $baseSalary['value'] = [
+                '@type' => 'QuantitativeValue',
+                'minValue' => $jobPosting->salary_min,
+                'unitText' => 'YEAR'
+            ];
+        } elseif ($jobPosting->salary_max) {
+            $baseSalary['value'] = [
+                '@type' => 'QuantitativeValue',
+                'maxValue' => $jobPosting->salary_max,
+                'unitText' => 'YEAR'
+            ];
+        }
+
+        $jobPostingSchema['baseSalary'] = $baseSalary;
     }
 
     if ($jobPosting->contact_email) {
@@ -267,6 +299,7 @@
                     <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                         <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
                         <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
+                        <meta itemprop="addressRegion" content="{{ $jobPosting->facility->address->getStateOrDefault() }}">
                         <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
                         <meta itemprop="addressCountry" content="DE">
                     </div>

@@ -187,6 +187,7 @@ class FacilityController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+            'state' => 'nullable|string|max:100',
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
         ]);
@@ -197,11 +198,11 @@ class FacilityController extends Controller
 
         if ($facility->address) {
             $facility->address->update($request->only([
-                'street', 'number', 'city', 'zip_code'
+                'street', 'number', 'city', 'zip_code', 'state'
             ]));
         } else {
             $facility->address()->create($request->only([
-                'street', 'number', 'city', 'zip_code'
+                'street', 'number', 'city', 'zip_code', 'state'
             ]));
         }
 

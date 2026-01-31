@@ -21,6 +21,7 @@ class Address extends Model implements Auditable, HasMedia
         'number',
         'city',
         'zip_code',
+        'state',
         'latitude',
         'longitude',
         'addressable_id',
@@ -30,6 +31,14 @@ class Address extends Model implements Auditable, HasMedia
     public function addressable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Get the state/region, defaulting to Sachsen if not set
+     */
+    public function getStateOrDefault(): string
+    {
+        return $this->state ?? 'Sachsen';
     }
 
     public function registerMediaCollections(): void
