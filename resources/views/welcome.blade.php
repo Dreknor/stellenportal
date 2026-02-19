@@ -415,6 +415,115 @@
 
     <!-- Latest Job Postings Section -->
     @if($latestJobs->isNotEmpty())
+        @push('structured-data')
+        @php
+            $jobListElements = [];
+            foreach ($latestJobs as $index => $job) {
+                $item = [
+                    '@type' => 'ListItem',
+                    'position' => $index + 1,
+                    'item' => [
+                        '@type' => 'JobPosting',
+                        'title' => $job->title,
+                        'description' => Str::limit(strip_tags($job->description), 200),
+                        'datePosted' => $job->published_at->toIso8601String(),
+                        'validThrough' => ($job->expires_at ?? $job->published_at->addMonths(3))->toIso8601String(),
+                        'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
+                        'hiringOrganization' => [
+                            '@type' => 'Organization',
+                            'name' => $job->facility->name,
+                            'logo' => $job->facility->getFirstMediaUrl('logo') ?: null,
+                        ],
+                        'url' => route('public.jobs.show', $job),
+                    ],
+                ];
+
+                if ($job->facility->address) {
+                    $streetAddress = trim($job->facility->address->street . ' ' . $job->facility->address->number);
+                    $item['item']['jobLocation'] = [
+                        '@type' => 'Place',
+                        'address' => [
+                            '@type' => 'PostalAddress',
+                            'streetAddress' => $streetAddress,
+                            'addressLocality' => $job->facility->address->city,
+                            'addressRegion' => $job->facility->address->getStateOrDefault(),
+                            'postalCode' => $job->facility->address->zip_code,
+                            'addressCountry' => 'DE',
+                        ],
+                    ];
+
+                    if ($job->facility->address->latitude && $job->facility->address->longitude) {
+                        $item['item']['jobLocation']['geo'] = [
+                            '@type' => 'GeoCoordinates',
+                            'latitude' => (string) $job->facility->address->latitude,
+                            'longitude' => (string) $job->facility->address->longitude,
+                        ];
+                    }
+                }
+
+                if ($job->requirements) {
+                    $item['item']['qualifications'] = strip_tags($job->requirements);
+                }
+
+                if ($job->benefits) {
+                    $item['item']['benefits'] = strip_tags($job->benefits);
+                }
+
+                // Add baseSalary if salary information is available
+                if ($job->salary_min || $job->salary_max) {
+                    $baseSalary = [
+                        '@type' => 'MonetaryAmount',
+                        'currency' => 'EUR',
+                    ];
+
+                    if ($job->salary_min && $job->salary_max) {
+                        $baseSalary['value'] = [
+                            '@type' => 'QuantitativeValue',
+                            'minValue' => $job->salary_min,
+                            'maxValue' => $job->salary_max,
+                            'unitText' => 'YEAR'
+                        ];
+                    } elseif ($job->salary_min) {
+                        $baseSalary['value'] = [
+                            '@type' => 'QuantitativeValue',
+                            'minValue' => $job->salary_min,
+                            'unitText' => 'YEAR'
+                        ];
+                    } elseif ($job->salary_max) {
+                        $baseSalary['value'] = [
+                            '@type' => 'QuantitativeValue',
+                            'maxValue' => $job->salary_max,
+                            'unitText' => 'YEAR'
+                        ];
+                    }
+
+                    $item['item']['baseSalary'] = $baseSalary;
+                }
+
+                if ($job->contact_email) {
+                    $item['item']['applicationContact'] = [
+                        '@type' => 'ContactPoint',
+                        'email' => $job->contact_email,
+                        'telephone' => $job->contact_phone ?: null,
+                        'name' => $job->contact_person ?: null,
+                    ];
+                }
+
+                $jobListElements[] = $item;
+            }
+
+            $welcomeJobsSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'ItemList',
+                'name' => 'Aktuelle Stellenangebote',
+                'description' => 'Neueste Stellenangebote auf der Startseite',
+                'numberOfItems' => count($jobListElements),
+                'itemListElement' => $jobListElements,
+            ];
+        @endphp
+        <script type="application/ld+json">{!! json_encode($welcomeJobsSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+        @endpush
+
         <section class="py-20 bg-gray-50 feature-section" aria-labelledby="latest-jobs-heading">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
@@ -448,6 +557,7 @@
                                             <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                                                 <span itemprop="addressLocality">{{ $job->facility->address->city }}</span>
                                                 <meta itemprop="streetAddress" content="{{ $job->facility->address->street }} {{ $job->facility->address->number }}">
+                                                <meta itemprop="addressRegion" content="{{ $job->facility->address->getStateOrDefault() }}">
                                                 <meta itemprop="postalCode" content="{{ $job->facility->address->zip_code }}">
                                                 <meta itemprop="addressCountry" content="DE">
                                             </span>
@@ -492,6 +602,28 @@
                                 <p class="text-gray-600 text-sm mb-4 line-clamp-3" itemprop="description">
                                     {{ Str::limit(strip_tags($job->description), 120) }}
                                 </p>
+
+                                <!-- Salary Information -->
+                                @if($job->salary_min || $job->salary_max)
+                                    <div class="mb-4 p-3 bg-green-50 rounded-lg" itemprop="baseSalary" itemscope itemtype="https://schema.org/MonetaryAmount">
+                                        <p class="text-sm font-medium text-green-900">
+                                            @if($job->salary_min && $job->salary_max)
+                                                <meta itemprop="currency" content="EUR">
+                                                <meta itemprop="minValue" content="{{ $job->salary_min }}">
+                                                <meta itemprop="maxValue" content="{{ $job->salary_max }}">
+                                                {{ number_format($job->salary_min, 0, ',', '.') }}€ - {{ number_format($job->salary_max, 0, ',', '.') }}€ pro Jahr
+                                            @elseif($job->salary_min)
+                                                <meta itemprop="currency" content="EUR">
+                                                <meta itemprop="minValue" content="{{ $job->salary_min }}">
+                                                ab {{ number_format($job->salary_min, 0, ',', '.') }}€ pro Jahr
+                                            @elseif($job->salary_max)
+                                                <meta itemprop="currency" content="EUR">
+                                                <meta itemprop="maxValue" content="{{ $job->salary_max }}">
+                                                bis {{ number_format($job->salary_max, 0, ',', '.') }}€ pro Jahr
+                                            @endif
+                                        </p>
+                                    </div>
+                                @endif
 
                                 <!-- Published Date -->
                                 <div class="text-xs text-gray-500 mb-4">
