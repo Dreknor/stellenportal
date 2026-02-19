@@ -129,7 +129,7 @@
                     <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="{{ __('Stichwort, Berufsgruppe, Einrichtung...') }}"
                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                            aria-describedby="search-help">
-                    <p id="search-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname') }}</p>
+                    <p id="search-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname.') }}</p>
                 </div>
 
                 <div>

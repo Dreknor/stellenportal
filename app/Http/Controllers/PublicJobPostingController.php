@@ -40,16 +40,22 @@ class PublicJobPostingController extends Controller
                 $searchPerformed = true;
                 $searchData['query'] = $search;
 
-                $query->where(function ($q) use ($search) {
-                    $q->where('job_postings.title', 'like', "%{$search}%")
-                        ->orWhere('job_postings.description', 'like', "%{$search}%")
-                        ->orWhere('job_postings.job_category', 'like', "%{$search}%")
-                        ->orWhere('job_postings.requirements', 'like', "%{$search}%")
-                        ->orWhere('job_postings.benefits', 'like', "%{$search}%")
-                        ->orWhereHas('facility', function ($fq) use ($search) {
-                            $fq->where('name', 'like', "%{$search}%");
-                        });
-                });
+                // Split search string into individual terms
+                $searchTerms = array_filter(array_map('trim', explode(' ', $search)));
+
+                // Each search term must match at least one field (AND logic between terms)
+                foreach ($searchTerms as $term) {
+                    $query->where(function ($q) use ($term) {
+                        $q->where('job_postings.title', 'like', "%{$term}%")
+                            ->orWhere('job_postings.description', 'like', "%{$term}%")
+                            ->orWhere('job_postings.job_category', 'like', "%{$term}%")
+                            ->orWhere('job_postings.requirements', 'like', "%{$term}%")
+                            ->orWhere('job_postings.benefits', 'like', "%{$term}%")
+                            ->orWhereHas('facility', function ($fq) use ($term) {
+                                $fq->where('name', 'like', "%{$term}%");
+                            });
+                    });
+                }
             }
         }
 

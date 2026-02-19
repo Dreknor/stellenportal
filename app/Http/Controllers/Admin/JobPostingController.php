@@ -22,11 +22,21 @@ class JobPostingController extends Controller
         // Search
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('employment_type', 'like', "%{$search}%");
-            });
+
+            // Split search string into individual terms
+            $searchTerms = array_filter(array_map('trim', explode(' ', $search)));
+
+            // Each search term must match at least one field (AND logic between terms)
+            foreach ($searchTerms as $term) {
+                $query->where(function ($q) use ($term) {
+                    $q->where('title', 'like', "%{$term}%")
+                        ->orWhere('description', 'like', "%{$term}%")
+                        ->orWhere('employment_type', 'like', "%{$term}%")
+                        ->orWhereHas('facility', function ($fq) use ($term) {
+                            $fq->where('name', 'like', "%{$term}%");
+                        });
+                });
+            }
         }
 
         // Filter by status
