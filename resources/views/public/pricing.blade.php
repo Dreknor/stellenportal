@@ -230,7 +230,12 @@
             <div class="space-y-6">
                 <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition">
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Wie funktioniert das Guthaben-System?</h3>
-                    <p class="text-gray-600">Sie kaufen ein Guthaben-Paket und können dieses für das Veröffentlichen von Stellenanzeigen verwenden. Das Guthaben wird beim Erstellen einer Anzeige automatisch abgebucht und verfällt nicht.</p>
+                    <p class="text-gray-600">
+                        Sie kaufen ein Guthaben-Paket und können dieses für das Veröffentlichen von Stellenanzeigen verwenden. Das Guthaben ist ab Kauf 3 Jahre gültig und kann flexibel für mehrere Anzeigen genutzt werden.
+                    </p>
+                    <p>
+                        1 Guthaben entspricht 1 Stellenanzeige für 3 Monate.
+                    </p>
                 </div>
 
                 <div class="bg-gray-50 rounded-xl p-6 hover:shadow-md transition">
