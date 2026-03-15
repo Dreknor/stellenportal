@@ -233,7 +233,7 @@
                     <p class="text-gray-600">
                         Sie kaufen ein Guthaben-Paket und können dieses für das Veröffentlichen von Stellenanzeigen verwenden. Das Guthaben ist ab Kauf 3 Jahre gültig und kann flexibel für mehrere Anzeigen genutzt werden.
                     </p>
-                    <p>
+                    <p class="text-gray-600">
                         1 Guthaben entspricht 1 Stellenanzeige für 3 Monate.
                     </p>
                 </div>
