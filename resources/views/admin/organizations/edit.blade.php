@@ -52,10 +52,11 @@
                     <label for="website" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Website') }}</label>
                     <input type="url" name="website" id="website" value="{{ old('website', $organization->website) }}"
                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                           placeholder="https://beispiel.de">
+                           placeholder="https://www.beispiel.de">
                     @error('website')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Bitte vollständige URL inklusive <code>https://</code> eingeben, z.&nbsp;B. <em>https://www.beispiel.de</em></p>
                 </div>
 
                 <div>

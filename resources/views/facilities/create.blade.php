@@ -74,8 +74,10 @@
                         label="Website"
                         name="website"
                         type="url"
+                        placeholder="https://www.beispiel.de"
                         value="{{ old('website') }}"
                     />
+                    <p class="text-xs text-gray-500 mt-1">Bitte geben Sie die vollständige URL inklusive <code>https://</code> ein, z.&nbsp;B. <em>https://www.beispiel.de</em></p>
                 </div>
 
                 <div class="mb-4">
