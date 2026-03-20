@@ -46,6 +46,9 @@ class AppServiceProvider extends ServiceProvider
         // Register MenuItem Observer for cache invalidation
         \App\Models\MenuItem::observe(\App\Observers\MenuItemObserver::class);
 
+        // Register Organization Observer for approval notifications
+        \App\Models\Organization::observe(\App\Observers\OrganizationObserver::class);
+
         // Register Keycloak Socialite Provider using Event Listener
         Event::listen(function (SocialiteWasCalled $event) {
             $event->extendSocialite('keycloak', \SocialiteProviders\Keycloak\Provider::class);

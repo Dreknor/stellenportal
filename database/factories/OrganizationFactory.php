@@ -30,5 +30,16 @@ class OrganizationFactory extends Factory
             'is_cooperative_member' => true,
         ]);
     }
+
+    /**
+     * Indicate that the organization is approved.
+     */
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_approved' => true,
+            'approved_at' => now(),
+        ]);
+    }
 }
 

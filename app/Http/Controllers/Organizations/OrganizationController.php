@@ -169,7 +169,7 @@ class OrganizationController extends Controller
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
         ], [
-            'website.regex' => 'Bitte geben Sie eine gültige Website-URL ein (z.B. example.com oder https://example.com).',
+            'website.regex' => 'Bitte geben Sie eine gültige Website-URL ein (z.B. https://example.com).',
         ]);
 
         $organization->update($request->only([
