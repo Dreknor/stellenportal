@@ -89,9 +89,14 @@ class InteractionAnalyticsController extends Controller
             ->get();
 
         // Interactions by hour of day (for heatmap-style display)
+        $driver = DB::getDriverName();
+        $hourExpression = $driver === 'sqlite'
+            ? "CAST(strftime('%H', created_at) AS INTEGER)"
+            : 'HOUR(created_at)';
+
         $hourlyDistribution = JobPostingInteraction::where('created_at', '>=', $since)
             ->where('interaction_type', JobPostingInteraction::TYPE_VIEW)
-            ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
+            ->selectRaw("$hourExpression as hour, COUNT(*) as count")
             ->groupBy('hour')
             ->orderBy('hour')
             ->pluck('count', 'hour')
@@ -119,4 +124,5 @@ class InteractionAnalyticsController extends Controller
         ));
     }
 }
+
 
