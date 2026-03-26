@@ -276,6 +276,11 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             ->middleware('permission:admin view logs')
             ->name('search-analytics.index');
 
+        // Admin Interaction Analytics (Clicks, Downloads, Views)
+        Route::get('/interaction-analytics', [\App\Http\Controllers\Admin\InteractionAnalyticsController::class, 'index'])
+            ->middleware('permission:admin view logs')
+            ->name('interaction-analytics.index');
+
         // Admin Logs (application log entries from database)
         Route::prefix('logs')->name('logs.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])
