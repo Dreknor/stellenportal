@@ -225,19 +225,21 @@
                         <p class="mt-1 text-sm text-gray-600">Anzahl der Suchen pro Tag</p>
                     </div>
                     <div class="p-6">
-                        <div class="h-64 flex items-end justify-between gap-2">
+                        <div class="h-64 flex justify-between gap-2">
                             @php
                                 $maxCount = $dailySearches->max('count');
                             @endphp
                             @foreach($dailySearches as $day)
                                 <div class="flex-1 flex flex-col items-center">
-                                    <div class="w-full bg-blue-500 hover:bg-blue-600 transition rounded-t relative group"
-                                         style="height: {{ $maxCount > 0 ? ($day->count / $maxCount * 100) : 0 }}%">
-                                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                                    <div class="flex-1 w-full flex items-end relative group">
+                                        <div class="w-full bg-blue-500 hover:bg-blue-600 transition rounded-t"
+                                             style="height: {{ $maxCount > 0 ? ($day->count / $maxCount * 100) : 0 }}%">
+                                        </div>
+                                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">
                                             {{ number_format($day->count) }} Suchen
                                         </div>
                                     </div>
-                                    <p class="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top-left">
+                                    <p class="shrink-0 text-xs text-gray-600 mt-2 transform -rotate-45 origin-top-left">
                                         {{ \Carbon\Carbon::parse($day->date)->format('d.m') }}
                                     </p>
                                 </div>

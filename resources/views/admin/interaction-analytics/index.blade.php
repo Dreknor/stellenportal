@@ -122,34 +122,36 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="h-64 flex items-end justify-between gap-1">
+                        <div class="h-64 flex justify-between gap-1">
                             @php
                                 $maxTotal = $dailyTrend->max('total') ?: 1;
                             @endphp
                             @foreach($dailyTrend as $date => $day)
-                                <div class="flex-1 flex flex-col items-center group relative">
-                                    {{-- Stacked bar --}}
-                                    <div class="w-full flex flex-col-reverse" style="height: {{ ($day['total'] / $maxTotal) * 100 }}%">
-                                        @if($day['views'] > 0)
-                                            <div class="w-full bg-blue-500 hover:bg-blue-600 transition"
-                                                 style="height: {{ ($day['views'] / $day['total']) * 100 }}%"></div>
-                                        @endif
-                                        @if($day['apply_clicks'] > 0)
-                                            <div class="w-full bg-green-500 hover:bg-green-600 transition"
-                                                 style="height: {{ ($day['apply_clicks'] / $day['total']) * 100 }}%"></div>
-                                        @endif
-                                        @if($day['downloads'] > 0)
-                                            <div class="w-full bg-red-500 hover:bg-red-600 transition"
-                                                 style="height: {{ ($day['downloads'] / $day['total']) * 100 }}%"></div>
-                                        @endif
-                                    </div>
-                                    {{-- Tooltip --}}
-                                    <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">
-                                        <strong>{{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}</strong><br>
-                                        {{ $day['views'] }} Aufrufe · {{ $day['apply_clicks'] }} Bewerbungen · {{ $day['downloads'] }} Downloads
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="flex-1 w-full flex items-end relative group">
+                                        {{-- Stacked bar --}}
+                                        <div class="w-full flex flex-col-reverse" style="height: {{ ($day['total'] / $maxTotal) * 100 }}%">
+                                            @if($day['views'] > 0)
+                                                <div class="w-full bg-blue-500 hover:bg-blue-600 transition"
+                                                     style="height: {{ ($day['views'] / $day['total']) * 100 }}%"></div>
+                                            @endif
+                                            @if($day['apply_clicks'] > 0)
+                                                <div class="w-full bg-green-500 hover:bg-green-600 transition"
+                                                     style="height: {{ ($day['apply_clicks'] / $day['total']) * 100 }}%"></div>
+                                            @endif
+                                            @if($day['downloads'] > 0)
+                                                <div class="w-full bg-red-500 hover:bg-red-600 transition"
+                                                     style="height: {{ ($day['downloads'] / $day['total']) * 100 }}%"></div>
+                                            @endif
+                                        </div>
+                                        {{-- Tooltip --}}
+                                        <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">
+                                            <strong>{{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}</strong><br>
+                                            {{ $day['views'] }} Aufrufe · {{ $day['apply_clicks'] }} Bewerbungen · {{ $day['downloads'] }} Downloads
+                                        </div>
                                     </div>
                                     @if($dailyTrend->count() <= 31)
-                                        <p class="text-xs text-gray-600 mt-2 transform -rotate-45 origin-top-left">
+                                        <p class="shrink-0 text-xs text-gray-600 mt-2 transform -rotate-45 origin-top-left">
                                             {{ \Carbon\Carbon::parse($date)->format('d.m') }}
                                         </p>
                                     @endif
@@ -258,18 +260,20 @@
                         @php
                             $maxHourly = count($hourlyDistribution) > 0 ? max($hourlyDistribution) : 1;
                         @endphp
-                        <div class="h-48 flex items-end justify-between gap-0.5">
+                        <div class="h-48 flex justify-between gap-0.5">
                             @for($h = 0; $h < 24; $h++)
                                 @php $count = $hourlyDistribution[$h] ?? 0; @endphp
-                                <div class="flex-1 flex flex-col items-center group relative">
-                                    <div class="w-full bg-indigo-400 hover:bg-indigo-500 transition rounded-t"
-                                         style="height: {{ $maxHourly > 0 ? ($count / $maxHourly * 100) : 0 }}%">
-                                    </div>
-                                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">
-                                        {{ $count }} Aufrufe um {{ str_pad($h, 2, '0', STR_PAD_LEFT) }}:00
+                                <div class="flex-1 flex flex-col items-center">
+                                    <div class="flex-1 w-full flex items-end relative group">
+                                        <div class="w-full bg-indigo-400 hover:bg-indigo-500 transition rounded-t"
+                                             style="height: {{ $maxHourly > 0 ? ($count / $maxHourly * 100) : 0 }}%">
+                                        </div>
+                                        <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">
+                                            {{ $count }} Aufrufe um {{ str_pad($h, 2, '0', STR_PAD_LEFT) }}:00
+                                        </div>
                                     </div>
                                     @if($h % 3 === 0)
-                                        <p class="text-xs text-gray-600 mt-1">{{ str_pad($h, 2, '0', STR_PAD_LEFT) }}</p>
+                                        <p class="shrink-0 text-xs text-gray-600 mt-1">{{ str_pad($h, 2, '0', STR_PAD_LEFT) }}</p>
                                     @endif
                                 </div>
                             @endfor

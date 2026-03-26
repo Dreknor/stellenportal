@@ -3,6 +3,7 @@
 use App\Models\JobPosting;
 use App\Models\JobPostingInteraction;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -100,7 +101,9 @@ test('interaction analytics period filter works', function () {
         'ip_address' => '5.6.7.8',
         'session_id' => 'session2',
     ]);
-    $old->update(['created_at' => now()->subDays(10)]);
+    DB::table('job_posting_interactions')
+        ->where('id', $old->id)
+        ->update(['created_at' => now()->subDays(10)]);
 
     // 7-day period should only show 1
     $response = $this->actingAs($this->admin)->get(route('admin.interaction-analytics.index', ['period' => 7]));
