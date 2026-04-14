@@ -72,6 +72,16 @@
                                 <x-layouts.sidebar-two-level-link href="{{ route('admin.audits.index') }}" icon='fas-list-check'
                                     :active="request()->routeIs('admin.audits*')">Audit Logs</x-layouts.sidebar-two-level-link>
                                 @endcan
+
+                                @can('admin view logs')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.search-analytics.index') }}" icon='fas-magnifying-glass-chart'
+                                    :active="request()->routeIs('admin.search-analytics*')">Such-Analyse</x-layouts.sidebar-two-level-link>
+                                @endcan
+
+                                @can('admin view logs')
+                                <x-layouts.sidebar-two-level-link href="{{ route('admin.interaction-analytics.index') }}" icon='fas-chart-line'
+                                    :active="request()->routeIs('admin.interaction-analytics*')">Interaktions-Statistiken</x-layouts.sidebar-two-level-link>
+                                @endcan
                             </x-layouts.sidebar-two-level-link-parent>
                             @endcanany
 
