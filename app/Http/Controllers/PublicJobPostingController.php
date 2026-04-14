@@ -74,8 +74,18 @@ class PublicJobPostingController extends Controller
             $searchData['location'] = $location;
             $searchData['radius'] = $radius;
 
-            // Geocode the location
-            $coordinates = $this->jobPostingService->geocodeLocation($location);
+            // Wenn der Nutzer einen Ort aus der Autocomplete-Auswahl gewählt hat,
+            // werden lat/lon direkt als Hidden-Felder mitgeschickt → kein API-Call nötig.
+            if ($request->filled('lat') && $request->filled('lon')) {
+                $coordinates = [
+                    'latitude'     => (float) $request->lat,
+                    'longitude'    => (float) $request->lon,
+                    'display_name' => $location,
+                ];
+            } else {
+                // Fallback: freie Texteingabe → Geocoding (mit countrycodes=de)
+                $coordinates = $this->jobPostingService->geocodeLocation($location);
+            }
 
             if ($coordinates) {
                 $jobPostings = $this->jobPostingService->searchByRadius(

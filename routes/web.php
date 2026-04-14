@@ -428,6 +428,10 @@ Route::prefix('cms')->middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+// Public API: Ortsvorschläge für die Umkreissuche (kein Auth erforderlich)
+Route::get('/api/location-suggestions', [\App\Http\Controllers\Api\LocationSuggestionsController::class, '__invoke'])
+    ->name('api.location-suggestions');
+
 // Public job postings (no auth required)
 Route::prefix('jobs')->name('public.jobs.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');

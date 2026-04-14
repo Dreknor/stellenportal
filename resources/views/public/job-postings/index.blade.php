@@ -132,10 +132,67 @@
                     <p id="search-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname.') }}</p>
                 </div>
 
-                <div>
+                {{-- Ort-Autocomplete mit Alpine.js --}}
+                <div x-data="locationSearch(@js(request('location', '')), @js(request('lat', '')), @js(request('lon', '')))"
+                     class="relative">
                     <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Ort / PLZ') }}</label>
-                    <input type="text" id="location" name="location" value="{{ request('location') }}" placeholder="{{ __('z.B. Berlin oder 10115') }}"
-                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                    <div class="relative">
+                        <input type="text"
+                               id="location"
+                               name="location"
+                               x-model="displayText"
+                               @input.debounce.400ms="fetchSuggestions"
+                               @keydown.escape="close"
+                               @keydown.arrow-down.prevent="navigateDown"
+                               @keydown.arrow-up.prevent="navigateUp"
+                               @keydown.enter.prevent="selectActive"
+                               @blur="onBlur"
+                               placeholder="{{ __('z.B. Dresden oder 01067') }}"
+                               autocomplete="off"
+                               class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 pr-8">
+                        {{-- Lade-Indikator --}}
+                        <span x-show="loading" class="absolute right-2 top-2.5 text-gray-400" aria-hidden="true">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                        </span>
+                    </div>
+
+                    {{-- Vorschläge-Dropdown --}}
+                    <ul x-show="open && suggestions.length > 0"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 -translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-72 overflow-y-auto"
+                        role="listbox"
+                        aria-label="{{ __('Ortsvorschläge') }}">
+                        <template x-for="(s, i) in suggestions" :key="i">
+                            <li @mousedown.prevent="select(s)"
+                                @mouseenter="activeIndex = i"
+                                :class="activeIndex === i
+                                    ? 'bg-blue-50 dark:bg-blue-900/30'
+                                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'"
+                                class="px-4 py-2.5 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
+                                role="option"
+                                :aria-selected="activeIndex === i">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <div class="min-w-0">
+                                        <span class="block text-sm font-medium text-gray-800 dark:text-gray-100 truncate" x-text="s.short_name"></span>
+                                        <span class="block text-xs text-gray-400 dark:text-gray-500 truncate" x-text="s.display_name"></span>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+
+                    {{-- Voraufgelöste Koordinaten (werden nur gefüllt, wenn Nutzer einen Vorschlag auswählt) --}}
+                    <input type="hidden" name="lat" x-model="lat">
+                    <input type="hidden" name="lon" x-model="lon">
                 </div>
 
                 <div>
@@ -374,5 +431,82 @@
             {{ $jobPostings->links() }}
         </nav>
     @endif
+
+    @push('scripts')
+    <script>
+        function locationSearch(initialText, initialLat, initialLon) {
+            return {
+                displayText: initialText,
+                lat: initialLat,
+                lon: initialLon,
+                suggestions: [],
+                open: false,
+                activeIndex: -1,
+                loading: false,
+
+                fetchSuggestions() {
+                    // Koordinaten zurücksetzen, sobald der Nutzer tippt
+                    this.lat = '';
+                    this.lon = '';
+
+                    if (this.displayText.length < 2) {
+                        this.suggestions = [];
+                        this.open = false;
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    fetch('/api/location-suggestions?q=' + encodeURIComponent(this.displayText))
+                        .then(r => r.json())
+                        .then(data => {
+                            this.suggestions = data;
+                            this.open = data.length > 0;
+                            this.activeIndex = -1;
+                            this.loading = false;
+                        })
+                        .catch(() => {
+                            this.loading = false;
+                        });
+                },
+
+                select(s) {
+                    this.displayText = s.short_name;
+                    this.lat = s.lat;
+                    this.lon = s.lon;
+                    this.open = false;
+                    this.suggestions = [];
+                },
+
+                selectActive() {
+                    if (this.activeIndex >= 0 && this.suggestions[this.activeIndex]) {
+                        this.select(this.suggestions[this.activeIndex]);
+                    }
+                    // Kein aktiver Eintrag → Formular normal absenden (Enter-Taste propagiert)
+                },
+
+                navigateDown() {
+                    if (!this.open) return;
+                    this.activeIndex = Math.min(this.activeIndex + 1, this.suggestions.length - 1);
+                },
+
+                navigateUp() {
+                    if (!this.open) return;
+                    this.activeIndex = Math.max(this.activeIndex - 1, 0);
+                },
+
+                close() {
+                    this.open = false;
+                    this.activeIndex = -1;
+                },
+
+                onBlur() {
+                    // Verzögerung, damit @mousedown auf dem Eintrag noch feuert
+                    setTimeout(() => { this.open = false; }, 200);
+                },
+            };
+        }
+    </script>
+    @endpush
 </x-layouts.public>
 

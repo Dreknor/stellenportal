@@ -221,7 +221,9 @@ class JobPostingService
             }
 
             $client = new \GuzzleHttp\Client();
-            $requestUrl = $url . urlencode($location) . '&api_key=' . $key;
+            // countrycodes=de: Fallback auf Deutschland einschränken,
+            // falls der Nutzer keinen Ort aus der Autocomplete-Liste ausgewählt hat.
+            $requestUrl = $url . urlencode($location) . '&api_key=' . $key . '&countrycodes=de';
 
             $response = $client->get($requestUrl);
             $data = json_decode($response->getBody(), true);
