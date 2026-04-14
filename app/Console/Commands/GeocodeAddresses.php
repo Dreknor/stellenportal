@@ -69,12 +69,11 @@ class GeocodeAddresses extends Command
                 $result = $this->geocodingService->geocode($address);
 
                 if ($result) {
-                    // Observer deaktivieren, um doppeltes Geocoding zu vermeiden
-                    Address::withoutObservers(function () use ($address, $result) {
-                        $address->latitude  = $result['lat'];
-                        $address->longitude = $result['lon'];
-                        $address->save();
-                    });
+                    // saveQuietly() umgeht alle Observer/Events, verhindert so
+                    // doppeltes Geocoding durch den AddressObserver
+                    $address->latitude  = $result['lat'];
+                    $address->longitude = $result['lon'];
+                    $address->saveQuietly();
 
                     // Kartenbild manuell generieren, da der Observer umgangen wurde
                     $this->geocodingService->generateMapImage($address);
