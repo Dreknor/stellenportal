@@ -178,6 +178,20 @@ class GeocodingService
         }
 
         try {
+            // Das dantsu/php-image-editor-Paket liest $_SERVER["REQUEST_SCHEME"] u. a. direkt
+            // aus, um einen cURL-Referer zu bauen. Im CLI-Kontext (Artisan-Commands, Cron-Jobs)
+            // sind diese Variablen nicht gesetzt → "Undefined array key" Fehler.
+            // Wir befüllen sie mit Fallback-Werten, sofern sie fehlen.
+            if (!isset($_SERVER['REQUEST_SCHEME'])) {
+                $_SERVER['REQUEST_SCHEME'] = 'https';
+            }
+            if (!isset($_SERVER['HTTP_HOST'])) {
+                $_SERVER['HTTP_HOST'] = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
+            }
+            if (!isset($_SERVER['REQUEST_URI'])) {
+                $_SERVER['REQUEST_URI'] = '/';
+            }
+
             $api = (new OpenStreetMap(new LatLng($address->latitude, $address->longitude), 17, 600, 400))
                 ->addMarkers(
                     (new Markers(public_path('/img/marker.png'), 32, 32))

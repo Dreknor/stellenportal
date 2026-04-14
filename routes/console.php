@@ -28,6 +28,10 @@ Schedule::command('credits:notify-expiring --days=30')->dailyAt('08:00')->name('
 // Geocode addresses without coordinates daily at 4 AM
 Schedule::command('addresses:geocode')->dailyAt('04:00')->name('geocode-addresses');
 
+// Generate missing map images for addresses with coordinates daily at 04:30 AM
+// (runs after geocode-addresses so newly geocoded addresses are covered as well)
+Schedule::command('addresses:generate-maps')->dailyAt('04:30')->name('generate-map-images');
+
 // Clean up old log entries from database (older than 30 days) daily at 3 AM
 Schedule::call(function () {
     $days = config('logtodb.max_hours') ? config('logtodb.max_hours') / 24 : 30;
