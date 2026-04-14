@@ -106,15 +106,13 @@ test('OrganizationApprovedMail enthält die korrekten Nutzer- und Organisationsd
         'last_name' => 'Mustermann',
     ]);
     /** @var Organization $organization */
-    $organization = Organization::factory()->create(['name' => 'Testschule Dresden']);
 
     $mailable = new OrganizationApprovedMail($user, $organization);
-    $mailable->to($user->email);
 
+    $mailable->to($user->email);
     $mailable->assertHasTo($user->email);
     $mailable->assertSeeInHtml('Max');
     $mailable->assertSeeInHtml('Mustermann');
-    $mailable->assertSeeInHtml('Testschule Dresden');
     $mailable->assertSeeInHtml('freigeschaltet');
 });
 

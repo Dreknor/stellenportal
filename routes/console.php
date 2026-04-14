@@ -25,6 +25,9 @@ Schedule::command('credits:expire')->dailyAt('01:00')->name('expire-credits');
 // Notify about expiring credits 30 days before expiration
 Schedule::command('credits:notify-expiring --days=30')->dailyAt('08:00')->name('notify-expiring-credits');
 
+// Geocode addresses without coordinates daily at 4 AM
+Schedule::command('addresses:geocode')->dailyAt('04:00')->name('geocode-addresses');
+
 // Clean up old log entries from database (older than 30 days) daily at 3 AM
 Schedule::call(function () {
     $days = config('logtodb.max_hours') ? config('logtodb.max_hours') / 24 : 30;
