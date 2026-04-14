@@ -13,37 +13,153 @@ class GeocodingService
 {
     /**
      * Versucht, Koordinaten für eine Adresse zu ermitteln.
+     * Probiert bei Misserfolg automatisch mehrere Adressvarianten (Fallbacks).
      *
      * @return array{lat: string, lon: string}|null
      */
     public function geocode(Address $address): ?array
     {
-        $url = config('geocode.geocode_url');
-        $key = config('geocode.geocode_key');
+        $variants = $this->buildAddressVariants($address);
 
-        $street = $address->number . '+' . $address->street;
-        $city   = $address->city;
-        $zip    = $address->zip_code;
+        foreach ($variants as $variant) {
+            $result = $this->fetchCoordinates(
+                $variant['street'],
+                $variant['city'],
+                $variant['zip'],
+                $variant['label']
+            );
 
-        $url .= urlencode($street) . '+' . urlencode($city) . '+' . urlencode($zip);
-        $url .= '&api_key=' . $key;
+            if ($result !== null) {
+                return $result;
+            }
+        }
 
-        Log::debug('Geocoding URL: ' . $url);
-
-        $client   = new Client();
-        $response = $client->get($url);
-        $data     = json_decode($response->getBody(), true);
-
-        Log::debug('Geocoding response', [
-            'url'      => $url,
-            'response' => $data,
+        Log::warning('Geocoding: Alle Adressvarianten erschöpft – keine Koordinaten gefunden.', [
+            'address_id' => $address->id,
+            'city'       => $address->city,
         ]);
 
-        if (!empty($data) && isset($data[0]['lat'], $data[0]['lon'])) {
-            return [
-                'lat' => $data[0]['lat'],
-                'lon' => $data[0]['lon'],
+        return null;
+    }
+
+    /**
+     * Baut eine Liste von Adressvarianten, die nacheinander ausprobiert werden.
+     *
+     * Berücksichtigt Ortsteil-Muster wie:
+     *   - "Grimma - OT Großbardau"          → Stadt: "Grimma",  Ortsteil: "Großbardau"
+     *   - "Reichenbach im Vogtl. OT Mylau"  → Stadt: "Reichenbach im Vogtl.", Ortsteil: "Mylau"
+     *   - "Wilsdruff OT Grumbach"           → Stadt: "Wilsdruff", Ortsteil: "Grumbach"
+     *
+     * @return array<int, array{street: string, city: string, zip: string, label: string}>
+     */
+    protected function buildAddressVariants(Address $address): array
+    {
+        $street   = trim($address->number . ' ' . $address->street);
+        $city     = $address->city ?? '';
+        $zip      = $address->zip_code ?? '';
+
+        $variants = [];
+
+        // 1. Original-Adresse
+        $variants[] = [
+            'street' => $street,
+            'city'   => $city,
+            'zip'    => $zip,
+            'label'  => 'Original',
+        ];
+
+        // 2. Ortsteil-Extraktion  (Muster: " - OT " oder " OT ")
+        $mainCity    = null;
+        $districtCity = null;
+
+        if (preg_match('/^(.+?)\s*-\s*OT\s+(.+)$/i', $city, $matches)) {
+            // "Grimma - OT Großbardau"
+            $mainCity     = trim($matches[1]);
+            $districtCity = trim($matches[2]);
+        } elseif (preg_match('/^(.+?)\s+OT\s+(.+)$/i', $city, $matches)) {
+            // "Reichenbach im Vogtl. OT Mylau" / "Wilsdruff OT Grumbach"
+            $mainCity     = trim($matches[1]);
+            $districtCity = trim($matches[2]);
+        }
+
+        if ($mainCity !== null) {
+            // 2a. Nur die Hauptstadt (ohne OT-Suffix)
+            $variants[] = [
+                'street' => $street,
+                'city'   => $mainCity,
+                'zip'    => $zip,
+                'label'  => "Hauptstadt ({$mainCity})",
             ];
+
+            // 2b. Nur den Ortsteil als Stadt
+            $variants[] = [
+                'street' => $street,
+                'city'   => $districtCity,
+                'zip'    => $zip,
+                'label'  => "Ortsteil ({$districtCity})",
+            ];
+
+            // 2c. Ortsteil mit PLZ, ohne Straße (sehr reduziert)
+            $variants[] = [
+                'street' => '',
+                'city'   => $districtCity,
+                'zip'    => $zip,
+                'label'  => "Nur Ortsteil + PLZ ({$districtCity}, {$zip})",
+            ];
+        }
+
+        // 3. Nur PLZ + Straße (ohne Stadtname) – universeller Fallback
+        $variants[] = [
+            'street' => $street,
+            'city'   => '',
+            'zip'    => $zip,
+            'label'  => 'Nur Straße + PLZ',
+        ];
+
+        return $variants;
+    }
+
+    /**
+     * Führt den eigentlichen HTTP-Request an den Geocodierungs-Dienst durch.
+     *
+     * @return array{lat: string, lon: string}|null
+     */
+    protected function fetchCoordinates(string $street, string $city, string $zip, string $variantLabel): ?array
+    {
+        $baseUrl = config('geocode.geocode_url');
+        $key     = config('geocode.geocode_key');
+
+        $parts = array_filter([
+            str_replace(' ', '+', trim($street)),
+            str_replace(' ', '+', trim($city)),
+            str_replace(' ', '+', trim($zip)),
+        ]);
+
+        $query = implode('+', $parts);
+        $url   = $baseUrl . urlencode($query) . '&api_key=' . $key;
+
+        Log::debug("Geocoding [{$variantLabel}]: {$url}");
+
+        try {
+            $client   = new Client();
+            $response = $client->get($url);
+            $data     = json_decode($response->getBody(), true);
+
+            if (!empty($data) && isset($data[0]['lat'], $data[0]['lon'])) {
+                Log::debug("Geocoding [{$variantLabel}]: Koordinaten gefunden.", [
+                    'lat' => $data[0]['lat'],
+                    'lon' => $data[0]['lon'],
+                ]);
+
+                return [
+                    'lat' => $data[0]['lat'],
+                    'lon' => $data[0]['lon'],
+                ];
+            }
+
+            Log::debug("Geocoding [{$variantLabel}]: Keine Ergebnisse.");
+        } catch (\Exception $e) {
+            Log::error("Geocoding [{$variantLabel}]: HTTP-Fehler – " . $e->getMessage());
         }
 
         return null;
