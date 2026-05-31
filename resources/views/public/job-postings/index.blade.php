@@ -25,27 +25,48 @@
                 ],
             ];
 
-            if ($job->facility->address) {
-                $streetAddress = trim($job->facility->address->street . ' ' . $job->facility->address->number);
+            // jobLocation ist ein von Google gefordertes Pflichtfeld.
+            // Adresse bevorzugt von der Einrichtung, sonst vom Träger (Organisation).
+            $jobLocationAddress = $job->facility->address
+                ?: ($job->facility->organization?->address);
+
+            if ($jobLocationAddress) {
+                $streetAddress = trim($jobLocationAddress->street . ' ' . $jobLocationAddress->number);
+                $postalAddress = ['@type' => 'PostalAddress'];
+
+                if ($streetAddress !== '') {
+                    $postalAddress['streetAddress'] = $streetAddress;
+                }
+                if ($jobLocationAddress->city) {
+                    $postalAddress['addressLocality'] = $jobLocationAddress->city;
+                }
+                $postalAddress['addressRegion'] = $jobLocationAddress->getStateOrDefault();
+                if ($jobLocationAddress->zip_code) {
+                    $postalAddress['postalCode'] = $jobLocationAddress->zip_code;
+                }
+                $postalAddress['addressCountry'] = 'DE';
+
+                $item['item']['jobLocation'] = [
+                    '@type' => 'Place',
+                    'address' => $postalAddress,
+                ];
+
+                if ($jobLocationAddress->latitude && $jobLocationAddress->longitude) {
+                    $item['item']['jobLocation']['geo'] = [
+                        '@type' => 'GeoCoordinates',
+                        'latitude' => (string) $jobLocationAddress->latitude,
+                        'longitude' => (string) $jobLocationAddress->longitude,
+                    ];
+                }
+            } else {
+                // Fallback: mindestens das Land angeben, damit das Pflichtfeld nie fehlt.
                 $item['item']['jobLocation'] = [
                     '@type' => 'Place',
                     'address' => [
                         '@type' => 'PostalAddress',
-                        'streetAddress' => $streetAddress,
-                        'addressLocality' => $job->facility->address->city,
-                        'addressRegion' => $job->facility->address->getStateOrDefault(),
-                        'postalCode' => $job->facility->address->zip_code,
                         'addressCountry' => 'DE',
                     ],
                 ];
-
-                if ($job->facility->address->latitude && $job->facility->address->longitude) {
-                    $item['item']['jobLocation']['geo'] = [
-                        '@type' => 'GeoCoordinates',
-                        'latitude' => (string) $job->facility->address->latitude,
-                        'longitude' => (string) $job->facility->address->longitude,
-                    ];
-                }
             }
 
             if ($job->requirements) {

@@ -31,27 +31,49 @@
         'url' => route('public.jobs.show', $jobPosting),
     ];
 
-    if ($jobPosting->facility->address) {
-        $streetAddress = trim($jobPosting->facility->address->street . ' ' . $jobPosting->facility->address->number);
+    // jobLocation ist ein von Google gefordertes Pflichtfeld.
+    // Adresse bevorzugt von der Einrichtung, sonst vom Träger (Organisation).
+    $jobLocationAddress = $jobPosting->facility->address
+        ?: ($jobPosting->facility->organization?->address);
+
+    if ($jobLocationAddress) {
+        $streetAddress = trim($jobLocationAddress->street . ' ' . $jobLocationAddress->number);
+        $postalAddress = ['@type' => 'PostalAddress'];
+
+        if ($streetAddress !== '') {
+            $postalAddress['streetAddress'] = $streetAddress;
+        }
+        if ($jobLocationAddress->city) {
+            $postalAddress['addressLocality'] = $jobLocationAddress->city;
+        }
+        $postalAddress['addressRegion'] = $jobLocationAddress->getStateOrDefault();
+        if ($jobLocationAddress->zip_code) {
+            $postalAddress['postalCode'] = $jobLocationAddress->zip_code;
+        }
+        $postalAddress['addressCountry'] = 'DE';
+
+        $jobPostingSchema['jobLocation'] = [
+            '@type' => 'Place',
+            'address' => $postalAddress,
+        ];
+
+        if ($jobLocationAddress->latitude && $jobLocationAddress->longitude) {
+            $jobPostingSchema['jobLocation']['geo'] = [
+                '@type' => 'GeoCoordinates',
+                'latitude' => $jobLocationAddress->latitude,
+                'longitude' => $jobLocationAddress->longitude,
+            ];
+        }
+    } else {
+        // Fallback: Wenn keine Adresse hinterlegt ist, mindestens das Land angeben,
+        // damit das Pflichtfeld "jobLocation" niemals fehlt.
         $jobPostingSchema['jobLocation'] = [
             '@type' => 'Place',
             'address' => [
                 '@type' => 'PostalAddress',
-                'streetAddress' => $streetAddress,
-                'addressLocality' => $jobPosting->facility->address->city,
-                'addressRegion' => $jobPosting->facility->address->getStateOrDefault(),
-                'postalCode' => $jobPosting->facility->address->zip_code,
                 'addressCountry' => 'DE',
             ],
         ];
-
-        if ($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude) {
-            $jobPostingSchema['jobLocation']['geo'] = [
-                '@type' => 'GeoCoordinates',
-                'latitude' => $jobPosting->facility->address->latitude,
-                'longitude' => $jobPosting->facility->address->longitude,
-            ];
-        }
     }
 
     if ($jobPosting->requirements) {
