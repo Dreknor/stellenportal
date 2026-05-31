@@ -10,6 +10,7 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Mail\CreditPurchasedInvoiceMail;
 use App\Mail\CreditPurchasedConfirmationMail;
+use App\Exceptions\InsufficientCreditsException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -17,21 +18,41 @@ use Illuminate\Support\Facades\Log;
 class CreditService
 {
     /**
+     * Lädt (oder erstellt) das CreditBalance-Row für ein Creditable und sperrt es
+     * innerhalb der aktuellen DB-Transaktion (pessimistisches Locking), damit
+     * nebenläufige Credit-Mutationen (publish/verbrauchen/transfer) nicht zu
+     * Race Conditions führen.
+     *
+     * WICHTIG: Nur innerhalb einer laufenden DB::transaction aufrufen.
+     */
+    protected function lockBalance($creditable): CreditBalance
+    {
+        // Sicherstellen, dass ein Balance-Row existiert (außerhalb des Locks,
+        // damit firstOrCreate unter Lock nicht neu anlegen muss).
+        $creditable->creditBalance()->firstOrCreate([]);
+
+        /** @var CreditBalance $balance */
+        $balance = $creditable->creditBalance()
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        return $balance;
+    }
+
+    /**
      * Purchase credits for an entity (Organization or Facility)
      */
     public function purchaseCredits($creditable, CreditPackage $package, User $user, ?string $note = null)
     {
         // Check if package can still be purchased by this organization
         if (!$package->canBePurchasedBy($creditable)) {
-            $remaining = $package->getRemainingPurchasesFor($creditable);
             throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
         }
 
         return DB::transaction(function () use ($creditable, $package, $user, $note) {
-            // Get or create credit balance
-            $balance = $creditable->creditBalance()->firstOrCreate([]);
+            // Balance mit Lock laden
+            $balance = $this->lockBalance($creditable);
 
-            // Create transaction
             $transaction = CreditTransaction::create([
                 'creditable_id' => $creditable->id,
                 'creditable_type' => get_class($creditable),
@@ -45,11 +66,9 @@ class CreditService
                 'expires_at' => now()->addYears(CreditTransaction::EXPIRATION_YEARS),
             ]);
 
-            // Update balance
             $balance->balance += $package->credits;
             $balance->save();
 
-            // Send emails
             $this->sendPurchaseEmails($creditable, $transaction, $user, $package);
 
             return $transaction;
@@ -61,20 +80,23 @@ class CreditService
      */
     public function transferCredits(Organization $organization, Facility $facility, int $amount, User $user, ?string $note = null)
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Betrag muss größer als 0 sein.');
+        }
+
         if ($facility->organization_id !== $organization->id) {
             throw new \Exception('Facility does not belong to this organization');
         }
 
-        if ($organization->getCurrentCreditBalance() < $amount) {
-            throw new \Exception('Insufficient credits');
-        }
-
         return DB::transaction(function () use ($organization, $facility, $amount, $user, $note) {
-            // Get balances
-            $orgBalance = $organization->creditBalance()->firstOrCreate([]);
-            $facilityBalance = $facility->creditBalance()->firstOrCreate([]);
+            // Deterministische Lock-Reihenfolge: Organization zuerst
+            $orgBalance = $this->lockBalance($organization);
+            $facilityBalance = $this->lockBalance($facility);
 
-            // Create transfer out transaction for organization
+            if ($orgBalance->balance < $amount) {
+                throw new InsufficientCreditsException();
+            }
+
             $transferOut = CreditTransaction::create([
                 'creditable_id' => $organization->id,
                 'creditable_type' => Organization::class,
@@ -87,7 +109,6 @@ class CreditService
                 'related_creditable_type' => Facility::class,
             ]);
 
-            // Create transfer in transaction for facility
             $transferIn = CreditTransaction::create([
                 'creditable_id' => $facility->id,
                 'creditable_type' => Facility::class,
@@ -101,11 +122,9 @@ class CreditService
                 'related_transaction_id' => $transferOut->id,
             ]);
 
-            // Link transactions
             $transferOut->related_transaction_id = $transferIn->id;
             $transferOut->save();
 
-            // Update balances
             $orgBalance->balance -= $amount;
             $orgBalance->save();
 
@@ -124,22 +143,25 @@ class CreditService
      */
     public function transferCreditsToOrganization(Facility $facility, int $amount, User $user, ?string $note = null)
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Betrag muss größer als 0 sein.');
+        }
+
         $organization = $facility->organization;
 
         if (!$organization) {
             throw new \Exception('Facility does not belong to any organization');
         }
 
-        if ($facility->getCurrentCreditBalance() < $amount) {
-            throw new \Exception('Insufficient credits');
-        }
-
         return DB::transaction(function () use ($facility, $organization, $amount, $user, $note) {
-            // Get balances
-            $facilityBalance = $facility->creditBalance()->firstOrCreate([]);
-            $orgBalance = $organization->creditBalance()->firstOrCreate([]);
+            // Deterministische Lock-Reihenfolge: Organization zuerst (siehe transferCredits)
+            $orgBalance = $this->lockBalance($organization);
+            $facilityBalance = $this->lockBalance($facility);
 
-            // Create transfer out transaction for facility
+            if ($facilityBalance->balance < $amount) {
+                throw new InsufficientCreditsException();
+            }
+
             $transferOut = CreditTransaction::create([
                 'creditable_id' => $facility->id,
                 'creditable_type' => Facility::class,
@@ -152,7 +174,6 @@ class CreditService
                 'related_creditable_type' => Organization::class,
             ]);
 
-            // Create transfer in transaction for organization
             $transferIn = CreditTransaction::create([
                 'creditable_id' => $organization->id,
                 'creditable_type' => Organization::class,
@@ -166,11 +187,9 @@ class CreditService
                 'related_transaction_id' => $transferOut->id,
             ]);
 
-            // Link transactions
             $transferOut->related_transaction_id = $transferIn->id;
             $transferOut->save();
 
-            // Update balances
             $facilityBalance->balance -= $amount;
             $facilityBalance->save();
 
@@ -189,12 +208,17 @@ class CreditService
      */
     public function useCredits($creditable, int $amount, User $user, ?string $note = null)
     {
-        if ($creditable->getCurrentCreditBalance() < $amount) {
-            throw new \Exception('Insufficient credits');
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Betrag muss größer als 0 sein.');
         }
 
         return DB::transaction(function () use ($creditable, $amount, $user, $note) {
-            $balance = $creditable->creditBalance()->firstOrCreate([]);
+            // ATOMARES Check-Then-Write unter Lock.
+            $balance = $this->lockBalance($creditable);
+
+            if ($balance->balance < $amount) {
+                throw new InsufficientCreditsException();
+            }
 
             $transaction = CreditTransaction::create([
                 'creditable_id' => $creditable->id,
@@ -219,7 +243,14 @@ class CreditService
     public function adjustCredits($creditable, int $amount, User $user, string $note)
     {
         return DB::transaction(function () use ($creditable, $amount, $user, $note) {
-            $balance = $creditable->creditBalance()->firstOrCreate([]);
+            $balance = $this->lockBalance($creditable);
+
+            // Auch Admin-Korrekturen dürfen keinen negativen Stand erzeugen.
+            if (($balance->balance + $amount) < 0) {
+                throw new InsufficientCreditsException(
+                    'Die Korrektur würde einen negativen Kontostand erzeugen.'
+                );
+            }
 
             $transaction = CreditTransaction::create([
                 'creditable_id' => $creditable->id,
@@ -241,18 +272,12 @@ class CreditService
     /**
      * Add credits (admin convenience wrapper)
      *
-     * Kehrt sich nicht von adjustCredits ab, sondern nutzt diese Methode.
-     * Signatur entspricht der Verwendung in `Admin\\CreditController`.
+     * Delegiert an adjustCredits und setzt bei Bedarf eine Standard-Notiz.
      *
      * @param mixed $creditable Organization|Facility
-     * @param int $amount
-     * @param User $user
-     * @param string|null $note
-     * @return CreditTransaction
      */
     public function addCredits($creditable, int $amount, User $user, ?string $note = null)
     {
-        // Verwende adjustCredits und setze einen Standard-Note-Text, falls nicht angegeben.
         $note = $note ?? 'Admin-Gutschrift';
 
         return $this->adjustCredits($creditable, $amount, $user, $note);
@@ -263,11 +288,9 @@ class CreditService
      */
     protected function sendPurchaseEmails($creditable, CreditTransaction $transaction, User $user, CreditPackage $package)
     {
-        // Email an Rechnungssteller (z.B. Buchhaltung)
         $invoiceEmail = config('mail.invoice_email', config('mail.from.address'));
         Mail::to($invoiceEmail)->queue(new CreditPurchasedInvoiceMail($creditable, $transaction, $user, $package));
 
-        // Bestätigungs-Email an den Käufer
         Mail::to($user->email)->queue(new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package));
     }
 
@@ -279,7 +302,6 @@ class CreditService
     {
         $totalExpired = 0;
 
-        // Finde alle abgelaufenen Kauftransaktionen, die noch nicht verarbeitet wurden
         $expiredPurchases = CreditTransaction::expiredPurchases()->get();
 
         foreach ($expiredPurchases as $purchase) {
@@ -290,17 +312,12 @@ class CreditService
                         return;
                     }
 
-                    $balance = $creditable->creditBalance;
-                    if (!$balance) {
-                        return;
-                    }
+                    // Balance mit Lock laden (Race-frei)
+                    $balance = $this->lockBalance($creditable);
 
-                    // Berechne verfügbare Credits aus diesem Kauf
-                    // (ursprünglicher Betrag minus alle bereits verwendeten/abgelaufenen)
                     $availableAmount = min($purchase->amount, $balance->balance);
 
                     if ($availableAmount > 0) {
-                        // Erstelle Ablauf-Transaktion
                         CreditTransaction::create([
                             'creditable_id' => $creditable->id,
                             'creditable_type' => get_class($creditable),
@@ -312,7 +329,6 @@ class CreditService
                             'related_transaction_id' => $purchase->id,
                         ]);
 
-                        // Aktualisiere Balance
                         $balance->balance -= $availableAmount;
                         $balance->save();
 
@@ -320,7 +336,6 @@ class CreditService
                     }
                 });
             } catch (\Exception $e) {
-                // Logge den Fehler und fahre mit dem nächsten fort
                 Log::error('Fehler beim Verarbeiten abgelaufener Credits', [
                     'transaction_id' => $purchase->id,
                     'error' => $e->getMessage(),

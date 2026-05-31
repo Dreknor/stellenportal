@@ -111,6 +111,7 @@ class JobPostingController extends Controller
             'job_category' => 'nullable|string|max:255',
             'requirements' => 'nullable|string',
             'benefits' => 'nullable|string',
+            'seo_keywords' => 'nullable|string|max:500',
             'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
@@ -136,8 +137,10 @@ class JobPostingController extends Controller
         $jobPosting = JobPosting::create([
             ...$validated,
             'created_by' => $user->id,
-            'status' => JobPosting::STATUS_DRAFT,
         ]);
+        // Status wird bewusst nicht via fillable gesetzt (State-Machine-Feld).
+        $jobPosting->status = JobPosting::STATUS_DRAFT;
+        $jobPosting->save();
 
         return redirect()->route('job-postings.show', $jobPosting)
             ->with('success', 'Stellenausschreibung wurde als Entwurf erstellt.');

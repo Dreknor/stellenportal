@@ -29,6 +29,16 @@ class JobPosting extends Model implements Auditable
     const CREDITS_PER_POSTING = 1;
     const POSTING_DURATION_MONTHS = 3;
 
+    /**
+     * Mass-assignable Felder.
+     *
+     * Wichtig: `status`, `published_at`, `expires_at` und `credits_used` sind
+     * BEWUSST nicht fillable – diese Felder sind Teil der State-Machine und
+     * werden ausschließlich vom {@see \App\Services\JobPostingService}
+     * gesetzt (per `$model->prop = …; $model->save()`). So ist ausgeschlossen,
+     * dass eine erweiterte Validation versehentlich einen externen Status-Wert
+     * akzeptiert.
+     */
     protected $fillable = [
         'facility_id',
         'created_by',
@@ -43,10 +53,6 @@ class JobPosting extends Model implements Auditable
         'contact_email',
         'contact_phone',
         'contact_person',
-        'status',
-        'published_at',
-        'expires_at',
-        'credits_used',
     ];
 
     protected $casts = [

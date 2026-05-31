@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(callback: function (Middleware $middleware) {
         $middleware->append(middleware: App\Http\Middleware\PasswordExpired::class);
+        $middleware->append(middleware: App\Http\Middleware\SecurityHeaders::class);
 
         // Register Spatie Permission Middleware
         $middleware->alias([

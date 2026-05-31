@@ -40,7 +40,9 @@ Route::middleware(['auth', 'verified', ])->group(function () {
 Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(function () {
     // Hilfe-Seite
     Route::get('help', [HelpController::class, 'index'])->name('help');
-    Route::post('help/contact', [HelpController::class, 'sendContact'])->name('help.contact');
+    Route::post('help/contact', [HelpController::class, 'sendContact'])
+        ->middleware('throttle:contact')
+        ->name('help.contact');
 
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::put('settings/profile', [Settings\ProfileController::class, 'update'])->name('settings.profile.update');
@@ -436,10 +438,13 @@ Route::get('/api/location-suggestions', [\App\Http\Controllers\Api\LocationSugge
 Route::prefix('jobs')->name('public.jobs.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');
     Route::get('/{jobPosting}', [\App\Http\Controllers\PublicJobPostingController::class, 'show'])->name('show');
-    Route::get('/{jobPosting}/pdf', [\App\Http\Controllers\PublicJobPostingController::class, 'exportPdf'])->name('pdf');
+    Route::get('/{jobPosting}/pdf', [\App\Http\Controllers\PublicJobPostingController::class, 'exportPdf'])
+        ->middleware('throttle:pdf')
+        ->name('pdf');
 
     // Interaction tracking API
     Route::post('/{jobPosting}/track', [\App\Http\Controllers\Api\JobPostingInteractionController::class, 'track'])
+        ->middleware('throttle:tracking')
         ->name('track');
 });
 

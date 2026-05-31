@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\InsufficientCreditsException;
 use App\Models\JobPosting;
 use App\Models\Facility;
 use App\Models\User;
@@ -33,10 +34,7 @@ class JobPostingService
         // Check if this posting is exempt from credit charges
         $isExempt = $jobPosting->isExemptFromCredits();
 
-        if (!$isExempt && $facility->getCurrentCreditBalance() < $creditsRequired) {
-            throw new \Exception('Nicht genügend Guthaben vorhanden.');
-        }
-
+        // Guthabenprüfung erfolgt atomar in CreditService::useCredits (unter lockForUpdate).
         return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $isExempt) {
             // Deduct credits only if not exempt
             if (!$isExempt) {
@@ -74,10 +72,7 @@ class JobPostingService
         // Check if this posting is exempt from credit charges
         $isExempt = $jobPosting->isExemptFromCredits();
 
-        if (!$isExempt && $facility->getCurrentCreditBalance() < $creditsRequired) {
-            throw new \Exception('Nicht genügend Guthaben vorhanden.');
-        }
-
+        // Guthabenprüfung erfolgt atomar in CreditService::useCredits (unter lockForUpdate).
         return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $months, $isExempt) {
             // Deduct credits only if not exempt
             if (!$isExempt) {

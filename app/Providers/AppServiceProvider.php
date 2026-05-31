@@ -13,10 +13,13 @@ use App\Policies\RolePolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\JobPostingPolicy;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Permission\Models\Role;
@@ -37,6 +40,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Named Rate Limiters
+        $this->configureRateLimiters();
+
         // Register LogEntry Observer for critical log notifications
         LogEntry::observe(LogEntryObserver::class);
 
@@ -112,6 +118,38 @@ class AppServiceProvider extends ServiceProvider
                 $event->message->bcc($bcc);
                 return;
             }
+        });
+    }
+
+    /**
+     * Definiert Named Rate Limiters für sicherheitsrelevante Endpunkte.
+     */
+    protected function configureRateLimiters(): void
+    {
+        // Login, Register, Passwort-Reset – kombinierter Schutz gegen
+        // Brute-Force und E-Mail-Enumeration/Flooding.
+        RateLimiter::for('auth', function (Request $request) {
+            $email = (string) $request->input('email', '');
+            return [
+                Limit::perMinute(10)->by($request->ip()),
+                Limit::perMinute(5)->by(mb_strtolower($email) . '|' . $request->ip()),
+            ];
+        });
+
+        // Kontaktformular / Hilfe – Schutz gegen Mail-Flood.
+        RateLimiter::for('contact', function (Request $request) {
+            return Limit::perMinute(5)->by(optional($request->user())->id ?: $request->ip());
+        });
+
+        // Öffentliches Interaction-Tracking (anonym). Höheres Limit,
+        // aber Schutz gegen Statistik-Poisoning.
+        RateLimiter::for('tracking', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
+        // PDF-Export (DomPDF ist CPU-/RAM-intensiv → DoS-Schutz).
+        RateLimiter::for('pdf', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
         });
     }
 }
