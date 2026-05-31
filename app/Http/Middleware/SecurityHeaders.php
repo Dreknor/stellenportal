@@ -62,6 +62,10 @@ class SecurityHeaders
         // TinyMCE + Alpine.js erfordern derzeit 'unsafe-inline' und 'unsafe-eval'.
         // Bilder: OSM-Kacheln (*.openstreetmap.org / tile.openstreetmap.org),
         //         Geocoding-Provider sowie eigene Media-Library-Uploads.
+        // frame-src: Google reCAPTCHA (www.google.com) sowie im CMS eingebettete
+        //            Video-Provider (z. B. YouTube/youtube-nocookie.com, Vimeo).
+        //            Ohne explizites frame-src würde default-src 'self' greifen und
+        //            diese iframes blockieren.
         $directives = [
             "default-src 'self'",
             "base-uri 'self'",
@@ -72,6 +76,7 @@ class SecurityHeaders
             "font-src 'self' data: https:",
             "style-src 'self' 'unsafe-inline' https:",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+            "frame-src 'self' https:",
             "connect-src 'self' https:",
         ];
 
