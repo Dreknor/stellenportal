@@ -1,0 +1,86 @@
+/* Aktion "Hauptfach: Mensch" – CMS-Landingpages */
+.hm {
+    --hm-green: #2f7d4f;
+    --hm-green-dark: #1f5c39;
+    --hm-green-soft: #eaf5ee;
+    --hm-sand: #faf7f1;
+    --hm-ink: #1f2937;
+    --hm-muted: #5b6472;
+    color: var(--hm-ink);
+    line-height: 1.7;
+}
+.hm * { box-sizing: border-box; }
+.hm-wrap { max-width: 72rem; margin: 0 auto; padding: 0 1.25rem; }
+.hm-narrow { max-width: 48rem; margin: 0 auto; padding: 0 1.25rem; }
+.hm-section { padding: 4rem 0; }
+.hm-section--sand { background: var(--hm-sand); }
+.hm-section--green { background: var(--hm-green-soft); }
+.hm h2 { font-size: clamp(1.6rem, 3vw, 2.25rem); font-weight: 800; line-height: 1.2; margin: 0 0 1rem; color: var(--hm-green-dark); }
+.hm h3 { font-size: 1.2rem; font-weight: 700; margin: 0 0 .5rem; }
+.hm p { margin: 0 0 1rem; }
+.hm-eyebrow { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--hm-green); margin-bottom: .75rem; }
+.hm-lead { font-size: 1.2rem; color: var(--hm-muted); max-width: 44rem; }
+.hm-center { text-align: center; }
+.hm-center .hm-lead { margin-left: auto; margin-right: auto; }
+
+.hm-hero { position: relative; overflow: hidden; color: #fff; padding: 6rem 0 5rem;
+    background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.18), transparent 45%),
+                linear-gradient(135deg, #1f5c39 0%, #2f7d4f 55%, #4c9a6a 100%); }
+.hm-hero h1 { font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; line-height: 1.05; margin: 0 0 1.25rem; }
+.hm-hero h1 span { display: block; font-weight: 400; opacity: .9; font-size: .55em; margin-bottom: .4rem; }
+.hm-hero p { font-size: 1.25rem; max-width: 40rem; opacity: .95; }
+.hm-hero .hm-eyebrow { color: #cdeedb; }
+.hm-hero--sub { padding: 4.5rem 0 3.5rem; }
+
+.hm-btn { display: inline-block; padding: .85rem 1.6rem; border-radius: .75rem; font-weight: 700; text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; }
+.hm-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.18); }
+.hm-btn--light { background: #fff; color: var(--hm-green-dark); }
+.hm-btn--green { background: var(--hm-green); color: #fff; }
+.hm-btn--green:hover { background: var(--hm-green-dark); }
+.hm-btn--ghost { border: 2px solid rgba(255,255,255,.7); color: #fff; }
+.hm-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+
+.hm-grid { display: grid; gap: 1.5rem; }
+.hm-grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.hm-grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.hm-grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+
+.hm-card { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.75rem; box-shadow: 0 2px 10px rgba(0,0,0,.04); text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s, border-color .2s; }
+a.hm-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(31,92,57,.15); border-color: var(--hm-green); }
+.hm-card p { color: var(--hm-muted); flex: 1; }
+.hm-card .hm-more { color: var(--hm-green); font-weight: 700; margin-top: .5rem; }
+.hm-badge { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; background: var(--hm-green-soft); color: var(--hm-green-dark); font-weight: 800; font-size: 1.1rem; margin-bottom: 1rem; }
+
+.hm-quote { border-left: 5px solid var(--hm-green); background: #fff; padding: 1.5rem 1.75rem; border-radius: 0 1rem 1rem 0; font-size: 1.3rem; font-style: italic; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+.hm-list { list-style: none; padding: 0; margin: 1rem 0; }
+.hm-list li { position: relative; padding: .4rem 0 .4rem 2rem; }
+.hm-list li::before { content: "✓"; position: absolute; left: 0; top: .5rem; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--hm-green); color: #fff; font-size: .8rem; display: flex; align-items: center; justify-content: center; }
+
+.hm-steps { counter-reset: step; display: grid; gap: 1rem; }
+.hm-steps > div { counter-increment: step; position: relative; background: #fff; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.25rem 1.25rem 1.25rem 4.5rem; }
+.hm-steps > div::before { content: counter(step); position: absolute; left: 1.25rem; top: 1.2rem; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--hm-green); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+.hm-faq details { background: #fff; border: 1px solid #e5e7eb; border-radius: .9rem; margin-bottom: .8rem; overflow: hidden; }
+.hm-faq summary { cursor: pointer; padding: 1.1rem 1.4rem; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+.hm-faq summary::-webkit-details-marker { display: none; }
+.hm-faq summary::after { content: "+"; color: var(--hm-green); font-size: 1.5rem; line-height: 1; }
+.hm-faq details[open] summary::after { content: "–"; }
+.hm-faq details[open] summary { background: var(--hm-green-soft); }
+.hm-faq .hm-answer { padding: 1rem 1.4rem 1.2rem; color: var(--hm-muted); }
+.hm a.hm-link { color: var(--hm-green); font-weight: 600; text-decoration: underline; }
+
+.hm-cta { background: linear-gradient(135deg, #1f5c39, #2f7d4f); color: #fff; border-radius: 1.25rem; padding: 2.5rem 2rem; text-align: center; }
+.hm-cta h2 { color: #fff; }
+.hm-cta p { opacity: .95; }
+
+.hm-subnav { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; padding: 1rem 1.25rem; }
+.hm-subnav a { padding: .45rem 1rem; border-radius: 999px; background: #fff; border: 1px solid #d1d5db; color: var(--hm-ink); text-decoration: none; font-weight: 600; font-size: .9rem; }
+.hm-subnav a:hover { background: var(--hm-green); border-color: var(--hm-green); color: #fff; }
+
+.dark .hm { color: #e5e7eb; }
+.dark .hm h2 { color: #8fd3a9; }
+.dark .hm-section--sand, .dark .hm-section--green { background: #111827; }
+.dark .hm-card, .dark .hm-steps > div, .dark .hm-faq details, .dark .hm-quote, .dark .hm-subnav a { background: #1f2937; border-color: #374151; color: #e5e7eb; }
+.dark .hm-card p, .dark .hm-lead, .dark .hm-faq .hm-answer { color: #9ca3af; }
+.dark .hm-faq details[open] summary { background: #14532d; }
+@media (prefers-reduced-motion: reduce) { .hm-btn, .hm-card { transition: none; } }

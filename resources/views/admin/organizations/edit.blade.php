@@ -155,6 +155,8 @@
                     </div>
                 </div>
 
+                @include('admin.partials.address-fields', ['model' => $organization])
+
                 <div class="flex gap-2">
                     <x-button type="primary" native-type="submit">
                         <x-fas-save class="w-3 mr-2"/>

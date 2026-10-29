@@ -6,7 +6,8 @@
         $settings = $page->settings ?? [];
         $maxWidth = $settings['max_width'] ?? 'container';
         $backgroundColor = $settings['background_color'] ?? 'transparent';
-        $customCss = $settings['custom_css'] ?? '';
+        $customCss = str_replace(['<', '>'], '', (string) ($settings['custom_css'] ?? ''));
+        $isLanding = ($settings['layout'] ?? '') === 'landing';
 
         // Map container classes
         $containerClasses = [
@@ -35,6 +36,11 @@
         @endpush
     @endif
 
+    @if($isLanding)
+        @foreach($page->contentBlocks->where('is_visible', true)->whereNull('parent_id') as $block)
+            @include('public.pages.partials.content-block', ['block' => $block, 'page' => $page])
+        @endforeach
+    @else
     <div class="w-full" @if($bgStyle) style="{{ $bgStyle }}" @endif>
         <div class="{{ $containerClass }} mx-auto px-4 py-8">
             <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
@@ -66,5 +72,6 @@
             </article>
         </div>
     </div>
+    @endif
 </x-layouts.public>
 

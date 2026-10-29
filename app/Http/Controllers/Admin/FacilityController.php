@@ -4,11 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
+use App\Http\Controllers\Admin\Concerns\ManagesAddress;
 use App\Models\Organization;
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class FacilityController extends Controller
 {
+    use ManagesAddress;
+
+    public function geocode(Facility $facility, GeocodingService $geocoding)
+    {
+        return $this->runGeocoding($facility, $geocoding);
+    }
+
     public function index(Request $request)
     {
         $query = Facility::with(['organization', 'address', 'creditBalance']);
@@ -68,9 +78,11 @@ class FacilityController extends Controller
             'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'remove_header_image' => ['nullable', 'boolean'],
             'remove_logo' => ['nullable', 'boolean'],
+            ...$this->addressRules(),
         ]);
 
-        $facility->update($validated);
+        $facility->update(Arr::except($validated, ['street', 'number', 'zip_code', 'city', 'state']));
+        $this->saveAddress($facility, $validated);
 
         // Handle header image removal
         if ($request->input('remove_header_image')) {

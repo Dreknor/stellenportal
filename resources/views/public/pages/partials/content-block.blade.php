@@ -68,7 +68,7 @@
     $customClass = $blockSettings['block_css_class'] ?? '';
 
     // Custom CSS
-    $customCss = $blockSettings['block_custom_css'] ?? '';
+    $customCss = str_replace(['<', '>'], '', (string) ($blockSettings['block_custom_css'] ?? ''));
     $blockIdClass = 'content-block-' . $block->id;
 
     // Extra Margin-Top für Cards mit Icon (damit das Icon Platz hat)

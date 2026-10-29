@@ -183,6 +183,13 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
             ->middleware('permission:admin edit organizations')
             ->name('organizations.unapprove');
 
+        Route::post('organizations/{organization}/geocode', [\App\Http\Controllers\Admin\OrganizationController::class, 'geocode'])
+            ->middleware('permission:admin edit organizations')
+            ->name('organizations.geocode');
+        Route::post('facilities/{facility}/geocode', [\App\Http\Controllers\Admin\FacilityController::class, 'geocode'])
+            ->middleware('permission:admin edit facilities')
+            ->name('facilities.geocode');
+
         // Admin Facility Management
         Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class)
             ->only(['index', 'show', 'edit', 'update', 'destroy'])

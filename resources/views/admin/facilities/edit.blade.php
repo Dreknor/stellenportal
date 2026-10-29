@@ -83,6 +83,8 @@
                     @enderror
                 </div>
 
+                @include('admin.partials.address-fields', ['model' => $facility])
+
                 <div class="flex gap-2">
                     <x-button type="primary" native-type="submit">
                         <x-fas-save class="w-3 mr-2"/>

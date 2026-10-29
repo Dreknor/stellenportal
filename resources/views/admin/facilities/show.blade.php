@@ -62,16 +62,12 @@
             <x-media-display :model="$facility" />
 
             <!-- Address -->
-            @if($facility->address)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Adresse') }}</h2>
-                    <div class="text-sm text-gray-900 dark:text-gray-100">
-                        <p>{{ $facility->address->street }} {{ $facility->address->street_number }}</p>
-                        <p>{{ $facility->address->postal_code }} {{ $facility->address->city }}</p>
-                        <p>{{ $facility->address->country }}</p>
-                    </div>
-                </div>
-            @endif
+            @include('admin.partials.address-card', [
+                'model' => $facility,
+                'permission' => 'admin edit facilities',
+                'geocodeRoute' => route('admin.facilities.geocode', $facility),
+                'editRoute' => route('admin.facilities.edit', $facility),
+            ])
 
             <!-- Users -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
