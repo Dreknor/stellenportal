@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContentBlock;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use App\Rules\SafeUrl;
 
 class ContentBlockController extends Controller
 {
@@ -35,6 +36,8 @@ class ContentBlockController extends Controller
             'type' => 'required|string',
             'content' => 'nullable|string',
             'settings' => 'nullable|array',
+            'settings.url' => ['nullable', 'string', 'max:2048', new SafeUrl],
+            'settings.button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
             'order' => 'nullable|integer',
             'parent_id' => 'nullable|integer|exists:content_blocks,id',
             'background_color' => 'nullable|string|max:20',
@@ -61,10 +64,14 @@ class ContentBlockController extends Controller
      */
     public function update(Request $request, Page $page, ContentBlock $block)
     {
+        abort_unless($block->page_id === $page->id, 404);
+
         $validated = $request->validate([
             'content' => 'nullable|string',
             'settings' => 'nullable|array',
             'settings.*' => 'nullable',
+            'settings.url' => ['nullable', 'string', 'max:2048', new SafeUrl],
+            'settings.button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
             'is_visible' => 'nullable|boolean',
             'background_color' => 'nullable|string|max:20',
             'parent_id' => 'nullable|integer|exists:content_blocks,id',
@@ -82,6 +89,8 @@ class ContentBlockController extends Controller
      */
     public function destroy(Page $page, ContentBlock $block)
     {
+        abort_unless($block->page_id === $page->id, 404);
+
         $block->delete();
 
         return redirect()
@@ -103,6 +112,7 @@ class ContentBlockController extends Controller
 
         foreach ($validated['blocks'] as $blockData) {
             ContentBlock::where('id', $blockData['id'])
+                ->where('page_id', $page->id)
                 ->update([
                     'order' => $blockData['order'],
                     'parent_id' => $blockData['parent_id'] ?? null,

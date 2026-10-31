@@ -42,7 +42,7 @@
                         <input type="radio" name="settings[image_id]" value="{{ $image->id }}"
                                {{ ($block->settings['image_id'] ?? null) == $image->id ? 'checked' : '' }}
                                class="hidden peer">
-                        <div class="border-2 border-gray-300 peer-checked:border-blue-500 rounded-lg overflow-hidden hover:border-blue-400 transition">
+                        <div class="border-2 border-gray-300 peer-checked:border-primary-500 rounded-lg overflow-hidden hover:border-primary-400 transition">
                             <img src="{{ $image->url }}" alt="{{ $image->alt_text }}" class="w-full h-32 object-cover">
                         </div>
                     </label>
@@ -51,7 +51,7 @@
         @else
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('Keine Bilder vorhanden. Laden Sie zuerst Bilder hoch.') }}</p>
         @endif
-        <a href="{{ route('cms.pages.images.index', $page) }}" class="text-blue-600 hover:text-blue-800 text-sm">
+        <a href="{{ route('cms.pages.images.index', $page) }}" class="text-primary-600 hover:text-primary-800 text-sm">
             {{ __('→ Bilder verwalten') }}
         </a>
     </div>
@@ -123,7 +123,7 @@
     <div class="mb-4">
         <div class="flex items-center">
             <input type="checkbox" name="settings[new_tab]" value="1" {{ ($block->settings['new_tab'] ?? false) ? 'checked' : '' }}
-                   id="new_tab_{{ $block->id }}" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                   id="new_tab_{{ $block->id }}" class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
             <label for="new_tab_{{ $block->id }}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {{ __('In neuem Tab öffnen') }}
             </label>
@@ -188,8 +188,8 @@
             <button type="button" onclick="setColor('{{ $block->id }}', 'transparent')" class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded">Transparent</button>
             <button type="button" onclick="setColor('{{ $block->id }}', '#ffffff')" class="px-3 py-1 text-xs bg-white border hover:bg-gray-50 rounded">Weiß</button>
             <button type="button" onclick="setColor('{{ $block->id }}', '#f3f4f6')" class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded">Grau</button>
-            <button type="button" onclick="setColor('{{ $block->id }}', '#dbeafe')" class="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded">Blau</button>
-            <button type="button" onclick="setColor('{{ $block->id }}', '#1e40af')" class="px-3 py-1 text-xs bg-blue-700 text-white hover:bg-blue-800 rounded">Dunkelblau</button>
+            <button type="button" onclick="setColor('{{ $block->id }}', '#dbeafe')" class="px-3 py-1 text-xs bg-primary-100 hover:bg-primary-200 rounded">Blau</button>
+            <button type="button" onclick="setColor('{{ $block->id }}', '#1e40af')" class="px-3 py-1 text-xs bg-primary-700 text-white hover:bg-primary-800 rounded">Dunkelblau</button>
         </div>
     </div>
     <div class="mb-4">
@@ -203,12 +203,12 @@
             <option value="large" {{ ($block->settings['padding'] ?? 'medium') === 'large' ? 'selected' : '' }}>Groß</option>
         </select>
     </div>
-    <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg">
+    <div class="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 rounded-lg">
         <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <div class="text-sm text-blue-800 dark:text-blue-200">
+            <div class="text-sm text-primary-800 dark:text-primary-200">
                 <p class="font-semibold mb-1">{{ __('Verschachtelte Blöcke') }}</p>
                 <p>{{ __('Blöcke können per Drag & Drop in diesen Container verschoben werden. Neue Blöcke können direkt im Container erstellt werden.') }}</p>
                 <p class="mt-2 text-xs">{{ __('Das Content-Feld wird nicht mehr für Container verwendet.') }}</p>
@@ -243,7 +243,7 @@
     <div class="mb-4">
         <div class="flex items-center mb-2">
             <input type="checkbox" name="settings[equal_height]" value="1" {{ ($block->settings['equal_height'] ?? false) ? 'checked' : '' }}
-                   id="equal_height_{{ $block->id }}" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                   id="equal_height_{{ $block->id }}" class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
             <label for="equal_height_{{ $block->id }}" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {{ __('Gleiche Höhe für alle Spalten') }}
             </label>
@@ -253,7 +253,7 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {{ __('Spalten-Inhalt (HTML)') }}
         </label>
-        <textarea name="content" rows="10" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm" placeholder="<div>Spalte 1</div>&#10;<div>Spalte 2</div>">{!! $block->content !!}</textarea>
+        <textarea name="content" rows="10" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm" placeholder="<div>Spalte 1</div>&#10;<div>Spalte 2</div>">{{ $block->content }}</textarea>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ __('Jedes <div>...</div> repräsentiert eine Spalte. Fügen Sie HTML-Inhalt hinzu.') }}</p>
     </div>
 @endif
@@ -277,12 +277,12 @@
             {{ __('Icon-Klasse (optional)') }}
         </label>
         <input type="text" name="settings[icon]" value="{{ $block->settings['icon'] ?? '' }}" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" placeholder="z.B. fa-check-circle">
-        <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+        <div class="mt-2 p-3 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700 rounded-lg">
             <div class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <div class="text-xs text-blue-800 dark:text-blue-200">
+                <div class="text-xs text-primary-800 dark:text-primary-200">
                     <p class="font-semibold">{{ __('Logo-Design') }}</p>
                     <p>{{ __('Das Icon wird als rundes Logo oben in der Card zentriert angezeigt. Geben Sie die vollständige Icon-Klasse ein (z.B. fa-check-circle).') }}</p>
                 </div>
@@ -385,7 +385,7 @@
                         <input type="radio" name="settings[image_id]" value="{{ $image->id }}"
                                {{ ($block->settings['image_id'] ?? null) == $image->id ? 'checked' : '' }}
                                class="hidden peer">
-                        <div class="border-2 border-gray-300 peer-checked:border-blue-500 rounded-lg overflow-hidden hover:border-blue-400 transition">
+                        <div class="border-2 border-gray-300 peer-checked:border-primary-500 rounded-lg overflow-hidden hover:border-primary-400 transition">
                             <img src="{{ $image->url }}" alt="{{ $image->alt_text }}" class="w-full h-32 object-cover">
                         </div>
                     </label>
@@ -394,7 +394,7 @@
         @else
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('Keine Bilder vorhanden.') }}</p>
         @endif
-        <a href="{{ route('cms.pages.images.index', $page) }}" class="text-blue-600 hover:text-blue-800 text-sm">
+        <a href="{{ route('cms.pages.images.index', $page) }}" class="text-primary-600 hover:text-primary-800 text-sm">
             {{ __('→ Bilder verwalten') }}
         </a>
     </div>

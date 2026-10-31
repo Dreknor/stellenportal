@@ -29,17 +29,22 @@ class DeleteUnverifiedUsers extends Command
     {
         $days = (int) $this->option('days');
 
+        $this->info("Lösche nicht verifizierte Benutzerkonten, die älter als {$days} Tage sind...");
 
-        // Find users who:
+        // Only accounts that were never verified, are older than the threshold and
+        // have not been assigned to an organization or facility yet
         $unverifiedUsers = User::whereNull('email_verified_at')
+            ->where('created_at', '<', now()->subDays($days))
+            ->whereDoesntHave('organizations')
+            ->whereDoesntHave('facilities')
             ->get();
 
         if ($unverifiedUsers->isEmpty()) {
-            $this->info('Keine unverifizierte Benutzer zum Löschen gefunden.');
+            $this->info('Keine nicht verifizierten Benutzerkonten zum Löschen gefunden.');
             return Command::SUCCESS;
         }
 
-        $count = $unverifiedUsers->count();
+        $count = 0;
 
         foreach ($unverifiedUsers as $user) {
             Log::info('Deleting unverified user', [
@@ -48,14 +53,14 @@ class DeleteUnverifiedUsers extends Command
                 'created_at' => $user->created_at,
                 'days_since_creation' => $user->created_at->diffInDays(now())
             ]);
+
+            // Delete per model so that auditing and model events run
+            $user->delete();
+            $count++;
         }
 
-        // Delete the users
-        User::whereNull('email_verified_at')
-            ->delete();
-
+        $this->info("Es wurden {$count} nicht verifizierte Benutzerkonten gelöscht.");
 
         return Command::SUCCESS;
     }
 }
-

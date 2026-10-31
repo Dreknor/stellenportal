@@ -67,7 +67,7 @@
                                                         </span>
                                                         @break
                                                     @case('transfer_in')
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary-100 text-primary-800">
                                                             Eingang
                                                         </span>
                                                         @break
@@ -97,7 +97,7 @@
                                                 {{ number_format($transaction->balance_after, 0, ',', '.') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $transaction->user->first_name }} {{ $transaction->user->last_name }}
+                                                {{ $transaction->user ? $transaction->user->first_name . ' ' . $transaction->user->last_name : '-' }}
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-500">
                                                 @if($transaction->creditPackage)

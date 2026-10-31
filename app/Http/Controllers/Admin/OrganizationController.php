@@ -90,14 +90,12 @@ class OrganizationController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $organization->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($organization, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $organization->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($organization, $request, 'logo');
         }
 
         return redirect()->route('admin.organizations.show', $organization)
@@ -109,6 +107,11 @@ class OrganizationController extends Controller
         // Check if organization has facilities
         if ($organization->facilities()->count() > 0) {
             return back()->with('error', 'Organisation kann nicht gelöscht werden, da sie noch Einrichtungen hat.');
+        }
+
+        $balance = (int) ($organization->creditBalance()->value('balance') ?? 0);
+        if ($balance > 0) {
+            return back()->with('error', "Organisation kann nicht gelöscht werden, da sie noch {$balance} Guthaben hat.");
         }
 
         $organization->delete();

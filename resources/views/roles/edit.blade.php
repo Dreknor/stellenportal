@@ -28,7 +28,7 @@
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Rollenname <span class="text-red-600">*</span>
                             </label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $role->name) }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="z.B. Administrator">
+                            <input type="text" name="name" id="name" value="{{ old('name', $role->name) }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500" placeholder="z.B. Administrator">
                             @error('name')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -45,7 +45,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         @foreach($groupPermissions as $permission)
                                             <label class="flex items-center">
-                                                <input type="checkbox" name="permissions[]" value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', $rolePermissions)) ? 'checked' : '' }} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                                <input type="checkbox" name="permissions[]" value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', $rolePermissions)) ? 'checked' : '' }} class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                                 <span class="ml-2 text-sm text-gray-700">{{ $permission->name }}</span>
                                             </label>
                                         @endforeach
@@ -62,7 +62,7 @@
                             <a href="{{ route('roles.index') }}" class="text-gray-600 hover:text-gray-800">
                                 Abbrechen
                             </a>
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                            <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-lg transition">
                                 Änderungen speichern
                             </button>
                         </div>

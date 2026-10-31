@@ -33,9 +33,9 @@
                 <tbody>
                     @foreach($expiringTransactions as $transaction)
                         <tr>
-                            <td style="padding: 10px; border: 1px solid #ddd;">{{ $transaction->created_at->format('d.m.Y') }}</td>
-                            <td style="padding: 10px; text-align: right; border: 1px solid #ddd;">{{ $transaction->amount }}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd;">{{ $transaction->expires_at->format('d.m.Y') }}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">{{ $transaction['purchased_at'] }}</td>
+                            <td style="padding: 10px; text-align: right; border: 1px solid #ddd;">{{ $transaction['amount'] }}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">{{ $transaction['expires_at'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>

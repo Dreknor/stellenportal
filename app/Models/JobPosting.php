@@ -132,6 +132,20 @@ class JobPosting extends Model implements Auditable
     }
 
     /**
+     * Get the schema.org employment type (values accepted by Google for Jobs)
+     */
+    public function getSchemaEmploymentType(): string
+    {
+        return match($this->employment_type) {
+            self::EMPLOYMENT_TYPE_FULL_TIME => 'FULL_TIME',
+            self::EMPLOYMENT_TYPE_PART_TIME, self::EMPLOYMENT_TYPE_MINI_JOB => 'PART_TIME',
+            self::EMPLOYMENT_TYPE_INTERNSHIP => 'INTERN',
+            self::EMPLOYMENT_TYPE_VOLUNTEER => 'VOLUNTEER',
+            default => 'OTHER',
+        };
+    }
+
+    /**
      * Get status label
      */
     public function getStatusLabel(): string

@@ -37,6 +37,10 @@
                                                value="{{ old('email', $user->email) }}" />
                             </div>
 
+                            <div class="mb-6">
+                                <x-forms.input label="Aktuelles Passwort (nur bei Änderung der E-Mail erforderlich)" name="current_password" type="password" />
+                            </div>
+
                             <div>
                                 <x-button type="primary">{{ __('Speichern') }}</x-button>
                             </div>

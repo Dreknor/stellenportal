@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\SafeUrl;
 
 class StoreMenuItemRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class StoreMenuItemRequest extends FormRequest
             'parent_id' => ['nullable', 'integer', 'exists:menu_items,id'],
             'page_id' => ['nullable', 'integer', 'exists:pages,id', 'required_without:url'],
             'label' => ['required', 'string', 'max:255'],
-            'url' => ['nullable', 'string', 'max:255', 'required_without:page_id'],
+            'url' => ['nullable', 'string', 'max:255', new SafeUrl, 'required_without:page_id'],
             'target' => ['required', 'in:_self,_blank'],
             'css_class' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],

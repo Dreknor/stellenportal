@@ -18,7 +18,7 @@ class PasswordExpired
         $user = auth()->user();
 
         // Ensure static analyzers know $user is an instance of App\Models\User before accessing custom properties
-        if ($user instanceof \App\Models\User && $user->change_password && ! $request->session()->has('ownID')) {
+        if ($user instanceof \App\Models\User && $user->change_password && ! $request->session()->has('impersonate_original_user')) {
             return redirect()->route('settings.password.edit');
         }
 

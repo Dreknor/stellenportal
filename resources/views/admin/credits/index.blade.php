@@ -30,13 +30,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Organisationen Gesamt') }}</p>
-                    <p class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                    <p class="text-3xl font-bold text-primary-600 dark:text-primary-400 mt-2">
                         {{ $organizationBalances->sum('balance') }}
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Credits') }}</p>
                 </div>
-                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-                    <x-fas-building class="w-8 h-8 text-blue-600 dark:text-blue-300"/>
+                <div class="bg-primary-100 dark:bg-primary-900 p-3 rounded-full">
+                    <x-fas-building class="w-8 h-8 text-primary-600 dark:text-primary-300"/>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $balance->creditable->name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-bold text-blue-600 dark:text-blue-400">{{ $balance->balance }} {{ __('Credits') }}</div>
+                                    <div class="text-sm font-bold text-primary-600 dark:text-primary-400">{{ $balance->balance }} {{ __('Credits') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                     {{ $balance->creditable->facilities->count() }}

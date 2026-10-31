@@ -78,6 +78,8 @@ class FacilityController extends Controller
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
+            'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
         ]);
 
         // Prüfen ob User der Organisation zugeordnet ist und diese genehmigt ist
@@ -102,14 +104,12 @@ class FacilityController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $facility->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($facility, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $facility->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($facility, $request, 'logo');
         }
 
         return redirect()->route('facilities.show', $facility)
@@ -190,7 +190,21 @@ class FacilityController extends Controller
             'state' => 'nullable|string|max:100',
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'remove_logo' => 'nullable|boolean',
         ]);
+
+        // Wechsel der Organisation nur zwischen eigenen, genehmigten Organisationen
+        if ((int) $request->organization_id !== $facility->organization_id) {
+            $targetOrganization = Organization::findOrFail($request->organization_id);
+            if (!$user->organizations->contains($facility->organization)
+                || !$user->organizations->contains($targetOrganization)
+                || !$targetOrganization->canUseFeatures()) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Sie haben keine Berechtigung, die Einrichtung dieser Organisation zuzuordnen.');
+            }
+        }
 
         $facility->update($request->only([
             'organization_id', 'name', 'email', 'phone', 'website', 'description'
@@ -218,14 +232,12 @@ class FacilityController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $facility->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($facility, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $facility->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($facility, $request, 'logo');
         }
 
         return redirect()->route('facilities.edit', $facility)
@@ -242,6 +254,10 @@ class FacilityController extends Controller
         if (!$user->organizations->contains($facility->organization)) {
             return redirect()->route('facilities.index')
                 ->with('error', 'Keine Berechtigung zum Löschen.');
+        }
+
+        if ($blocker = $facility->deletionBlocker()) {
+            return back()->with('error', $blocker);
         }
 
         $facility->delete();

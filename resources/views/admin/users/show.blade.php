@@ -12,11 +12,11 @@
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $user->first_name }} {{ $user->last_name }}</h1>
         <div class="flex gap-2">
             @can('admin impersonate users')
-                @if($user->id !== auth()->id() && !$user->hasRole(['Super Admin', 'Admin']))
+                @if($user->id !== auth()->id() && $user->canBeImpersonated())
                     <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
                         @csrf
                         <x-button type="warning" native-type="submit"
-                            onclick="return confirm('Möchten Sie sich als {{ $user->name }} anmelden?')">
+                            onclick="return confirm({{ Js::from('Möchten Sie sich als ' . $user->name . ' anmelden?') }})">
                             <x-fas-user-secret class="w-3 mr-3"/>
                             {{ __('Als Benutzer anmelden') }}
                         </x-button>
@@ -125,7 +125,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Rollen') }}</h2>
                 @forelse($user->roles as $role)
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 mb-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 mb-2">
                         {{ $role->name }}
                     </span>
                 @empty

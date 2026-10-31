@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::post('verify-email', [VerificationController::class, 'store'])->middleware('throttle:6,1')->name('verification.store');
 
     Route::get('confirm-password', [ConfirmationController::class, 'create'])->name('password.confirm');
-    Route::post('confirm-password', [ConfirmationController::class, 'store'])->name('confirmation.store');
+    Route::post('confirm-password', [ConfirmationController::class, 'store'])->middleware('throttle:auth')->name('confirmation.store');
 });
 
 Route::post('logout', [LoginController::class, 'destroy'])->name('logout');

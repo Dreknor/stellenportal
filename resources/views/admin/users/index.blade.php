@@ -25,12 +25,12 @@
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suche') }}</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="{{ __('Name oder E-Mail...') }}">
                 </div>
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Rolle') }}</label>
-                    <select name="role" id="role" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="role" id="role" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle Rollen') }}</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->name }}" {{ request('role') === $role->name ? 'selected' : '' }}>
@@ -41,7 +41,7 @@
                 </div>
                 <div>
                     <label for="verified" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('E-Mail verifiziert') }}</label>
-                    <select name="verified" id="verified" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="verified" id="verified" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle') }}</option>
                         <option value="yes" {{ request('verified') === 'yes' ? 'selected' : '' }}>{{ __('Ja') }}</option>
                         <option value="no" {{ request('verified') === 'no' ? 'selected' : '' }}>{{ __('Nein') }}</option>
@@ -79,7 +79,7 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                    <div class="flex-shrink-0 h-10 w-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold">
                                         {{ strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1)) }}
                                     </div>
                                     <div class="ml-4">
@@ -95,7 +95,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-wrap gap-1">
                                     @forelse($user->roles as $role)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                             {{ $role->name }}
                                         </span>
                                     @empty
@@ -137,11 +137,11 @@
                                         </x-button>
                                     @endcan
                                     @can('admin impersonate users')
-                                        @if($user->id !== auth()->id() && !$user->hasRole(['Super Admin', 'Admin']))
+                                        @if($user->id !== auth()->id() && $user->canBeImpersonated())
                                             <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
                                                 @csrf
                                                 <x-button type="warning" size="sm" native-type="submit"
-                                                    onclick="return confirm('Möchten Sie sich als {{ $user->name }} anmelden?')">
+                                                    onclick="return confirm({{ Js::from('Möchten Sie sich als ' . $user->name . ' anmelden?') }})">
                                                     <x-fas-user-secret class="w-3"/>
                                                 </x-button>
                                             </form>

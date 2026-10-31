@@ -24,11 +24,11 @@
                         {{ $stats['users_verified'] }} {{ __('verifiziert') }}
                     </p>
                 </div>
-                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
-                    <x-fas-users class="w-6 h-6 text-blue-600 dark:text-blue-300"/>
+                <div class="bg-primary-100 dark:bg-primary-900 p-3 rounded-full">
+                    <x-fas-users class="w-6 h-6 text-primary-600 dark:text-primary-300"/>
                 </div>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="{{ route('admin.users.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                 {{ __('Alle anzeigen') }} →
             </a>
         </div>
@@ -96,13 +96,13 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Guthaben-Übersicht') }}</h2>
-                <a href="{{ route('admin.credits.index') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                <a href="{{ route('admin.credits.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                     {{ __('Details') }} →
                 </a>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['credits_total'] }}</p>
+                <div class="text-center p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                    <p class="text-3xl font-bold text-primary-600 dark:text-primary-400">{{ $stats['credits_total'] }}</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('Gesamt Credits') }}</p>
                 </div>
                 <div class="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -174,7 +174,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Neueste Benutzer') }}</h2>
-                <a href="{{ route('admin.users.index') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                <a href="{{ route('admin.users.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                     {{ __('Alle') }} →
                 </a>
             </div>
@@ -182,7 +182,7 @@
                 @forelse($recentUsers as $user)
                     <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                            <div class="flex-shrink-0 h-10 w-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                 {{ strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1)) }}
                             </div>
                             <div class="ml-3">
@@ -204,7 +204,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Neueste Stellenausschreibungen') }}</h2>
-                <a href="{{ route('admin.job-postings.index') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                <a href="{{ route('admin.job-postings.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                     {{ __('Alle') }} →
                 </a>
             </div>
@@ -241,7 +241,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Letzte Credit-Transaktionen') }}</h2>
-            <a href="{{ route('admin.credits.transactions') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="{{ route('admin.credits.transactions') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                 {{ __('Alle anzeigen') }} →
             </a>
         </div>
@@ -263,7 +263,7 @@
                             </td>
                             <td class="px-4 py-2 text-xs">
                                 @if($transaction->type === 'purchase')
-                                    <span class="text-blue-600 dark:text-blue-400">{{ __('Kauf') }}</span>
+                                    <span class="text-primary-600 dark:text-primary-400">{{ __('Kauf') }}</span>
                                 @elseif($transaction->type === 'grant')
                                     <span class="text-green-600 dark:text-green-400">{{ __('Gewährt') }}</span>
                                 @elseif($transaction->type === 'transfer')

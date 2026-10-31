@@ -17,16 +17,16 @@
         @endcan
     </div>
 
-    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+    <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg p-4 mb-6">
         <div class="flex">
             <div class="flex-shrink-0">
-                <x-fas-info-circle class="h-5 w-5 text-blue-400"/>
+                <x-fas-info-circle class="h-5 w-5 text-primary-400"/>
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                <h3 class="text-sm font-medium text-primary-800 dark:text-primary-200">
                     {{ __('Was sind Guthabenausnahmen?') }}
                 </h3>
-                <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                <div class="mt-2 text-sm text-primary-700 dark:text-primary-300">
                     <p>{{ __('Guthabenausnahmen ermöglichen es, für bestimmte Beschäftigungsarten keine Credits für Veröffentlichung oder Verlängerung von Stellenausschreibungen zu verlangen. Sie können festlegen, ob die Ausnahme für alle Organisationen oder nur für Genossenschaftsmitglieder gilt.') }}</p>
                 </div>
             </div>

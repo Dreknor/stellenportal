@@ -36,6 +36,13 @@ class JobPostingService
 
         // Guthabenprüfung erfolgt atomar in CreditService::useCredits (unter lockForUpdate).
         return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $isExempt) {
+            // Re-check the status under a row lock so a double submit cannot charge twice
+            $locked = JobPosting::whereKey($jobPosting->id)->lockForUpdate()->firstOrFail();
+            if ($locked->status !== JobPosting::STATUS_DRAFT) {
+                throw new \Exception('Nur Entwürfe können veröffentlicht werden.');
+            }
+            $jobPosting->setRawAttributes($locked->getAttributes(), true);
+
             // Deduct credits only if not exempt
             if (!$isExempt) {
                 $this->creditService->useCredits(
@@ -50,7 +57,7 @@ class JobPostingService
             // Update job posting
             $jobPosting->status = JobPosting::STATUS_ACTIVE;
             $jobPosting->published_at = now();
-            $jobPosting->expires_at = now()->addMonths(JobPosting::POSTING_DURATION_MONTHS);
+            $jobPosting->expires_at = now()->addMonthsNoOverflow(JobPosting::POSTING_DURATION_MONTHS);
             $jobPosting->save();
 
             return $jobPosting;
@@ -62,8 +69,8 @@ class JobPostingService
      */
     public function extendJobPosting(JobPosting $jobPosting, User $user, int $months = 3): JobPosting
     {
-        if (!in_array($jobPosting->status, [JobPosting::STATUS_ACTIVE, JobPosting::STATUS_EXPIRED])) {
-            throw new \Exception('Nur aktive oder abgelaufene Stellenausschreibungen können verlängert werden.');
+        if (!in_array($jobPosting->status, [JobPosting::STATUS_ACTIVE, JobPosting::STATUS_EXPIRED, JobPosting::STATUS_PAUSED])) {
+            throw new \Exception('Nur aktive, pausierte oder abgelaufene Stellenausschreibungen können verlängert werden.');
         }
 
         $facility = $jobPosting->facility;
@@ -74,6 +81,10 @@ class JobPostingService
 
         // Guthabenprüfung erfolgt atomar in CreditService::useCredits (unter lockForUpdate).
         return DB::transaction(function () use ($jobPosting, $facility, $user, $creditsRequired, $months, $isExempt) {
+            // Work on the locked, current row so concurrent extensions add up correctly
+            $locked = JobPosting::whereKey($jobPosting->id)->lockForUpdate()->firstOrFail();
+            $jobPosting->setRawAttributes($locked->getAttributes(), true);
+
             // Deduct credits only if not exempt
             if (!$isExempt) {
                 $this->creditService->useCredits(
@@ -87,8 +98,8 @@ class JobPostingService
 
             // Extend expiration date
             $newExpiresAt = $jobPosting->expires_at && $jobPosting->expires_at->isFuture()
-                ? $jobPosting->expires_at->addMonths($months)
-                : now()->addMonths($months);
+                ? $jobPosting->expires_at->addMonthsNoOverflow($months)
+                : now()->addMonthsNoOverflow($months);
 
             $jobPosting->status = JobPosting::STATUS_ACTIVE;
             $jobPosting->expires_at = $newExpiresAt;
@@ -138,7 +149,8 @@ class JobPostingService
      */
     public function markExpiredPostings(): int
     {
-        $expiredPostings = JobPosting::where('status', JobPosting::STATUS_ACTIVE)
+        // Paused postings expire as well, otherwise they could never be extended again
+        $expiredPostings = JobPosting::whereIn('status', [JobPosting::STATUS_ACTIVE, JobPosting::STATUS_PAUSED])
             ->where('expires_at', '<=', now())
             ->with(['creator', 'facility'])
             ->get();
@@ -220,7 +232,7 @@ class JobPostingService
             // falls der Nutzer keinen Ort aus der Autocomplete-Liste ausgewählt hat.
             $requestUrl = $url . urlencode($location) . '&api_key=' . $key . '&countrycodes=de';
 
-            $response = $client->get($requestUrl);
+            $response = $client->get($requestUrl, ['timeout' => 5]);
             $data = json_decode($response->getBody(), true);
 
             if (!empty($data) && isset($data[0]['lat']) && isset($data[0]['lon'])) {
@@ -233,7 +245,8 @@ class JobPostingService
 
             return null;
         } catch (\Exception $e) {
-            Log::error('Geocoding failed: ' . $e->getMessage());
+            // The request URL contains the API key, never log it unmasked
+            Log::error('Geocoding failed: ' . str_replace((string) config('geocode.geocode_key'), '***', $e->getMessage()));
             return null;
         }
     }

@@ -18,7 +18,7 @@
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suche') }}</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}"
-                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                        placeholder="{{ __('Name, E-Mail oder Telefon...') }}">
             </div>
             <div class="flex gap-2">
@@ -83,7 +83,7 @@
                                         </span>
                                     @endif
                                     @if($organization->is_cooperative_member)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                             <x-fas-star class="w-3 mr-1"/>
                                             {{ __('Genossenschaft') }}
                                         </span>

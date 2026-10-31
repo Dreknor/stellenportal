@@ -165,7 +165,7 @@
 
 {{-- Quote Block --}}
 @if($block->type === 'quote' && $block->content)
-    <blockquote class="my-8 pl-6 border-l-4 border-blue-500 italic text-gray-700 dark:text-gray-300">
+    <blockquote class="my-8 pl-6 border-l-4 border-primary-500 italic text-gray-700 dark:text-gray-300">
         <p class="text-lg mb-2">{{ $block->content }}</p>
         @if(isset($block->settings['author']))
             <footer class="text-sm text-gray-600 dark:text-gray-400 not-italic">
@@ -180,7 +180,7 @@
     @php
         $style = $block->settings['style'] ?? 'primary';
         $buttonClasses = [
-            'primary' => 'bg-blue-600 hover:bg-blue-700 text-white',
+            'primary' => 'bg-primary-600 hover:bg-primary-700 text-white',
             'secondary' => 'bg-gray-600 hover:bg-gray-700 text-white',
             'success' => 'bg-green-600 hover:bg-green-700 text-white',
             'danger' => 'bg-red-600 hover:bg-red-700 text-white',
@@ -377,7 +377,7 @@
             {{-- Icon innerhalb der Card, über dem Titel --}}
             @if($icon)
                 <div class="flex justify-center mb-6">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 flex items-center justify-center shadow-xl border-4 border-white dark:border-gray-800">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 flex items-center justify-center shadow-xl border-4 border-white dark:border-gray-800">
                         <i class="fas {{ $icon }} text-3xl text-white"></i>
                     </div>
                 </div>
@@ -395,7 +395,7 @@
 
         @if($showButton && $finalButtonUrl)
             <a href="{{ $finalButtonUrl }}"
-               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105">
+               class="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all transform hover:scale-105">
                 {{ $buttonText }}
             </a>
         @endif
@@ -469,7 +469,7 @@
                     @endif
                     @if($showButton && $finalButtonUrl)
                         <a href="{{ $finalButtonUrl }}"
-                           class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                           class="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                             {{ $buttonText }}
                         </a>
                     @endif
@@ -493,7 +493,7 @@
                         @endif
                         @if($showButton && $finalButtonUrl)
                             <a href="{{ $finalButtonUrl }}"
-                               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
+                               class="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
                                 {{ $buttonText }}
                             </a>
                         @endif
@@ -515,7 +515,7 @@
                         @endif
                         @if($showButton && $finalButtonUrl)
                             <a href="{{ $finalButtonUrl }}"
-                               class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
+                               class="inline-block px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg transition-all self-start">
                                 {{ $buttonText }}
                             </a>
                         @endif

@@ -20,12 +20,12 @@
                 <div>
                     <label for="q" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suche') }}</label>
                     <input type="text" name="q" id="q" value="{{ $filters['q'] ?? '' }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="{{ __('Exception oder Payload...') }}">
                 </div>
                 <div>
                     <label for="queue" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Queue') }}</label>
-                    <select name="queue" id="queue" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="queue" id="queue" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle Queues') }}</option>
                         @foreach(($queues ?? []) as $qname)
                             <option value="{{ $qname }}" {{ (isset($filters['queue']) && $filters['queue'] === $qname) ? 'selected' : '' }}>{{ $qname }}</option>
@@ -35,12 +35,12 @@
                 <div>
                     <label for="date_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Von') }}</label>
                     <input type="date" name="date_from" id="date_from" value="{{ $filters['date_from'] ?? '' }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
                 <div>
                     <label for="date_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Bis') }}</label>
                     <input type="date" name="date_to" id="date_to" value="{{ $filters['date_to'] ?? '' }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
             </div>
             <div class="flex gap-2">
@@ -108,10 +108,10 @@
             <div class="text-sm text-gray-600 dark:text-gray-400">{{ __('Anzeigen') }} {{ count($jobs) }} / {{ $total }}</div>
             <div>
                 @if($page > 1)
-                    <a href="?page={{ $page - 1 }}" class="text-sm text-blue-600">&laquo; {{ __('Zurück') }}</a>
+                    <a href="?page={{ $page - 1 }}" class="text-sm text-primary-600">&laquo; {{ __('Zurück') }}</a>
                 @endif
                 @if($page * $perPage < $total)
-                    <a href="?page={{ $page + 1 }}" class="ml-3 text-sm text-blue-600">{{ __('Weiter') }} &raquo;</a>
+                    <a href="?page={{ $page + 1 }}" class="ml-3 text-sm text-primary-600">{{ __('Weiter') }} &raquo;</a>
                 @endif
             </div>
         </div>

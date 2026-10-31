@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CreditBalance;
+use App\Models\CreditLot;
 use App\Models\CreditPackage;
 use App\Models\CreditTransaction;
 use App\Models\Facility;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Mail\CreditPurchasedInvoiceMail;
 use App\Mail\CreditPurchasedConfirmationMail;
 use App\Exceptions\InsufficientCreditsException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -29,7 +31,13 @@ class CreditService
     {
         // Sicherstellen, dass ein Balance-Row existiert (außerhalb des Locks,
         // damit firstOrCreate unter Lock nicht neu anlegen muss).
-        $creditable->creditBalance()->firstOrCreate([]);
+        if (!$creditable->creditBalance()->exists()) {
+            try {
+                $creditable->creditBalance()->create([]);
+            } catch (UniqueConstraintViolationException) {
+                // Created concurrently by another request
+            }
+        }
 
         /** @var CreditBalance $balance */
         $balance = $creditable->creditBalance()
@@ -40,16 +48,100 @@ class CreditService
     }
 
     /**
+     * Legt eine neue Credit-Charge (Lot) für ein Creditable an.
+     */
+    protected function addLot($creditable, int $amount, $expiresAt, ?int $purchaseTransactionId): void
+    {
+        CreditLot::create([
+            'creditable_id' => $creditable->id,
+            'creditable_type' => get_class($creditable),
+            'purchase_transaction_id' => $purchaseTransactionId,
+            'amount' => $amount,
+            'remaining' => $amount,
+            'expires_at' => $expiresAt,
+        ]);
+    }
+
+    /**
+     * Verbraucht Credits FIFO aus den Chargen (früheste Ablaufdaten zuerst,
+     * unbefristete zuletzt) und liefert die verbrauchten Teilmengen zurück.
+     *
+     * Credits ohne Charge (Altbestand) werden als unbefristete Teilmenge geliefert.
+     * WICHTIG: Nur innerhalb einer laufenden DB::transaction nach lockBalance() aufrufen.
+     *
+     * @return array<int, array{amount: int, expires_at: mixed, purchase_transaction_id: ?int}>
+     */
+    protected function consumeLots($creditable, int $amount): array
+    {
+        $lots = CreditLot::where('creditable_type', get_class($creditable))
+            ->where('creditable_id', $creditable->id)
+            ->where('remaining', '>', 0)
+            ->orderByRaw('expires_at IS NULL')
+            ->orderBy('expires_at')
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get();
+
+        $consumed = [];
+        $rest = $amount;
+
+        foreach ($lots as $lot) {
+            if ($rest <= 0) {
+                break;
+            }
+
+            $take = min($lot->remaining, $rest);
+            $lot->remaining -= $take;
+            $lot->save();
+            $rest -= $take;
+
+            $consumed[] = [
+                'amount' => $take,
+                'expires_at' => $lot->expires_at,
+                'purchase_transaction_id' => $lot->purchase_transaction_id,
+            ];
+        }
+
+        if ($rest > 0) {
+            $consumed[] = ['amount' => $rest, 'expires_at' => null, 'purchase_transaction_id' => null];
+        }
+
+        return $consumed;
+    }
+
+    /**
+     * Überträgt verbrauchte Teilmengen als neue Chargen auf ein anderes Creditable
+     * und behält dabei das ursprüngliche Ablaufdatum bei.
+     *
+     * @param array<int, array{amount: int, expires_at: mixed, purchase_transaction_id: ?int}> $consumed
+     */
+    protected function moveLots(array $consumed, $target): void
+    {
+        foreach ($consumed as $part) {
+            $this->addLot($target, $part['amount'], $part['expires_at'], $part['purchase_transaction_id']);
+        }
+    }
+
+    /**
      * Purchase credits for an entity (Organization or Facility)
      */
     public function purchaseCredits($creditable, CreditPackage $package, User $user, ?string $note = null)
     {
-        // Check if package can still be purchased by this organization
-        if (!$package->canBePurchasedBy($creditable)) {
-            throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
+        $organization = $creditable instanceof Organization ? $creditable : $creditable->organization;
+
+        // Cooperative packages only for members and vice versa (the UI filters, this enforces)
+        if (!$organization || (bool) $package->for_cooperative_members !== (bool) $organization->is_cooperative_member) {
+            throw new \Exception('Dieses Paket ist für Ihre Organisation nicht verfügbar.');
         }
 
-        return DB::transaction(function () use ($creditable, $package, $user, $note) {
+        return DB::transaction(function () use ($creditable, $organization, $package, $user, $note) {
+            // Serialize purchases per organization so the purchase limit cannot be raced
+            Organization::whereKey($organization->id)->lockForUpdate()->first();
+
+            if (!$package->canBePurchasedBy($creditable)) {
+                throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
+            }
+
             // Balance mit Lock laden
             $balance = $this->lockBalance($creditable);
 
@@ -68,6 +160,8 @@ class CreditService
 
             $balance->balance += $package->credits;
             $balance->save();
+
+            $this->addLot($creditable, $package->credits, $transaction->expires_at, $transaction->id);
 
             $this->sendPurchaseEmails($creditable, $transaction, $user, $package);
 
@@ -130,6 +224,8 @@ class CreditService
 
             $facilityBalance->balance += $amount;
             $facilityBalance->save();
+
+            $this->moveLots($this->consumeLots($organization, $amount), $facility);
 
             return [
                 'transfer_out' => $transferOut,
@@ -196,6 +292,8 @@ class CreditService
             $orgBalance->balance += $amount;
             $orgBalance->save();
 
+            $this->moveLots($this->consumeLots($facility, $amount), $organization);
+
             return [
                 'transfer_out' => $transferOut,
                 'transfer_in' => $transferIn,
@@ -233,6 +331,8 @@ class CreditService
             $balance->balance -= $amount;
             $balance->save();
 
+            $this->consumeLots($creditable, $amount);
+
             return $transaction;
         });
     }
@@ -265,6 +365,13 @@ class CreditService
             $balance->balance += $amount;
             $balance->save();
 
+            // Admin-Gutschriften verfallen nicht, Abzüge verbrauchen FIFO
+            if ($amount > 0) {
+                $this->addLot($creditable, $amount, null, null);
+            } elseif ($amount < 0) {
+                $this->consumeLots($creditable, -$amount);
+            }
+
             return $transaction;
         });
     }
@@ -289,55 +396,70 @@ class CreditService
     protected function sendPurchaseEmails($creditable, CreditTransaction $transaction, User $user, CreditPackage $package)
     {
         $invoiceEmail = config('mail.invoice_email', config('mail.from.address'));
-        Mail::to($invoiceEmail)->queue(new CreditPurchasedInvoiceMail($creditable, $transaction, $user, $package));
+        Mail::to($invoiceEmail)->queue((new CreditPurchasedInvoiceMail($creditable, $transaction, $user, $package))->afterCommit());
 
-        Mail::to($user->email)->queue(new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package));
+        Mail::to($user->email)->queue((new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package))->afterCommit());
     }
 
     /**
      * Process expired credits
+     * Lässt nur den Restbestand fälliger Chargen verfallen, bereits verbrauchte
+     * oder übertragene Credits sind davon nicht mehr betroffen.
      * Returns the number of credits expired
      */
     public function processExpiredCredits(): int
     {
         $totalExpired = 0;
 
-        $expiredPurchases = CreditTransaction::expiredPurchases()->get();
+        $dueLotIds = CreditLot::dueForExpiration()->pluck('id');
 
-        foreach ($expiredPurchases as $purchase) {
+        foreach ($dueLotIds as $lotId) {
             try {
-                DB::transaction(function () use ($purchase, &$totalExpired) {
-                    $creditable = $purchase->creditable;
+                DB::transaction(function () use ($lotId, &$totalExpired) {
+                    $creditable = CreditLot::whereKey($lotId)->first()?->creditable;
                     if (!$creditable) {
                         return;
                     }
 
-                    // Balance mit Lock laden (Race-frei)
+                    // Lock-Reihenfolge wie bei allen Mutationen: erst Balance, dann Charge
                     $balance = $this->lockBalance($creditable);
+                    $lot = CreditLot::whereKey($lotId)->lockForUpdate()->first();
 
-                    $availableAmount = min($purchase->amount, $balance->balance);
-
-                    if ($availableAmount > 0) {
-                        CreditTransaction::create([
-                            'creditable_id' => $creditable->id,
-                            'creditable_type' => get_class($creditable),
-                            'user_id' => $purchase->user_id,
-                            'type' => CreditTransaction::TYPE_EXPIRATION,
-                            'amount' => -$availableAmount,
-                            'balance_after' => $balance->balance - $availableAmount,
-                            'note' => 'Automatischer Verfall von Credits (gekauft am ' . $purchase->created_at->format('d.m.Y') . ', abgelaufen am ' . $purchase->expires_at->format('d.m.Y') . ')',
-                            'related_transaction_id' => $purchase->id,
-                        ]);
-
-                        $balance->balance -= $availableAmount;
-                        $balance->save();
-
-                        $totalExpired += $availableAmount;
+                    if (!$lot || $lot->remaining <= 0) {
+                        return;
                     }
+
+                    $amount = min($lot->remaining, $balance->balance);
+                    $purchase = $lot->purchaseTransaction;
+
+                    $lot->remaining = 0;
+                    $lot->save();
+
+                    if ($amount <= 0) {
+                        return;
+                    }
+
+                    CreditTransaction::create([
+                        'creditable_id' => $creditable->id,
+                        'creditable_type' => get_class($creditable),
+                        'user_id' => $purchase?->user_id,
+                        'type' => CreditTransaction::TYPE_EXPIRATION,
+                        'amount' => -$amount,
+                        'balance_after' => $balance->balance - $amount,
+                        'note' => 'Automatischer Verfall von Credits ('
+                            . ($purchase ? 'gekauft am ' . $purchase->created_at->format('d.m.Y') . ', ' : '')
+                            . 'abgelaufen am ' . $lot->expires_at->format('d.m.Y') . ')',
+                        'related_transaction_id' => $purchase?->id,
+                    ]);
+
+                    $balance->balance -= $amount;
+                    $balance->save();
+
+                    $totalExpired += $amount;
                 });
             } catch (\Exception $e) {
                 Log::error('Fehler beim Verarbeiten abgelaufener Credits', [
-                    'transaction_id' => $purchase->id,
+                    'credit_lot_id' => $lotId,
                     'error' => $e->getMessage(),
                 ]);
             }

@@ -50,13 +50,15 @@ class OrganizationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'website' => 'nullable|string|max:255',
+            'website' => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i'],
             'description' => 'nullable|string|max:1000',
             'street' => 'required|string|max:255',
             'number' => 'required|string|max:20',
             'city' => 'required|string|max:100',
             'zip_code' => 'required|string|max:20',
             'state' => 'nullable|string|max:100',
+            'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
         ]);
 
 
@@ -70,14 +72,12 @@ class OrganizationController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $organization->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($organization, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $organization->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($organization, $request, 'logo');
         }
 
         $user = auth()->user();
@@ -168,6 +168,8 @@ class OrganizationController extends Controller
            'state' => 'nullable|string|max:100',
             'header_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'remove_header_image' => 'nullable|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'remove_logo' => 'nullable|boolean',
         ], [
             'website.regex' => 'Bitte geben Sie eine gültige Website-URL ein (z.B. https://example.com).',
         ]);
@@ -198,14 +200,12 @@ class OrganizationController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $organization->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($organization, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $organization->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($organization, $request, 'logo');
         }
 
         return redirect()->route('organizations.edit', $organization)

@@ -24,16 +24,19 @@ class ImpersonateController extends Controller
             return redirect()->back()->with('error', 'Sie können sich nicht selbst impersonieren.');
         }
 
-        // Cannot impersonate another admin (with same or higher permissions)
-        if ($user->hasRole(['Super Admin', 'Admin'])) {
-            return redirect()->back()->with('error', 'Sie können keine Admin-Benutzer impersonieren.');
+        // Cannot impersonate accounts with roles or permissions (admins, CMS editors, ...)
+        if (!$user->canBeImpersonated()) {
+            return redirect()->back()->with('error', 'Sie können nur Benutzer ohne Rollen und Berechtigungen impersonieren.');
         }
 
-        // Store original user ID in session
-        session(['impersonate_original_user' => Auth::id()]);
+        $originalUserId = Auth::id();
 
-        // Login as the target user
+        // Login as the target user with a fresh session ID
         Auth::login($user);
+        $request->session()->regenerate();
+
+        // Store original user ID in session
+        session(['impersonate_original_user' => $originalUserId]);
 
         return redirect()->route('dashboard')->with('success', "Sie sind jetzt als {$user->name} angemeldet.");
     }
@@ -57,8 +60,9 @@ class ImpersonateController extends Controller
         // Remove impersonation session
         session()->forget('impersonate_original_user');
 
-        // Login back as original user
+        // Login back as original user with a fresh session ID
         Auth::login($originalUser);
+        $request->session()->regenerate();
 
         return redirect()->route('admin.dashboard')->with('success', 'Impersonierung beendet. Sie sind wieder als ' . $originalUser->name . ' angemeldet.');
     }

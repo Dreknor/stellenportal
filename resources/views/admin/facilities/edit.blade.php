@@ -22,7 +22,7 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $facility->name) }}" required
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -31,7 +31,7 @@
                 <div>
                     <label for="organization_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Organisation') }}</label>
                     <select name="organization_id" id="organization_id" required
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @foreach($organizations as $organization)
                             <option value="{{ $organization->id }}" {{ old('organization_id', $facility->organization_id) == $organization->id ? 'selected' : '' }}>
                                 {{ $organization->name }}
@@ -47,7 +47,7 @@
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('E-Mail') }}</label>
                         <input type="email" name="email" id="email" value="{{ old('email', $facility->email) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @error('email')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -56,7 +56,7 @@
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Telefon') }}</label>
                         <input type="text" name="phone" id="phone" value="{{ old('phone', $facility->phone) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -66,7 +66,7 @@
                 <div>
                     <label for="website" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Website') }}</label>
                     <input type="url" name="website" id="website" value="{{ old('website', $facility->website) }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="https://www.beispiel.de">
                     @error('website')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -77,7 +77,7 @@
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Beschreibung') }}</label>
                     <textarea name="description" id="description" rows="4"
-                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ old('description', $facility->description) }}</textarea>
+                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">{{ old('description', $facility->description) }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror

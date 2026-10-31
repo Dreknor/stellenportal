@@ -11,7 +11,7 @@
                     <div>
                         <form method="GET" action="{{ route('admin.search-analytics.index') }}" class="flex items-center gap-2">
                             <label for="period" class="text-sm font-medium text-gray-700">Zeitraum:</label>
-                            <select name="period" id="period" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <select name="period" id="period" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 <option value="7" {{ $period == 7 ? 'selected' : '' }}>Letzte 7 Tage</option>
                                 <option value="30" {{ $period == 30 ? 'selected' : '' }}>Letzte 30 Tage</option>
                                 <option value="90" {{ $period == 90 ? 'selected' : '' }}>Letzte 90 Tage</option>
@@ -26,8 +26,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                 <div class="bg-white rounded-lg shadow p-6">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0 p-3 bg-blue-100 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex-shrink-0 p-3 bg-primary-100 rounded-lg">
+                            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
@@ -111,8 +111,8 @@
                                 @foreach($popularSearches as $index => $search)
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center flex-1">
-                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <span class="text-sm font-bold text-blue-600">{{ $index + 1 }}</span>
+                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                                <span class="text-sm font-bold text-primary-600">{{ $index + 1 }}</span>
                                             </div>
                                             <div class="ml-4 flex-1">
                                                 <p class="text-sm font-medium text-gray-900">{{ $search->query }}</p>
@@ -232,7 +232,7 @@
                             @foreach($dailySearches as $day)
                                 <div class="flex-1 flex flex-col items-center">
                                     <div class="flex-1 w-full flex items-end relative group">
-                                        <div class="w-full bg-blue-500 hover:bg-blue-600 transition rounded-t"
+                                        <div class="w-full bg-primary-500 hover:bg-primary-600 transition rounded-t"
                                              style="height: {{ $maxCount > 0 ? ($day->count / $maxCount * 100) : 0 }}%">
                                         </div>
                                         <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10 pointer-events-none">

@@ -12,7 +12,7 @@
                                 Zurück zur Übersicht
                             </a>
                             @can('update', $role)
-                                <a href="{{ route('roles.edit', $role) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <a href="{{ route('roles.edit', $role) }}" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
                                     Bearbeiten
                                 </a>
                             @endcan
@@ -28,9 +28,9 @@
                             <div class="text-sm text-green-600 font-semibold mb-1">Benutzer</div>
                             <div class="text-3xl font-bold text-green-900">{{ $role->users->count() }}</div>
                         </div>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <div class="text-sm text-blue-600 font-semibold mb-1">Erstellt am</div>
-                            <div class="text-lg font-bold text-blue-900">{{ $role->created_at->format('d.m.Y') }}</div>
+                        <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                            <div class="text-sm text-primary-600 font-semibold mb-1">Erstellt am</div>
+                            <div class="text-lg font-bold text-primary-900">{{ $role->created_at->format('d.m.Y') }}</div>
                         </div>
                     </div>
 

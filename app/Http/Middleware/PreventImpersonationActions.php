@@ -19,13 +19,15 @@ class PreventImpersonationActions
         if (session()->has('impersonate_original_user')) {
             // Prevent certain actions while impersonating
             $restrictedRoutes = [
-                'profile.password',
-                'profile.delete',
+                'settings.password.update',
+                'settings.profile.update',
+                'settings.profile.destroy',
                 'admin.*', // Prevent all admin actions while impersonating
+                'cms.*',
             ];
 
             foreach ($restrictedRoutes as $route) {
-                if ($request->routeIs($route)) {
+                if ($request->routeIs($route) && !$request->routeIs('admin.impersonate.stop')) {
                     return redirect()
                         ->back()
                         ->with('error', 'Diese Aktion kann während der Impersonierung nicht durchgeführt werden.');

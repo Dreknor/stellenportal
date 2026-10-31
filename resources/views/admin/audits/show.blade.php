@@ -32,7 +32,7 @@
                                     {{ __('Erstellt') }}
                                 </span>
                             @elseif($audit->event === 'updated')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                     <x-fas-edit class="w-3 mr-1"/>
                                     {{ __('Aktualisiert') }}
                                 </span>
@@ -103,13 +103,13 @@
             @if($audit->event === 'updated' && $audit->old_values && $audit->new_values)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                        <x-fas-exchange-alt class="w-5 h-5 mr-2 text-blue-500"/>
+                        <x-fas-exchange-alt class="w-5 h-5 mr-2 text-primary-500"/>
                         {{ __('Geänderte Felder') }}
                     </h2>
                     <div class="space-y-3">
                         @foreach($audit->new_values as $key => $newValue)
                             @if(isset($audit->old_values[$key]) && $audit->old_values[$key] != $newValue)
-                                <div class="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                                <div class="border-l-4 border-primary-500 pl-4 py-2 bg-primary-50 dark:bg-primary-900/20 rounded">
                                     <div class="font-medium text-sm text-gray-800 dark:text-gray-200 mb-1">{{ $key }}</div>
                                     <div class="grid grid-cols-2 gap-4 text-xs">
                                         <div>
@@ -140,7 +140,7 @@
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Benutzer') }}</h2>
                 @if($audit->user)
                     <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0 h-12 w-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        <div class="flex-shrink-0 h-12 w-12 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold">
                             {{ strtoupper(substr($audit->user->first_name, 0, 1) . substr($audit->user->last_name, 0, 1)) }}
                         </div>
                         <div class="ml-3">

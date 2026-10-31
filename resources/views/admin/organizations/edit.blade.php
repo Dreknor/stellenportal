@@ -22,7 +22,7 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $organization->name) }}" required
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -32,7 +32,7 @@
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('E-Mail') }}</label>
                         <input type="email" name="email" id="email" value="{{ old('email', $organization->email) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @error('email')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -41,7 +41,7 @@
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Telefon') }}</label>
                         <input type="text" name="phone" id="phone" value="{{ old('phone', $organization->phone) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -51,7 +51,7 @@
                 <div>
                     <label for="website" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Website') }}</label>
                     <input type="url" name="website" id="website" value="{{ old('website', $organization->website) }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="https://www.beispiel.de">
                     @error('website')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -62,7 +62,7 @@
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Beschreibung') }}</label>
                     <textarea name="description" id="description" rows="4"
-                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ old('description', $organization->description) }}</textarea>
+                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">{{ old('description', $organization->description) }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -81,14 +81,14 @@
                                 <img src="{{ $organization->getFirstMediaUrl('header_image') }}" alt="Header Image" class="max-w-md rounded-lg shadow-md">
                                 <div class="mt-2">
                                     <label class="inline-flex items-center">
-                                        <input type="checkbox" name="remove_header_image" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        <input type="checkbox" name="remove_header_image" value="1" class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
                                         <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Headerbild entfernen') }}</span>
                                     </label>
                                 </div>
                             </div>
                         @endif
                         <input type="file" name="header_image" id="header_image" accept="image/jpeg,image/png,image/jpg,image/webp"
-                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300">
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900 dark:file:text-primary-300">
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Großes Bild für die Anzeige bei Stellenausschreibungen. Erlaubte Formate: JPG, PNG, WEBP. Maximale Größe: 5 MB') }}</p>
                         @error('header_image')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -104,14 +104,14 @@
                                 <img src="{{ $organization->getFirstMediaUrl('logo') }}" alt="Logo" class="max-w-xs rounded-lg shadow-md">
                                 <div class="mt-2">
                                     <label class="inline-flex items-center">
-                                        <input type="checkbox" name="remove_logo" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        <input type="checkbox" name="remove_logo" value="1" class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
                                         <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Logo entfernen') }}</span>
                                     </label>
                                 </div>
                             </div>
                         @endif
                         <input type="file" name="logo" id="logo" accept="image/jpeg,image/png,image/jpg,image/webp"
-                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300">
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-900 dark:file:text-primary-300">
                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Logo als Icon für die Anzeige. Erlaubte Formate: JPG, PNG, WEBP. Maximale Größe: 5 MB') }}</p>
                         @error('logo')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -124,7 +124,7 @@
                     <div>
                         <label class="flex items-start">
                             <input type="checkbox" name="is_cooperative_member" value="1" {{ old('is_cooperative_member', $organization->is_cooperative_member) ? 'checked' : '' }}
-                                   class="mt-1 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                   class="mt-1 rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <div class="ml-3">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Genossenschaftsmitglied') }}</span>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Wenn aktiviert, hat diese Organisation Zugang zu speziellen Guthaben-Paketen für Genossenschaftsmitglieder.') }}</p>
@@ -138,16 +138,16 @@
 
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('Informationen') }}</h3>
-                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg p-4">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <x-fas-info-circle class="h-5 w-5 text-blue-600 dark:text-blue-400"/>
+                                <x-fas-info-circle class="h-5 w-5 text-primary-600 dark:text-primary-400"/>
                             </div>
                             <div class="ml-3">
-                                <p class="text-sm text-blue-800 dark:text-blue-200">
+                                <p class="text-sm text-primary-800 dark:text-primary-200">
                                     {{ __('Der Slug wird automatisch aus dem Namen generiert und kann nicht manuell geändert werden.') }}
                                 </p>
-                                <p class="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                                <p class="text-xs text-primary-700 dark:text-primary-300 mt-1">
                                     {{ __('Aktueller Slug:') }} <span class="font-mono">{{ $organization->slug }}</span>
                                 </p>
                             </div>

@@ -7,7 +7,7 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-900">Guthaben umbuchen</h2>
-                        <a href="{{ route('credits.organization.transactions', $organization) }}" class="text-blue-600 hover:text-blue-800">
+                        <a href="{{ route('credits.organization.transactions', $organization) }}" class="text-primary-600 hover:text-primary-800">
                             Zurück zur Historie
                         </a>
                     </div>
@@ -46,7 +46,7 @@
                     @elseif($balance <= 0)
                         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                             <p class="text-yellow-800">Sie haben kein Guthaben zum Umbuchen. Bitte laden Sie zuerst Guthaben auf.</p>
-                            <a href="{{ route('credits.organization.purchase', $organization) }}" class="text-blue-600 hover:text-blue-800 font-semibold mt-2 inline-block">
+                            <a href="{{ route('credits.organization.purchase', $organization) }}" class="text-primary-600 hover:text-primary-800 font-semibold mt-2 inline-block">
                                 Jetzt Guthaben aufladen →
                             </a>
                         </div>
@@ -58,7 +58,7 @@
                                 <label for="facility_id" class="block text-sm font-medium text-gray-700 mb-2">
                                     Ziel-Einrichtung auswählen
                                 </label>
-                                <select name="facility_id" id="facility_id" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <select name="facility_id" id="facility_id" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                     <option value="">-- Bitte wählen --</option>
                                     @foreach($facilities as $facility)
                                         <option value="{{ $facility->id }}">
@@ -75,7 +75,7 @@
                                 <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">
                                     Anzahl Guthaben
                                 </label>
-                                <input type="number" name="amount" id="amount" min="1" max="{{ $balance }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="z.B. 100">
+                                <input type="number" name="amount" id="amount" min="1" max="{{ $balance }}" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500" placeholder="z.B. 100">
                                 <p class="text-sm text-gray-500 mt-1">Maximal {{ number_format($balance, 0, ',', '.') }} Guthaben verfügbar</p>
                                 @error('amount')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -86,7 +86,7 @@
                                 <label for="note" class="block text-sm font-medium text-gray-700 mb-2">
                                     Grund der Umbuchung (optional)
                                 </label>
-                                <textarea name="note" id="note" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="z.B. Monatliche Zuteilung, Projektbudget, etc."></textarea>
+                                <textarea name="note" id="note" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500" placeholder="z.B. Monatliche Zuteilung, Projektbudget, etc."></textarea>
                                 @error('note')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -96,7 +96,7 @@
                                 <a href="{{ route('credits.organization.transactions', $organization) }}" class="text-gray-600 hover:text-gray-800">
                                     Abbrechen
                                 </a>
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                                <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-lg transition">
                                     Guthaben umbuchen
                                 </button>
                             </div>

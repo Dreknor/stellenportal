@@ -79,9 +79,7 @@ class JobPostingController extends Controller
             'description' => ['required', 'string'],
             'requirements' => ['nullable', 'string'],
             'benefits' => ['nullable', 'string'],
-            'employment_type' => ['required', 'string'],
-            'salary_min' => ['nullable', 'numeric', 'min:0'],
-            'salary_max' => ['nullable', 'numeric', 'min:0'],
+            'employment_type' => ['required', 'in:full_time,part_time,mini_job,internship,apprenticeship,volunteer'],
             'contact_email' => ['nullable', 'email'],
             'contact_phone' => ['nullable', 'string'],
         ]);

@@ -12,7 +12,7 @@
                                 Berechtigungen verwalten
                             </a>
                             @can('create', Spatie\Permission\Models\Role::class)
-                                <a href="{{ route('roles.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <a href="{{ route('roles.create') }}" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
                                     Neue Rolle erstellen
                                 </a>
                             @endcan
@@ -38,7 +38,7 @@
                             </svg>
                             <p class="text-gray-600 mb-4">Noch keine Rollen vorhanden</p>
                             @can('create', Spatie\Permission\Models\Role::class)
-                                <a href="{{ route('roles.create') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                                <a href="{{ route('roles.create') }}" class="text-primary-600 hover:text-primary-800 font-semibold">
                                     Erste Rolle erstellen →
                                 </a>
                             @endcan
@@ -60,8 +60,8 @@
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
-                                                    <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-blue-100">
-                                                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-primary-100">
+                                                        <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                                         </svg>
                                                     </div>
@@ -91,7 +91,7 @@
                                                         </a>
                                                     @endcan
                                                     @can('update', $role)
-                                                        <a href="{{ route('roles.edit', $role) }}" class="text-blue-600 hover:text-blue-900">
+                                                        <a href="{{ route('roles.edit', $role) }}" class="text-primary-600 hover:text-primary-900">
                                                             Bearbeiten
                                                         </a>
                                                     @endcan

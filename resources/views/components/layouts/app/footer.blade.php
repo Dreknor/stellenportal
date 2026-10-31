@@ -82,7 +82,7 @@
                             @if($menuUrl)
                                 <a href="{{ $menuUrl }}"
                                    target="{{ $menuItem->target }}"
-                                   class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-sm transition-colors">
+                                   class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm transition-colors">
                                     {{ $menuItem->label }}
                                 </a>
                             @endif

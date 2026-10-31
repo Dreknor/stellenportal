@@ -47,7 +47,7 @@
                 <div class="absolute inset-0 flex items-center justify-center">
                     <div class="text-center">
                         <div class="w-24 h-24 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-3xl font-bold mx-auto mb-4">
-                            {!! $initials ?: '&nbsp;' !!}
+                            @if($initials){{ $initials }}@else&nbsp;@endif
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $jobPosting->facility->name }}</h2>
                         @if($jobPosting->facility->address)
@@ -70,7 +70,7 @@
                     <span class="px-3 py-1 rounded-full text-sm font-semibold bg-{{ $jobPosting->getStatusColor() }}-100 text-{{ $jobPosting->getStatusColor() }}-800 dark:bg-{{ $jobPosting->getStatusColor() }}-900/30 dark:text-{{ $jobPosting->getStatusColor() }}-300">
                         {{ $jobPosting->getStatusLabel() }}
                     </span>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
                         {{ $jobPosting->getEmploymentTypeLabel() }}
                     </span>
                 </div>
@@ -109,10 +109,10 @@
                 </h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <!-- Views -->
-                <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div class="text-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
                     <div class="flex justify-center mb-2">
-                        <div class="bg-blue-100 dark:bg-blue-900/40 rounded-full p-2">
-                            <x-fas-eye class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <div class="bg-primary-100 dark:bg-primary-900/40 rounded-full p-2">
+                            <x-fas-eye class="w-5 h-5 text-primary-600 dark:text-primary-400" />
                         </div>
                     </div>
                     <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['views']) }}</p>
@@ -224,7 +224,7 @@
                     <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{{ __('Aktionen') }}</h3>
 
                     @can('publish', $jobPosting)
-                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                        <div class="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3">
                             @if($jobPosting->isExemptFromCredits())
                                 <div class="flex items-start mb-2">
                                     <x-fas-info-circle class="w-4 h-4 text-green-600 dark:text-green-400 mr-2 mt-0.5 flex-shrink-0"/>
@@ -345,14 +345,14 @@
                             $isExempt = $jobPosting->isExemptFromCredits();
                         @endphp
 
-                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-3">
+                        <div class="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 mb-3">
                             <div class="flex items-start">
-                                <x-fas-info-circle class="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
+                                <x-fas-info-circle class="w-4 h-4 text-primary-600 dark:text-primary-400 mr-2 mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <p class="text-sm text-blue-900 dark:text-blue-200 font-medium mb-2">
+                                    <p class="text-sm text-primary-900 dark:text-primary-200 font-medium mb-2">
                                         {{ __('Reaktivieren Sie diese Stellenausschreibung') }}
                                     </p>
-                                    <p class="text-xs text-blue-800 dark:text-blue-300 mb-3">
+                                    <p class="text-xs text-primary-800 dark:text-primary-300 mb-3">
                                         {{ __('Sie können diese Stellenausschreibung um :months weitere Monate aktiv machen.', ['months' => \App\Models\JobPosting::POSTING_DURATION_MONTHS]) }}
                                     </p>
                                 </div>
@@ -472,7 +472,7 @@
                             <div class="flex items-start">
                                 <x-fas-envelope class="w-4 h-4 text-gray-400 mr-2 mt-1" />
                                 <div>
-                                    <a href="mailto:{{ $jobPosting->contact_email }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                    <a href="mailto:{{ $jobPosting->contact_email }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                                         {{ $jobPosting->contact_email }}
                                     </a>
                                 </div>
@@ -483,7 +483,7 @@
                             <div class="flex items-start">
                                 <x-fas-phone class="w-4 h-4 text-gray-400 mr-2 mt-1" />
                                 <div>
-                                    <a href="tel:{{ $jobPosting->contact_phone }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                    <a href="tel:{{ $jobPosting->contact_phone }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                                         {{ $jobPosting->contact_phone }}
                                     </a>
                                 </div>
@@ -514,7 +514,7 @@
 
                     <div class="flex justify-between">
                         <span class="text-gray-600 dark:text-gray-400">{{ __('Erstellt von') }}</span>
-                        <span class="text-gray-800 dark:text-gray-200">{{ $jobPosting->creator->name }}</span>
+                        <span class="text-gray-800 dark:text-gray-200">{{ $jobPosting->creator->name ?? __('Unbekannt') }}</span>
                     </div>
 
                     <div class="flex justify-between">
@@ -542,12 +542,12 @@
                             $shareText = $jobPosting->title . ' - ' . $jobPosting->facility->name;
                         @endphp
 
-                        <button type="button" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm" data-share="twitter" aria-label="Teilen auf Twitter">
+                        <button type="button" class="inline-flex items-center px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-md text-sm" data-share="twitter" aria-label="Teilen auf Twitter">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.633 7.997c.013.176.013.353.013.53 0 5.393-4.103 11.61-11.61 11.61-2.307 0-4.453-.676-6.253-1.847.329.038.657.051.998.051 1.91 0 3.668-.651 5.073-1.747-1.785-.038-3.294-1.21-3.816-2.829.25.038.501.064.767.064.373 0 .746-.05 1.094-.143-1.869-.374-3.272-2.029-3.272-4.014v-.051c.55.307 1.181.494 1.86.517-1.104-.736-1.828-1.989-1.828-3.409 0-.747.201-1.445.552-2.048 2.031 2.493 5.073 4.138 8.494 4.309-.064-.302-.101-.615-.101-.936 0-2.268 1.853-4.121 4.121-4.121 1.186 0 2.258.5 3.011 1.302.936-.176 1.8-.526 2.586-.998-.307.96-.96 1.766-1.816 2.277.829-.089 1.62-.32 2.356-.649-.55.821-1.248 1.542-2.049 2.115z"/></svg>
                             {{ __('Twitter') }}
                         </button>
 
-                        <button type="button" class="inline-flex items-center px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md text-sm" data-share="facebook" aria-label="Teilen auf Facebook">
+                        <button type="button" class="inline-flex items-center px-3 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm" data-share="facebook" aria-label="Teilen auf Facebook">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.07C22 6.48 17.52 2 11.93 2 6.48 2 2 6.48 2 12.07c0 4.99 3.66 9.13 8.44 9.94v-7.03H8.08v-2.9h2.36V9.41c0-2.34 1.39-3.62 3.52-3.62.99 0 2.03.18 2.03.18v2.23h-1.14c-1.12 0-1.47.7-1.47 1.41v1.7h2.5l-.4 2.9h-2.1v7.03C18.34 21.2 22 17.06 22 12.07z"/></svg>
                             {{ __('Facebook') }}
                         </button>

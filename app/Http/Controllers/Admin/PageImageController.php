@@ -34,7 +34,7 @@ class PageImageController extends Controller
 
         $file = $request->file('image');
         $originalFilename = $file->getClientOriginalName();
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid() . '.' . $file->guessExtension();
         $path = $file->storeAs('pages/' . $page->id, $filename, 'public');
 
         $image = $page->images()->create([
@@ -66,6 +66,8 @@ class PageImageController extends Controller
      */
     public function update(Request $request, Page $page, PageImage $image)
     {
+        abort_unless($image->page_id === $page->id, 404);
+
         $validated = $request->validate([
             'alt_text' => ['nullable', 'string', 'max:255'],
             'title' => ['nullable', 'string', 'max:255'],
@@ -91,6 +93,8 @@ class PageImageController extends Controller
      */
     public function destroy(Request $request, Page $page, PageImage $image)
     {
+        abort_unless($image->page_id === $page->id, 404);
+
         $image->delete();
 
         if ($request->expectsJson()) {

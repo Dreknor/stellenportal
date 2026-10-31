@@ -35,7 +35,7 @@
             <div class="absolute inset-0 flex items-center justify-center">
                 <div class="text-center">
                     <div class="w-16 h-16 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-xl font-bold mx-auto">
-                        {!! $initials ?: '&nbsp;' !!}
+                        @if($initials){{ $initials }}@else&nbsp;@endif
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                     @else
                         <div class="flex-shrink-0">
                             <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-sm font-bold border-2 border-gray-200 dark:border-gray-600">
-                                {!! $initials ?: '&nbsp;' !!}
+                                @if($initials){{ $initials }}@else&nbsp;@endif
                             </div>
                         </div>
                     @endif
@@ -79,7 +79,7 @@
 
                 <div class="flex items-center gap-3 mb-2">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        <a href="{{ route('job-postings.show', $jobPosting) }}" class="hover:text-blue-600 dark:hover:text-blue-400">
+                        <a href="{{ route('job-postings.show', $jobPosting) }}" class="hover:text-primary-600 dark:hover:text-primary-400">
                             {{ $jobPosting->title }}
                         </a>
                     </h3>

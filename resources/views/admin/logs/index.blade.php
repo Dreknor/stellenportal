@@ -17,8 +17,8 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
             <div class="flex items-center">
-                <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
-                    <x-fas-database class="w-6 h-6 text-blue-600 dark:text-blue-300"/>
+                <div class="flex-shrink-0 bg-primary-100 dark:bg-primary-900 rounded-lg p-3">
+                    <x-fas-database class="w-6 h-6 text-primary-600 dark:text-primary-300"/>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Gesamt') }}</p>
@@ -53,8 +53,8 @@
 
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
             <div class="flex items-center">
-                <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
-                    <x-fas-info-circle class="w-6 h-6 text-blue-600 dark:text-blue-300"/>
+                <div class="flex-shrink-0 bg-primary-100 dark:bg-primary-900 rounded-lg p-3">
+                    <x-fas-info-circle class="w-6 h-6 text-primary-600 dark:text-primary-300"/>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Info') }}</p>
@@ -78,7 +78,7 @@
                            id="search"
                            value="{{ request('search') }}"
                            placeholder="{{ __('Nachricht durchsuchen...') }}"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                 </div>
 
                 {{-- Level Filter --}}
@@ -88,7 +88,7 @@
                     </label>
                     <select name="level"
                             id="level"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                         <option value="all">{{ __('Alle') }}</option>
                         @foreach($levels as $level)
                             <option value="{{ strtolower($level) }}" {{ request('level') === strtolower($level) ? 'selected' : '' }}>
@@ -105,7 +105,7 @@
                     </label>
                     <select name="channel"
                             id="channel"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
                         <option value="all">{{ __('Alle') }}</option>
                         @foreach($channels as $channel)
                             <option value="{{ $channel }}" {{ request('channel') === $channel ? 'selected' : '' }}>
@@ -136,6 +136,7 @@
                 {{ __('Export (JSON)') }}
             </x-button>
 
+            @can('admin delete logs')
             <button type="button"
                     onclick="if(confirm('{{ __('Sind Sie sicher, dass Sie alte Log-Einträge löschen möchten?') }}')) { document.getElementById('clear-form').submit(); }"
                     class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800 rounded-md transition-colors">
@@ -151,6 +152,7 @@
                 @method('DELETE')
                 <input type="hidden" name="days" value="30">
             </form>
+            @endcan
         </div>
     </div>
 
@@ -174,7 +176,7 @@
                                 @php
                                     $badgeColors = [
                                         'DEBUG' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                        'INFO' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                                        'INFO' => 'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300',
                                         'NOTICE' => 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
                                         'WARNING' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                                         'ERROR' => 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',

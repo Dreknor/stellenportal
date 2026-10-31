@@ -11,17 +11,17 @@
                                 <a href="{{ route('credits.facility.transfer-to-organization', $facility) }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">
                                     An Träger übertragen
                                 </a>
-                            <a href="{{ route('credits.facility.purchase', $facility) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                            <a href="{{ route('credits.facility.purchase', $facility) }}" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
                                 Guthaben aufladen
                             </a>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div class="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-6">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-gray-600">Aktueller Kontostand</p>
-                                <p class="text-3xl font-bold text-blue-600">{{ number_format($balance, 0, ',', '.') }}</p>
+                                <p class="text-3xl font-bold text-primary-600">{{ number_format($balance, 0, ',', '.') }}</p>
                                 <p class="text-sm text-gray-500">{{ $facility->name }}</p>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                                         </span>
                                                         @break
                                                     @case('transfer_in')
-                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary-100 text-primary-800">
                                                             Eingang
                                                         </span>
                                                         @break
@@ -97,7 +97,7 @@
                                                 {{ number_format($transaction->balance_after, 0, ',', '.') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $transaction->user->first_name }} {{ $transaction->user->last_name }}
+                                                {{ $transaction->user ? $transaction->user->first_name . ' ' . $transaction->user->last_name : '-' }}
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-500">
                                                 @if($transaction->creditPackage)
