@@ -253,7 +253,7 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             {{ __('Spalten-Inhalt (HTML)') }}
         </label>
-        <textarea name="content" rows="10" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm" placeholder="<div>Spalte 1</div>&#10;<div>Spalte 2</div>">{!! $block->content !!}</textarea>
+        <textarea name="content" rows="10" class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 font-mono text-sm" placeholder="<div>Spalte 1</div>&#10;<div>Spalte 2</div>">{{ $block->content }}</textarea>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ __('Jedes <div>...</div> repräsentiert eine Spalte. Fügen Sie HTML-Inhalt hinzu.') }}</p>
     </div>
 @endif

@@ -66,6 +66,8 @@ class PageImageController extends Controller
      */
     public function update(Request $request, Page $page, PageImage $image)
     {
+        abort_unless($image->page_id === $page->id, 404);
+
         $validated = $request->validate([
             'alt_text' => ['nullable', 'string', 'max:255'],
             'title' => ['nullable', 'string', 'max:255'],
@@ -91,6 +93,8 @@ class PageImageController extends Controller
      */
     public function destroy(Request $request, Page $page, PageImage $image)
     {
+        abort_unless($image->page_id === $page->id, 404);
+
         $image->delete();
 
         if ($request->expectsJson()) {

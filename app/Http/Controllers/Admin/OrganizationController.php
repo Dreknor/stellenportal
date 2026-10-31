@@ -109,6 +109,11 @@ class OrganizationController extends Controller
             return back()->with('error', 'Organisation kann nicht gelöscht werden, da sie noch Einrichtungen hat.');
         }
 
+        $balance = (int) ($organization->creditBalance()->value('balance') ?? 0);
+        if ($balance > 0) {
+            return back()->with('error', "Organisation kann nicht gelöscht werden, da sie noch {$balance} Guthaben hat.");
+        }
+
         $organization->delete();
 
         return redirect()->route('admin.organizations.index')

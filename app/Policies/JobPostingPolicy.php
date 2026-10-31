@@ -147,11 +147,6 @@ class JobPostingPolicy
             return true;
         }
 
-        // Admins can manage all postings
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
         return false;
     }
 }

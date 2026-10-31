@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class LocationSuggestionsController extends Controller
@@ -14,16 +15,27 @@ class LocationSuggestionsController extends Controller
     {
         $q = trim((string) $request->get('q', ''));
 
-        if (mb_strlen($q) < 2) {
+        if (mb_strlen($q) < 2 || mb_strlen($q) > 100) {
             return response()->json([]);
         }
 
+        return response()->json(
+            Cache::remember('location-suggestions:' . md5(mb_strtolower($q)), now()->addDay(), fn () => $this->fetchSuggestions($q))
+        );
+    }
+
+    /**
+     * @return array<int, array{display_name: string, short_name: string, lat: string, lon: string}>
+     */
+    private function fetchSuggestions(string $q): array
+    {
+        $key = config('geocode.geocode_key');
+
         try {
             $url = config('geocode.geocode_url');
-            $key = config('geocode.geocode_key');
 
             if (!$url || !$key) {
-                return response()->json([]);
+                return [];
             }
 
             $client     = new Client();
@@ -38,7 +50,7 @@ class LocationSuggestionsController extends Controller
             $data     = json_decode($response->getBody(), true);
 
             if (empty($data) || !is_array($data)) {
-                return response()->json([]);
+                return [];
             }
 
             $suggestions = collect($data)
@@ -49,13 +61,15 @@ class LocationSuggestionsController extends Controller
                     'lon'          => (string) ($item['lon'] ?? ''),
                 ])
                 ->filter(fn ($s) => $s['lat'] !== '' && $s['lon'] !== '')
-                ->values();
+                ->values()
+                ->all();
 
-            return response()->json($suggestions);
+            return $suggestions;
         } catch (\Exception $e) {
-            Log::warning('Ortsvorschläge konnten nicht geladen werden: ' . $e->getMessage());
+            // The request URL contains the API key, never log it unmasked
+            Log::warning('Ortsvorschläge konnten nicht geladen werden: ' . str_replace((string) $key, '***', $e->getMessage()));
 
-            return response()->json([]);
+            return [];
         }
     }
 

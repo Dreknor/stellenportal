@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MenuItem;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use App\Rules\SafeUrl;
 
 class MenuController extends Controller
 {
@@ -42,7 +43,7 @@ class MenuController extends Controller
             'parent_id' => ['nullable', 'integer', 'exists:menu_items,id'],
             'page_id' => ['nullable', 'integer', 'exists:pages,id'],
             'label' => ['required', 'string', 'max:255'],
-            'url' => ['nullable', 'string', 'max:255'],
+            'url' => ['nullable', 'string', 'max:255', new SafeUrl],
             'target' => ['required', 'in:_self,_blank'],
             'css_class' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],
@@ -86,7 +87,7 @@ class MenuController extends Controller
             'parent_id' => ['nullable', 'integer', 'exists:menu_items,id'],
             'page_id' => ['nullable', 'integer', 'exists:pages,id'],
             'label' => ['required', 'string', 'max:255'],
-            'url' => ['nullable', 'string', 'max:255'],
+            'url' => ['nullable', 'string', 'max:255', new SafeUrl],
             'target' => ['required', 'in:_self,_blank'],
             'css_class' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],

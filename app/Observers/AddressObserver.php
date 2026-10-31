@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\GenerateAddressMapJob;
 use App\Services\GeocodingService;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +28,8 @@ class AddressObserver
      */
     public function created(\App\Models\Address $address): void
     {
-        $this->geocodingService->generateMapImage($address);
+        // Downloading map tiles is slow, so render the map image in the queue
+        GenerateAddressMapJob::dispatch($address->id)->afterCommit();
     }
 
     /**
@@ -54,7 +56,7 @@ class AddressObserver
     public function updated(\App\Models\Address $address): void
     {
         if ($address->wasChanged(['street', 'number', 'city', 'zip_code', 'latitude', 'longitude'])) {
-            $this->geocodingService->generateMapImage($address);
+            GenerateAddressMapJob::dispatch($address->id)->afterCommit();
         }
     }
 }

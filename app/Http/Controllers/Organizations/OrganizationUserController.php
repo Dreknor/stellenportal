@@ -73,15 +73,15 @@ class OrganizationUserController extends Controller
             }
         }
 
-        // Generate a random password
-        $password = Str::random(12);
+        // Random password nobody knows; the user sets an own one via the emailed link
+        $password = Str::random(40);
 
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($password),
-            'change_password' => true, // User must change password on first login
+            'change_password' => false,
         ]);
 
         // Attach user to organization
@@ -90,8 +90,8 @@ class OrganizationUserController extends Controller
         // Send email verification notification
         $user->sendEmailVerificationNotification();
 
-        // Send email with login credentials
-        Mail::to($user->email)->queue(new UserCreatedMail($user, $organization, $password));
+        // Send email with a link to set the password
+        Mail::to($user->email)->queue(new UserCreatedMail($user, $organization, $user->passwordSetUrl()));
 
         return redirect()->route('organizations.users.index', $organization)
             ->with('success', 'Benutzer erfolgreich erstellt und Zugangsdaten per E-Mail versendet.');

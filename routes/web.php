@@ -79,11 +79,10 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
     });
 
     // Guthaben-Pakete verwalten (nur mit Permission "manage credit packages")
-    Route::resource('credits/packages', CreditPackageController::class)->names([
+    Route::resource('credits/packages', CreditPackageController::class)->except(['show'])->names([
         'index' => 'credits.packages.index',
         'create' => 'credits.packages.create',
         'store' => 'credits.packages.store',
-        'show' => 'credits.packages.show',
         'edit' => 'credits.packages.edit',
         'update' => 'credits.packages.update',
         'destroy' => 'credits.packages.destroy',
@@ -162,13 +161,9 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         // Admin Organization Management
         Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class)
             ->only(['index', 'show', 'edit', 'update', 'destroy'])
-            ->middleware([
-                'index' => 'permission:admin view organizations',
-                'show' => 'permission:admin view organizations',
-                'edit' => 'permission:admin edit organizations',
-                'update' => 'permission:admin edit organizations',
-                'destroy' => 'permission:admin delete organizations',
-            ]);
+            ->middlewareFor(['index', 'show'], 'permission:admin view organizations')
+            ->middlewareFor(['edit', 'update'], 'permission:admin edit organizations')
+            ->middlewareFor('destroy', 'permission:admin delete organizations');
 
         // Organization Approval
         Route::post('organizations/{organization}/approve', [\App\Http\Controllers\Admin\OrganizationController::class, 'approve'])
@@ -191,13 +186,9 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         // Admin Facility Management
         Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class)
             ->only(['index', 'show', 'edit', 'update', 'destroy'])
-            ->middleware([
-                'index' => 'permission:admin view facilities',
-                'show' => 'permission:admin view facilities',
-                'edit' => 'permission:admin edit facilities',
-                'update' => 'permission:admin edit facilities',
-                'destroy' => 'permission:admin delete facilities',
-            ]);
+            ->middlewareFor(['index', 'show'], 'permission:admin view facilities')
+            ->middlewareFor(['edit', 'update'], 'permission:admin edit facilities')
+            ->middlewareFor('destroy', 'permission:admin delete facilities');
 
         // Admin Job Posting Management
         Route::prefix('job-postings')->name('job-postings.')->group(function () {
@@ -254,15 +245,8 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
 
         // Admin Job Posting Credit Exemptions
         Route::resource('job-posting-credit-exemptions', \App\Http\Controllers\Admin\JobPostingCreditExemptionController::class)
-            ->middleware([
-                'index' => 'permission:admin view credits',
-                'create' => 'permission:admin grant credits',
-                'store' => 'permission:admin grant credits',
-                'show' => 'permission:admin view credits',
-                'edit' => 'permission:admin grant credits',
-                'update' => 'permission:admin grant credits',
-                'destroy' => 'permission:admin grant credits',
-            ]);
+            ->middlewareFor(['index', 'show'], 'permission:admin view credits')
+            ->middlewareFor(['create', 'store', 'edit', 'update', 'destroy'], 'permission:admin grant credits');
         Route::post('job-posting-credit-exemptions/{jobPostingCreditExemption}/toggle',
             [\App\Http\Controllers\Admin\JobPostingCreditExemptionController::class, 'toggle'])
             ->middleware('permission:admin grant credits')
@@ -297,7 +281,7 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
                 ->middleware('permission:admin view logs')
                 ->name('export');
             Route::delete('/clear', [\App\Http\Controllers\Admin\LogController::class, 'clear'])
-                ->middleware('permission:admin view logs')
+                ->middleware('permission:admin delete logs')
                 ->name('clear');
             Route::get('/{id}', [\App\Http\Controllers\Admin\LogController::class, 'show'])
                 ->middleware('permission:admin view logs')
@@ -322,15 +306,8 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
 
         // Admin Footer Settings
         Route::resource('footer-settings', \App\Http\Controllers\Admin\FooterSettingController::class)
-            ->middleware([
-                'index' => 'permission:admin edit organizations',
-                'create' => 'permission:admin edit organizations',
-                'store' => 'permission:admin edit organizations',
-                'show' => 'permission:admin edit organizations',
-                'edit' => 'permission:admin edit organizations',
-                'update' => 'permission:admin edit organizations',
-                'destroy' => 'permission:admin delete organizations',
-            ]);
+            ->middlewareFor(['index', 'create', 'store', 'show', 'edit', 'update'], 'permission:admin edit organizations')
+            ->middlewareFor('destroy', 'permission:admin delete organizations');
         Route::post('footer-settings/{footerSetting}/activate',
             [\App\Http\Controllers\Admin\FooterSettingController::class, 'activate'])
             ->middleware('permission:admin edit organizations')
@@ -339,7 +316,7 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
 });
 
 // CMS Routes (separate from Admin, accessible with CMS permissions only)
-Route::prefix('cms')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('cms')->middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(function () {
     // CMS Pages Management
     Route::prefix('pages')->name('cms.pages.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PageController::class, 'index'])
@@ -437,11 +414,14 @@ Route::prefix('cms')->middleware(['auth', 'verified'])->group(function () {
 
 // Public API: Ortsvorschläge für die Umkreissuche (kein Auth erforderlich)
 Route::get('/api/location-suggestions', [\App\Http\Controllers\Api\LocationSuggestionsController::class, '__invoke'])
+    ->middleware('throttle:geocode')
     ->name('api.location-suggestions');
 
 // Public job postings (no auth required)
 Route::prefix('jobs')->name('public.jobs.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])->name('index');
+    Route::get('/', [\App\Http\Controllers\PublicJobPostingController::class, 'index'])
+        ->middleware('throttle:search')
+        ->name('index');
     Route::get('/{jobPosting}', [\App\Http\Controllers\PublicJobPostingController::class, 'show'])->name('show');
     Route::get('/{jobPosting}/pdf', [\App\Http\Controllers\PublicJobPostingController::class, 'exportPdf'])
         ->middleware('throttle:pdf')

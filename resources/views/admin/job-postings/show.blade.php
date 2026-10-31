@@ -46,7 +46,7 @@
                 <div class="absolute inset-0 flex items-center justify-center">
                     <div class="text-center">
                         <div class="w-24 h-24 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-3xl font-bold mx-auto mb-4">
-                            {!! $initials ?: '&nbsp;' !!}
+                            @if($initials){{ $initials }}@else&nbsp;@endif
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $jobPosting->facility->name }}</h2>
                         @if($jobPosting->facility->address)

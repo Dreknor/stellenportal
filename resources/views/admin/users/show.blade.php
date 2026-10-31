@@ -12,11 +12,11 @@
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $user->first_name }} {{ $user->last_name }}</h1>
         <div class="flex gap-2">
             @can('admin impersonate users')
-                @if($user->id !== auth()->id() && !$user->hasRole(['Super Admin', 'Admin']))
+                @if($user->id !== auth()->id() && $user->canBeImpersonated())
                     <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
                         @csrf
                         <x-button type="warning" native-type="submit"
-                            onclick="return confirm('Möchten Sie sich als {{ $user->name }} anmelden?')">
+                            onclick="return confirm({{ Js::from('Möchten Sie sich als ' . $user->name . ' anmelden?') }})">
                             <x-fas-user-secret class="w-3 mr-3"/>
                             {{ __('Als Benutzer anmelden') }}
                         </x-button>

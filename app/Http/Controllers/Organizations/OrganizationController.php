@@ -50,7 +50,7 @@ class OrganizationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'website' => 'nullable|string|max:255',
+            'website' => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i'],
             'description' => 'nullable|string|max:1000',
             'street' => 'required|string|max:255',
             'number' => 'required|string|max:20',

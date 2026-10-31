@@ -45,9 +45,9 @@ class CreditController extends Controller
         // Filter by transactionable type
         if ($request->filled('transactionable_type')) {
             if ($request->transactionable_type === 'Organization') {
-                $query->where('transactionable_type', 'App\Models\Organization');
+                $query->where('creditable_type', \App\Models\Organization::class);
             } elseif ($request->transactionable_type === 'Facility') {
-                $query->where('transactionable_type', 'App\Models\Facility');
+                $query->where('creditable_type', \App\Models\Facility::class);
             }
         }
 
@@ -77,7 +77,7 @@ class CreditController extends Controller
         $validated = $request->validate([
             'target_type' => ['required', 'in:organization,facility'],
             'target_id' => ['required', 'integer'],
-            'amount' => ['required', 'integer', 'min:1'],
+            'amount' => ['required', 'integer', 'min:1', 'max:100000'],
             'description' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -122,7 +122,7 @@ class CreditController extends Controller
         $validated = $request->validate([
             'target_type' => ['required', 'in:organization,facility'],
             'target_id' => ['required', 'integer'],
-            'amount' => ['required', 'integer', 'min:1'],
+            'amount' => ['required', 'integer', 'min:1', 'max:100000'],
             'reason' => ['required', 'string', 'max:500'],
         ]);
 

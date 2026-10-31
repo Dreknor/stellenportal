@@ -17,33 +17,18 @@ class KeycloakController extends Controller
      */
     public function redirect(): SymfonyRedirectResponse
     {
-        // Debug: Log Keycloak configuration
-        Log::info('Keycloak Config', [
-            'base_url' => config('services.keycloak.base_url'),
-            'realm' => config('services.keycloak.realm'),
-            'realms' => config('services.keycloak.realms'),
-            'client_id' => config('services.keycloak.client_id'),
-            'redirect' => config('services.keycloak.redirect'),
-            'app_url' => config('app.url'),
-        ]);
-
         try {
             // Explicitly set the redirect URI
-            $redirect = Socialite::driver('keycloak')
+            return Socialite::driver('keycloak')
                 ->redirectUrl(config('services.keycloak.redirect'))
                 ->redirect();
-
-            // Debug: Log redirect URL
-            Log::info('Keycloak Redirect URL', ['url' => $redirect->getTargetUrl()]);
-
-            return $redirect;
         } catch (\Exception $e) {
             Log::error('Keycloak Redirect Error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
 
             return redirect('/')
-                ->with('error', 'Fehler beim Weiterleiten zu Keycloak: ' . $e->getMessage());
+                ->with('error', 'Fehler beim Weiterleiten zu Keycloak. Bitte versuchen Sie es später erneut.');
         }
     }
 
@@ -55,18 +40,29 @@ class KeycloakController extends Controller
         try {
             $keycloakUser = Socialite::driver('keycloak')->user();
 
-            // Try to find an existing user by email
-            $user = User::where('email', $keycloakUser->getEmail())->first();
+            $keycloakId = (string) $keycloakUser->getId();
 
-            // If no user exists, redirect to home page with message
-            if (!$user) {
+            if ($keycloakId === '') {
                 return redirect('/')
-                    ->with('error', 'Kein Benutzerkonto für diese E-Mail-Adresse gefunden. Bitte kontaktieren Sie den Administrator.');
+                    ->with('error', 'Fehler bei der Anmeldung über Keycloak. Bitte versuchen Sie es erneut.');
             }
 
-            // Update keycloak_id if not already set
-            if (empty($user->keycloak_id) && !empty($keycloakUser->getId())) {
-                $user->keycloak_id = $keycloakUser->getId();
+            // Already linked accounts are matched by the Keycloak subject only
+            $user = User::where('keycloak_id', $keycloakId)->first();
+
+            if (!$user) {
+                // First login: link by email, but only with an email address verified by Keycloak
+                $emailVerified = filter_var($keycloakUser->user['email_verified'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                $user = $emailVerified
+                    ? User::where('email', $keycloakUser->getEmail())->whereNull('keycloak_id')->first()
+                    : null;
+
+                if (!$user) {
+                    return redirect('/')
+                        ->with('error', 'Kein passendes Benutzerkonto gefunden oder E-Mail-Adresse in Keycloak nicht bestätigt. Bitte kontaktieren Sie den Administrator.');
+                }
+
+                $user->keycloak_id = $keycloakId;
                 $user->save();
             }
 

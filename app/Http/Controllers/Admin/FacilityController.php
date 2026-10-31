@@ -145,6 +145,10 @@ class FacilityController extends Controller
             return back()->with('error', 'Einrichtung kann nicht gelöscht werden, da sie noch aktive Stellenausschreibungen hat.');
         }
 
+        if ($blocker = $facility->deletionBlocker()) {
+            return back()->with('error', $blocker);
+        }
+
         $facility->delete();
 
         return redirect()->route('admin.facilities.index')

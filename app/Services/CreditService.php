@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Mail\CreditPurchasedInvoiceMail;
 use App\Mail\CreditPurchasedConfirmationMail;
 use App\Exceptions\InsufficientCreditsException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,13 @@ class CreditService
     {
         // Sicherstellen, dass ein Balance-Row existiert (außerhalb des Locks,
         // damit firstOrCreate unter Lock nicht neu anlegen muss).
-        $creditable->creditBalance()->firstOrCreate([]);
+        if (!$creditable->creditBalance()->exists()) {
+            try {
+                $creditable->creditBalance()->create([]);
+            } catch (UniqueConstraintViolationException) {
+                // Created concurrently by another request
+            }
+        }
 
         /** @var CreditBalance $balance */
         $balance = $creditable->creditBalance()
@@ -120,12 +127,21 @@ class CreditService
      */
     public function purchaseCredits($creditable, CreditPackage $package, User $user, ?string $note = null)
     {
-        // Check if package can still be purchased by this organization
-        if (!$package->canBePurchasedBy($creditable)) {
-            throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
+        $organization = $creditable instanceof Organization ? $creditable : $creditable->organization;
+
+        // Cooperative packages only for members and vice versa (the UI filters, this enforces)
+        if (!$organization || (bool) $package->for_cooperative_members !== (bool) $organization->is_cooperative_member) {
+            throw new \Exception('Dieses Paket ist für Ihre Organisation nicht verfügbar.');
         }
 
-        return DB::transaction(function () use ($creditable, $package, $user, $note) {
+        return DB::transaction(function () use ($creditable, $organization, $package, $user, $note) {
+            // Serialize purchases per organization so the purchase limit cannot be raced
+            Organization::whereKey($organization->id)->lockForUpdate()->first();
+
+            if (!$package->canBePurchasedBy($creditable)) {
+                throw new \Exception('Dieses Paket kann nicht mehr gekauft werden. Das Kauflimit von ' . $package->purchase_limit_per_organization . ' wurde bereits erreicht.');
+            }
+
             // Balance mit Lock laden
             $balance = $this->lockBalance($creditable);
 
@@ -380,9 +396,9 @@ class CreditService
     protected function sendPurchaseEmails($creditable, CreditTransaction $transaction, User $user, CreditPackage $package)
     {
         $invoiceEmail = config('mail.invoice_email', config('mail.from.address'));
-        Mail::to($invoiceEmail)->queue(new CreditPurchasedInvoiceMail($creditable, $transaction, $user, $package));
+        Mail::to($invoiceEmail)->queue((new CreditPurchasedInvoiceMail($creditable, $transaction, $user, $package))->afterCommit());
 
-        Mail::to($user->email)->queue(new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package));
+        Mail::to($user->email)->queue((new CreditPurchasedConfirmationMail($creditable, $transaction, $user, $package))->afterCommit());
     }
 
     /**

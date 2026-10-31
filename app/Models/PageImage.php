@@ -85,8 +85,14 @@ class PageImage extends Model
      */
     public function deleteFile(): bool
     {
-        if (Storage::exists($this->path)) {
-            return Storage::delete($this->path);
+        // Duplicated pages share the same file, keep it while it is still referenced
+        if (static::where('path', $this->path)->whereKeyNot($this->id)->exists()) {
+            return true;
+        }
+
+        $disk = Storage::disk('public');
+        if ($disk->exists($this->path)) {
+            return $disk->delete($this->path);
         }
 
         return true;

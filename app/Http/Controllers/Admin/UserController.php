@@ -74,9 +74,6 @@ class UserController extends Controller
 
         $this->authorizeRoleChange($validated['roles'] ?? [], []);
 
-        // Store the plain password before hashing
-        $plainPassword = $validated['password'];
-
         $user = User::create([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
@@ -105,7 +102,7 @@ class UserController extends Controller
             $user->sendEmailVerificationNotification();
 
             $user->load(['organizations', 'facilities.organization']);
-            \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\AdminUserCreatedMail($user, $plainPassword));
+            \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\AdminUserCreatedMail($user, $user->passwordSetUrl()));
         }
 
         return redirect()->route('admin.users.index')

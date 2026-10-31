@@ -95,15 +95,15 @@
                     </tr>
                     <tr>
                         <td>Anzahl Guthaben:</td>
-                        <td>{{ number_format($package->credits, 0, ',', '.') }}</td>
+                        <td>{{ number_format($transaction->amount, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <td>Preis:</td>
-                        <td><strong>{{ number_format($package->price, 2, ',', '.') }} €</strong></td>
+                        <td><strong>{{ number_format($transaction->price_paid, 2, ',', '.') }} €</strong></td>
                     </tr>
                     <tr>
                         <td>Preis pro Guthaben:</td>
-                        <td>{{ number_format($package->pricePerCredit, 4, ',', '.') }} €</td>
+                        <td>{{ number_format($transaction->price_paid / max(1, $transaction->amount), 4, ',', '.') }} €</td>
                     </tr>
                     @else
                     <tr>
@@ -113,11 +113,11 @@
                     </tr>
                     <tr>
                         <td>Anzahl Guthaben:</td>
-                        <td>{{ number_format($transaction->credits, 0, ',', '.') }}</td>
+                        <td>{{ number_format($transaction->amount, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <td>Preis:</td>
-                        <td><strong>{{ number_format($transaction->amount, 2, ',', '.') }} €</strong></td>
+                        <td><strong>{{ number_format($transaction->price_paid, 2, ',', '.') }} €</strong></td>
                     </tr>
                     @endif
                     @if($transaction->note)
@@ -139,11 +139,11 @@
                     @if($creditable->address)
                     <tr>
                         <td>Straße:</td>
-                        <td>{{ $creditable->address->street }} {{ $creditable->address->house_number }}</td>
+                        <td>{{ $creditable->address->street }} {{ $creditable->address->number }}</td>
                     </tr>
                     <tr>
                         <td>PLZ / Ort:</td>
-                        <td>{{ $creditable->address->zip }} {{ $creditable->address->city }}</td>
+                        <td>{{ $creditable->address->zip_code }} {{ $creditable->address->city }}</td>
                     </tr>
                     @endif
                     @if($creditable->email)

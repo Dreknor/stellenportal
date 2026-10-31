@@ -137,11 +137,11 @@
                                         </x-button>
                                     @endcan
                                     @can('admin impersonate users')
-                                        @if($user->id !== auth()->id() && !$user->hasRole(['Super Admin', 'Admin']))
+                                        @if($user->id !== auth()->id() && $user->canBeImpersonated())
                                             <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="inline">
                                                 @csrf
                                                 <x-button type="warning" size="sm" native-type="submit"
-                                                    onclick="return confirm('Möchten Sie sich als {{ $user->name }} anmelden?')">
+                                                    onclick="return confirm({{ Js::from('Möchten Sie sich als ' . $user->name . ' anmelden?') }})">
                                                     <x-fas-user-secret class="w-3"/>
                                                 </x-button>
                                             </form>

@@ -81,6 +81,23 @@ class Facility extends Model implements HasMedia, \OwenIt\Auditing\Contracts\Aud
         return $this->creditBalance()->firstOrCreate([])->balance;
     }
 
+    /**
+     * Reason why the facility must not be deleted yet, or null if it can be deleted
+     */
+    public function deletionBlocker(): ?string
+    {
+        $balance = (int) ($this->creditBalance()->value('balance') ?? 0);
+        if ($balance > 0) {
+            return "Die Einrichtung hat noch {$balance} Guthaben. Bitte übertragen Sie das Guthaben zuerst an die Organisation.";
+        }
+
+        if ($this->jobPostings()->whereIn('status', [JobPosting::STATUS_ACTIVE, JobPosting::STATUS_PAUSED])->exists()) {
+            return 'Die Einrichtung hat noch laufende Stellenausschreibungen.';
+        }
+
+        return null;
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

@@ -16,13 +16,14 @@
         <div style="background-color: #fff; padding: 15px; border-left: 4px solid #3490dc; margin: 20px 0;">
             <h3 style="margin-top: 0;">Ihre Zugangsdaten:</h3>
             <p style="margin: 5px 0;"><strong>E-Mail:</strong> {{ $user->email }}</p>
-            <p style="margin: 5px 0;"><strong>Passwort:</strong> <code style="background-color: #f4f4f4; padding: 2px 6px; border-radius: 3px;">{{ $password }}</code></p>
+            <p style="margin: 5px 0;"><strong>Passwort:</strong> Bitte legen Sie Ihr Passwort über den folgenden Link fest:</p>
+            <p style="margin: 10px 0;"><a href="{{ $passwordSetUrl }}" style="display: inline-block; padding: 10px 20px; background-color: #3490dc; color: #fff; text-decoration: none; border-radius: 5px;">Passwort festlegen</a></p>
+            <p style="margin: 5px 0; font-size: 12px; color: #666;">Der Link ist aus Sicherheitsgründen nur {{ config('auth.passwords.users.expire') }} Minuten gültig. Danach können Sie über „Passwort vergessen“ auf der Anmeldeseite jederzeit einen neuen Link anfordern.</p>
         </div>
 
         <p><strong>Wichtig:</strong> Sie erhalten eine separate E-Mail zur Bestätigung Ihrer E-Mail-Adresse. Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.</p>
 
-        <p><strong>Hinweis:</strong> Aus Sicherheitsgründen müssen Sie Ihr Passwort beim ersten Login ändern.</p>
-
+        
         <p style="margin-top: 30px;">
             <a href="{{ route('login') }}" style="display: inline-block; padding: 12px 24px; background-color: #3490dc; color: #fff; text-decoration: none; border-radius: 5px;">Jetzt anmelden</a>
         </p>

@@ -256,6 +256,10 @@ class FacilityController extends Controller
                 ->with('error', 'Keine Berechtigung zum Löschen.');
         }
 
+        if ($blocker = $facility->deletionBlocker()) {
+            return back()->with('error', $blocker);
+        }
+
         $facility->delete();
 
         return redirect()->route('facilities.index')
