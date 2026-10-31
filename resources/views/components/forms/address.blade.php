@@ -23,7 +23,7 @@
                 name="{{ $pref }}street"
                 id="{{ $idPref }}street"
                 value="{{ old($pref.'street', $address?->street) }}"
-                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent {{ $class }}"
                 @if($required) required @endif
             />
             @error($pref.'street')
@@ -38,7 +38,7 @@
                 name="{{ $pref }}number"
                 id="{{ $idPref }}number"
                 value="{{ old($pref.'number', $address?->number) }}"
-                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent {{ $class }}"
                 @if($required) required @endif
             />
             @error($pref.'number')
@@ -56,7 +56,7 @@
                 name="{{ $pref }}zip_code"
                 id="{{ $idPref }}zip_code"
                 value="{{ old($pref.'zip_code', $address?->zip_code) }}"
-                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent {{ $class }}"
                 @if($required) required @endif
             />
             @error($pref.'zip_code')
@@ -71,7 +71,7 @@
                 name="{{ $pref }}city"
                 id="{{ $idPref }}city"
                 value="{{ old($pref.'city', $address?->city) }}"
-                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+                class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent {{ $class }}"
                 @if($required) required @endif
             />
             @error($pref.'city')
@@ -86,7 +86,7 @@
         <select
             name="{{ $pref }}state"
             id="{{ $idPref }}state"
-            class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent {{ $class }}"
+            class="w-full px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent {{ $class }}"
         >
             <option value="Sachsen" {{ old($pref.'state', $address?->state) == 'Sachsen' || old($pref.'state', $address?->state) === null ? 'selected' : '' }}>Sachsen</option>
             <option value="Baden-Württemberg" {{ old($pref.'state', $address?->state) == 'Baden-Württemberg' ? 'selected' : '' }}>Baden-Württemberg</option>

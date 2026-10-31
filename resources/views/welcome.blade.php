@@ -79,12 +79,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
         .hero-bg {
-            background: linear-gradient(rgb(0 50 100 / 10%), rgb(0 50 100 / 55%)), url('/img/header_01.jpg');
+            background: linear-gradient(rgb(14 42 27 / 35%), rgb(14 42 27 / 75%)), url('/img/header_01.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -99,21 +95,8 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-        }
-
         .feature-section {
-            background-image: url('/img/HG-blau-soft.jpg');
-            background-size: cover;
-            background-position: center;
+            background-color: var(--color-sand-50);
             position: relative;
         }
 
@@ -130,163 +113,21 @@
     </style>
 </head>
 
-<body class="antialiased">
-    <!-- Navigation -->
-    <nav class="fixed w-full top-0 z-50 bg-white shadow-md">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex items-center">
-                    <img src="{{ asset('img/Stellenportal-Logo.png') }}"
-                         alt="{{ config('app.name') }} Logo"
-                         class="h-12"
-                         width="48"
-                         height="48"
-                         fetchpriority="high">
-                    <span class="ml-3 text-xl sm:text-2xl font-bold text-gray-800 hidden sm:inline">{{ config('app.name') }}</span>
-                </div>
-
-                <!-- Desktop Navigation -->
-                <div class="hidden lg:flex items-center gap-4" x-data="{ openDropdown: null }">
-                    <a href="{{ route('public.jobs.index') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Stellenangebote">
-                        Stellenangebote
-                    </a>
-                    <a href="{{ route('public.pricing') }}" class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Preise">
-                        Preise
-                    </a>
-
-                    @if(isset($headerMenu) && $headerMenu->count() > 0)
-                        @foreach($headerMenu as $menuItem)
-                            @if($menuItem->children->count() > 0)
-                                <!-- Dropdown Menu Item -->
-                                <div class="relative" @click.away="openDropdown = null">
-                                    <button @click="openDropdown = openDropdown === {{ $menuItem->id }} ? null : {{ $menuItem->id }}"
-                                            class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
-                                            :aria-expanded="openDropdown === {{ $menuItem->id }}">
-                                        {{ $menuItem->label }}
-                                        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': openDropdown === {{ $menuItem->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-                                    <div x-show="openDropdown === {{ $menuItem->id }}"
-                                         x-transition:enter="transition ease-out duration-200"
-                                         x-transition:enter-start="opacity-0 scale-95"
-                                         x-transition:enter-end="opacity-100 scale-100"
-                                         x-transition:leave="transition ease-in duration-150"
-                                         x-transition:leave-start="opacity-100 scale-100"
-                                         x-transition:leave-end="opacity-0 scale-95"
-                                         class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
-                                         style="display: none;">
-                                        <div class="py-1">
-                                            @foreach($menuItem->children as $child)
-                                                @if($child->is_active)
-                                                    @php
-                                                        $childUrl = $child->url;
-                                                        if ($child->page_id && $child->page) {
-                                                            $childUrl = route('pages.show', $child->page->slug);
-                                                        }
-                                                    @endphp
-                                                    @if($childUrl)
-                                                        <a href="{{ $childUrl }}"
-                                                           target="{{ $child->target }}"
-                                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors">
-                                                            {{ $child->label }}
-                                                        </a>
-                                                    @endif
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            @else
-                                <!-- Single Menu Item -->
-                                @php
-                                    $menuUrl = $menuItem->url;
-                                    if ($menuItem->page_id && $menuItem->page) {
-                                        $menuUrl = route('pages.show', $menuItem->page->slug);
-                                    }
-                                @endphp
-                                @if($menuUrl)
-                                    <a href="{{ $menuUrl }}"
-                                       target="{{ $menuItem->target }}"
-                                       class="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                                        {{ $menuItem->label }}
-                                    </a>
-                                @endif
-                            @endif
-                        @endforeach
-                    @endif
-
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Zum Dashboard">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="px-6 py-2.5 text-gray-700 hover:text-blue-600 font-medium transition-colors" aria-label="Anmelden">
-                            Anmelden
-                        </a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-primary px-6 py-2.5 text-white rounded-lg font-medium" aria-label="Jetzt registrieren">
-                                Registrieren
-                            </a>
-                        @endif
-                    @endauth
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button type="button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
-                    <span class="sr-only">Hauptmenü öffnen</span>
-                    <!-- Icon when menu is closed -->
-                    <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" id="menu-icon-closed">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                    <!-- Icon when menu is open -->
-                    <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" id="menu-icon-open">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="lg:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
-                <a href="{{ route('public.jobs.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Stellenangebote">
-                    Stellenangebote
-                </a>
-                <a href="{{ route('public.pricing') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Preise">
-                    Preise
-                </a>
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Zum Dashboard">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" aria-label="Anmelden">
-                        Anmelden
-                    </a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="block mx-3 my-2 px-6 py-2.5 bg-blue-600 text-white text-center rounded-lg font-medium hover:bg-blue-700 transition-colors" aria-label="Jetzt registrieren">
-                            Registrieren
-                        </a>
-                    @endif
-                @endauth
-            </div>
-        </div>
-    </nav>
+<body class="antialiased bg-sand-50 text-gray-800">
+    <x-layouts.public.nav />
 
     <!-- Hero Section -->
-    <section class="hero-bg min-h-screen flex items-center justify-center text-white pt-20">
+    <section id="main-content" class="hero-bg min-h-[85vh] flex items-center justify-center text-white py-16">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="max-w-4xl mx-auto">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
                     Willkommen beim Stellenportal
                 </h1>
-                <h2 class="text-xl md:text-2xl mb-8 text-blue-100">
+                <h2 class="text-xl md:text-2xl mb-8 text-primary-100">
                     Fachkräfte finden für das Hauptfach: Mensch
                 </h2>
 
-                <p class="text-lg mb-12 text-blue-50 max-w-2xl mx-auto">
+                <p class="text-lg mb-12 text-primary-50 max-w-2xl mx-auto">
                     Ob Lehrkräfte, Schulbegleiterinnen, Referendarinnen oder Praktikanten – das Stellenportal, ursprünglich entwickelt für evangelische Schulen, bringt jede Einrichtung mit passenden Mitarbeitenden zusammen.
                 </p>
                 <img src="{{ asset('img/Hauptfach_Mensch_logo.png') }}"
@@ -344,7 +185,7 @@
                     <a href="https://www.ev-schulen-sachsen.de/hauptfach-mensch-1"
                        target="_blank"
                        rel="noopener noreferrer"
-                       class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                       class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors">
                         Zur Aktion "Hauptfach Mensch"
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
@@ -428,7 +269,7 @@
                         'description' => Str::limit(strip_tags($job->description), 200),
                         'datePosted' => $job->published_at->toIso8601String(),
                         'validThrough' => ($job->expires_at ?? $job->published_at->addMonths(3))->toIso8601String(),
-                        'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
+                        'employmentType' => $job->getSchemaEmploymentType(),
                         'hiringOrganization' => [
                             '@type' => 'Organization',
                             'name' => $job->facility->name,
@@ -588,32 +429,12 @@
 
                                 <!-- Job Type Badge -->
                                 <div class="mb-4">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800" itemprop="employmentType">
-                                @switch($job->employment_type)
-                                    @case('full_time')
-                                        Vollzeit
-                                        @break
-                                    @case('part_time')
-                                        Teilzeit
-                                        @break
-                                    @case('mini_job')
-                                        Minijob
-                                        @break
-                                    @case('internship')
-                                        Praktikum
-                                        @break
-                                    @case('apprenticeship')
-                                        Ausbildung
-                                        @break
-                                    @case('volunteer')
-                                        Ehrenamt
-                                        @break
-                                    @default
-                                        {{ $job->employment_type }}
-                                @endswitch
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                                {{ $job->getEmploymentTypeLabel() }}
                             </span>
+                            <meta itemprop="employmentType" content="{{ $job->getSchemaEmploymentType() }}">
                                     @if($job->job_category)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-sand-100 text-gray-700 ml-2">
                                 {{ $job->job_category }}
                             </span>
                                     @endif
@@ -654,11 +475,11 @@
                                 </div>
 
                                 <!-- View Details Button -->
-                                <a href="{{ route('public.jobs.show', $job) }}" class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors" aria-label="Details zur Stelle {{ $job->title }} ansehen">
+                                <a href="{{ route('public.jobs.show', $job) }}" class="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors" aria-label="Details zur Stelle {{ $job->title }} ansehen">
                                     Details ansehen
                                 </a>
 
-                                <meta itemprop="validThrough" content="{{ $job->published_at->addMonths(3)->toIso8601String() }}">
+                                <meta itemprop="validThrough" content="{{ ($job->expires_at ?? $job->published_at->copy()->addMonths(3))->toIso8601String() }}">
                             </div>
                         </article>
                     @endforeach
@@ -666,7 +487,7 @@
 
                 <!-- View All Jobs Button -->
                 <div class="text-center">
-                    <a href="{{ route('public.jobs.index') }}" class="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors" aria-label="Alle Stellenangebote ansehen">
+                    <a href="{{ route('public.jobs.index') }}" class="inline-flex items-center px-8 py-4 bg-primary-600 text-white rounded-lg font-semibold text-lg hover:bg-primary-700 transition-colors" aria-label="Alle Stellenangebote ansehen">
                         Alle Stellenangebote ansehen
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
@@ -692,7 +513,7 @@
                     <!-- Step 1 -->
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="flex-shrink-0">
-                            <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-3xl font-bold">
+                            <div class="w-20 h-20 bg-primary-600 text-white rounded-full flex items-center justify-center text-3xl font-bold">
                                 1
                             </div>
                         </div>
@@ -706,7 +527,7 @@
                     <!-- Step 2 -->
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="flex-shrink-0">
-                            <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-3xl font-bold">
+                            <div class="w-20 h-20 bg-primary-600 text-white rounded-full flex items-center justify-center text-3xl font-bold">
                                 2
                             </div>
                         </div>
@@ -722,7 +543,7 @@
                             <a href="{{ route('register') }}" class="btn-primary px-8 py-4 text-white rounded-lg font-semibold text-lg inline-block">
                                 Jetzt kostenlos starten
                             </a>
-                            <a href="{{ route('login') }}" class="px-8 py-4 bg-white text-blue-900 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors inline-block">
+                            <a href="{{ route('login') }}" class="px-8 py-4 bg-white text-primary-900 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors inline-block">
                                 Anmelden
                             </a>
                         @else
@@ -742,7 +563,7 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="max-w-3xl mx-auto">
                 <h2 id="cta-heading" class="text-4xl font-bold mb-6">Bereit loszulegen?</h2>
-                <p class="text-xl mb-8 text-blue-100">
+                <p class="text-xl mb-8 text-primary-100">
                     Registrieren Sie sich jetzt kostenlos und starten Sie mit der Verwaltung Ihrer Stellenanzeigen.
                 </p>
                 @guest
@@ -764,39 +585,6 @@
     <!-- Mobile Menu Toggle & Image Optimization Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile Menu Toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const menuIconClosed = document.getElementById('menu-icon-closed');
-            const menuIconOpen = document.getElementById('menu-icon-open');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', function() {
-                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-
-                    // Toggle menu visibility
-                    mobileMenu.classList.toggle('hidden');
-
-                    // Toggle icons
-                    menuIconClosed.classList.toggle('hidden');
-                    menuIconOpen.classList.toggle('hidden');
-
-                    // Update aria-expanded
-                    mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-                });
-
-                // Close menu when clicking on a link
-                const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-                mobileMenuLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        mobileMenu.classList.add('hidden');
-                        menuIconClosed.classList.remove('hidden');
-                        menuIconOpen.classList.add('hidden');
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    });
-                });
-            }
-
             // Lazy Loading für Hintergrundbilder mit Intersection Observer
             if ('IntersectionObserver' in window) {
                 const lazyBgObserver = new IntersectionObserver(function(entries) {

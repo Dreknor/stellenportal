@@ -45,7 +45,7 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Website') }}</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                             @if($organization->website)
-                                <a href="{{ $organization->website }}" target="_blank" class="text-blue-600 hover:underline">{{ $organization->website }}</a>
+                                <a href="{{ $organization->website }}" target="_blank" class="text-primary-600 hover:underline">{{ $organization->website }}</a>
                             @else
                                 -
                             @endif
@@ -198,7 +198,7 @@
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Genossenschaft') }}</h2>
                 @if($organization->is_cooperative_member)
                     <div class="mb-2">
-                        <span class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 w-full justify-center">
+                        <span class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 w-full justify-center">
                             <x-fas-star class="w-4 h-4 mr-2"/>
                             {{ __('Genossenschaftsmitglied') }}
                         </span>
@@ -217,7 +217,7 @@
             <!-- Credit Balance -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Guthaben') }}</h2>
-                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">
                     {{ $organization->creditBalance->balance ?? 0 }}
                 </div>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('Credits verfügbar') }}</p>

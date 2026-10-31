@@ -46,7 +46,7 @@
                 <p class="text-gray-600">
                     {{ __('Sie haben bereits einen Zugang?') }}
                     <a href="{{ route('login') }}"
-                        class="text-blue-600 hover:text-blue-700 hover:underline font-semibold ml-1">{{ __('Jetzt anmelden') }}</a>
+                        class="text-primary-600 hover:text-primary-700 hover:underline font-semibold ml-1">{{ __('Jetzt anmelden') }}</a>
                 </p>
             </div>
         </div>

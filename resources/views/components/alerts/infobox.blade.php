@@ -11,7 +11,7 @@
      x-transition:leave-end="opacity-0 transform -translate-y-2"
      @switch($type)
         @case('info')
-            class="mb-6 bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-500 p-4 rounded-md"
+            class="mb-6 bg-primary-50 dark:bg-primary-900 border-l-4 border-primary-500 p-4 rounded-md"
             @break
         @case('warning')
             class="mb-6 bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 rounded-md"

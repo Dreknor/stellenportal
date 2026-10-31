@@ -6,15 +6,14 @@
 
 @php
     $styleClasses = \Illuminate\Support\Arr::toCssClasses([
-        'text-white font-medium py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors flex items-center justify-center cursor-pointer',
+        'font-semibold py-2 px-4 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-colors flex items-center justify-center gap-2 cursor-pointer',
         match ($type) {
-            'primary' => 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
-            'danger' => 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
-            'secondary' => 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500',
-            'success' => 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
-            'warning' => 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500',
-            'outline' => 'bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-            default => 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
+            'danger' => 'text-white bg-red-700 hover:bg-red-800 focus-visible:ring-red-500',
+            'secondary' => 'text-primary-800 bg-white border border-primary-200 hover:bg-primary-50 focus-visible:ring-primary-500 dark:bg-gray-800 dark:text-primary-200 dark:border-gray-600 dark:hover:bg-gray-700',
+            'success' => 'text-white bg-green-700 hover:bg-green-800 focus-visible:ring-green-500',
+            'warning' => 'text-white bg-amber-700 hover:bg-amber-800 focus-visible:ring-amber-500',
+            'outline' => 'text-gray-700 bg-transparent border border-gray-300 hover:bg-gray-100 focus-visible:ring-gray-500 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700',
+            default => 'text-white bg-primary-600 hover:bg-primary-700 focus-visible:ring-primary-500',
         },
     ]);
 @endphp

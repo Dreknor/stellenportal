@@ -38,9 +38,9 @@
             </div>
         </div>
     @else
-        <div class="h-40 md:h-56 flex items-center justify-center bg-gradient-to-r from-blue-200 to-blue-400 dark:from-gray-800 dark:to-gray-700 bg-blue-100 dark:bg-blue-900 p-3 ">
+        <div class="h-40 md:h-56 flex items-center justify-center bg-gradient-to-r from-primary-200 to-primary-400 dark:from-gray-800 dark:to-gray-700 bg-primary-100 dark:bg-primary-900 p-3 ">
             <div class="text-center p-4">
-                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 flex items-center justify-center text-2xl font-bold mx-auto">
+                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-200 flex items-center justify-center text-2xl font-bold mx-auto">
                     @if($initials){{ $initials }}@else&nbsp;@endif
                 </div>
                 <h2 class="mt-3 text-gray-800 dark:text-gray-100 text-lg font-semibold">{{ $organization->name }}</h2>
@@ -56,7 +56,7 @@
             <div class="{{ $hasMap ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : '' }}">
                 <div class="mt-4   text-gray-600 dark:text-gray-400 space-y-1">
                     @if($organization->email)
-                        <p><strong>{{ __('E-Mail:') }}</strong> <a href="mailto:{{ $organization->email }}" class="text-blue-600 hover:underline">{{ $organization->email }}</a></p>
+                        <p><strong>{{ __('E-Mail:') }}</strong> <a href="mailto:{{ $organization->email }}" class="text-primary-600 hover:underline">{{ $organization->email }}</a></p>
                     @endif
 
                     @if($organization->phone || $organization->telefon)

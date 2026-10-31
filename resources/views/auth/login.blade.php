@@ -19,7 +19,7 @@
                         <x-forms.checkbox label="Angemeldet bleiben" name="remember" />
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                               class="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium">{{ __('Passwort vergessen?') }}</a>
+                               class="text-sm text-primary-600 hover:text-primary-700 hover:underline font-medium">{{ __('Passwort vergessen?') }}</a>
                         @endif
                     </div>
                 </div>
@@ -41,7 +41,7 @@
 
                     <div class="mt-6">
                         <a href="{{ route('keycloak.redirect') }}"
-                           class="w-full inline-flex justify-center items-center px-4 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                           class="w-full inline-flex justify-center items-center px-4 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
                             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M11.5 0C5.149 0 0 5.149 0 11.5S5.149 23 11.5 23 23 17.851 23 11.5 17.851 0 11.5 0zm0 21.5C6.262 21.5 2 17.238 2 12S6.262 2.5 11.5 2.5 21 6.762 21 12s-4.262 9.5-9.5 9.5zm4.5-9.5c0 2.485-2.015 4.5-4.5 4.5S7 14.485 7 12s2.015-4.5 4.5-4.5S16 9.515 16 12z"/>
                             </svg>
@@ -56,7 +56,7 @@
                     <p class="text-gray-600">
                         {{ __('Sie haben noch kein Konto?') }}
                         <a href="{{ route('register') }}"
-                           class="text-blue-600 hover:text-blue-700 hover:underline font-semibold ml-1">{{ __('Jetzt registrieren') }}</a>
+                           class="text-primary-600 hover:text-primary-700 hover:underline font-semibold ml-1">{{ __('Jetzt registrieren') }}</a>
                     </p>
                 </div>
             @endif

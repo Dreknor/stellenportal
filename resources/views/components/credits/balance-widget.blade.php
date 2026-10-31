@@ -45,7 +45,7 @@
                 @endcan
             @else
                 @can('purchaseCredits', $creditable)
-                    <a href="{{ route('credits.facility.purchase', $creditable) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded transition">
+                    <a href="{{ route('credits.facility.purchase', $creditable) }}" class="inline-flex items-center justify-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
@@ -53,7 +53,7 @@
                     </a>
                 @endcan
                 @can('viewTransactions', $creditable)
-                    <a href="{{ route('credits.facility.transactions', $creditable) }}" class="text-sm text-blue-600 hover:text-blue-800 text-center">
+                    <a href="{{ route('credits.facility.transactions', $creditable) }}" class="text-sm text-primary-600 hover:text-primary-800 text-center">
                         Historie →
                     </a>
                 @endcan

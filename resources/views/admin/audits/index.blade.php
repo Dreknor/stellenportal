@@ -20,12 +20,12 @@
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suche') }}</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="{{ __('Modell, Event oder IP...') }}">
                 </div>
                 <div>
                     <label for="event" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Event') }}</label>
-                    <select name="event" id="event" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="event" id="event" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle Events') }}</option>
                         @foreach($eventTypes as $eventType)
                             <option value="{{ $eventType }}" {{ request('event') === $eventType ? 'selected' : '' }}>
@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <label for="auditable_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Modell') }}</label>
-                    <select name="auditable_type" id="auditable_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="auditable_type" id="auditable_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle Modelle') }}</option>
                         @foreach($auditableTypes as $type)
                             <option value="{{ $type }}" {{ request('auditable_type') === $type ? 'selected' : '' }}>
@@ -48,7 +48,7 @@
                 <div>
                     <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Benutzer ID') }}</label>
                     <input type="number" name="user_id" id="user_id" value="{{ request('user_id') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                            placeholder="{{ __('Benutzer ID...') }}">
                 </div>
             </div>
@@ -56,12 +56,12 @@
                 <div>
                     <label for="date_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Von') }}</label>
                     <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
                 <div>
                     <label for="date_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Bis') }}</label>
                     <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
             </div>
             <div class="flex gap-2">
@@ -103,7 +103,7 @@
                                         {{ __('Erstellt') }}
                                     </span>
                                 @elseif($audit->event === 'updated')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                         <x-fas-edit class="w-3 mr-1"/>
                                         {{ __('Aktualisiert') }}
                                     </span>

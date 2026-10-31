@@ -13,7 +13,7 @@
             <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('CMS-Seiten verwalten') }}</p>
         </div>
         @can('admin create pages')
-            <a href="{{ route('cms.pages.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
+            <a href="{{ route('cms.pages.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition">
                 <x-fas-plus class="w-4 h-4 mr-2"/>
                 {{ __('Neue Seite') }}
             </a>
@@ -79,7 +79,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
                                 @can('admin view pages')
-                                    <a href="{{ route('cms.pages.show', $page) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400">
+                                    <a href="{{ route('cms.pages.show', $page) }}" class="text-primary-600 hover:text-primary-900 dark:text-primary-400">
                                         {{ __('Anzeigen') }}
                                     </a>
                                 @endcan

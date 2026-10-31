@@ -1,5 +1,5 @@
 {{-- Block Item with nested support --}}
-<div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 transition-colors block-item {{ $block->type === 'row' ? 'row-container' : '' }}"
+<div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 transition-colors block-item {{ $block->type === 'row' ? 'row-container' : '' }}"
      data-block-id="{{ $block->id }}"
      data-block-type="{{ $block->type }}"
      style="margin-left: {{ $level * 2 }}rem;">
@@ -10,7 +10,7 @@
                 <svg class="w-5 h-5 text-gray-400 cursor-move drag-handle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
                 </svg>
-                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs font-semibold">
+                <span class="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded-full text-xs font-semibold">
                     {{ $blockTypes[$block->type] ?? $block->type }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('Reihenfolge') }}: {{ $block->order }}</span>
@@ -30,7 +30,7 @@
                         </svg>
                     </button>
                 @endif
-                <button onclick="toggleEdit({{ $block->id }})" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">
+                <button onclick="toggleEdit({{ $block->id }})" class="text-primary-600 hover:text-primary-800 dark:text-primary-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
@@ -64,7 +64,7 @@
                     <button type="button" onclick="toggleEdit({{ $block->id }})" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-lg">
                         {{ __('Abbrechen') }}
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
                         {{ __('Speichern') }}
                     </button>
                 </div>
@@ -74,7 +74,7 @@
 
     <!-- Nested Children (for row and columns containers) -->
     @if($block->type === 'row' || $block->type === 'columns')
-        <div class="children-container bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 border-t-2 border-dashed border-purple-300 dark:border-purple-700" data-parent-id="{{ $block->id }}">
+        <div class="children-container bg-gradient-to-r from-purple-50 to-primary-50 dark:from-gray-800 dark:to-gray-700 p-4 border-t-2 border-dashed border-purple-300 dark:border-purple-700" data-parent-id="{{ $block->id }}">
             <div class="flex justify-between items-center mb-3">
                 <div class="text-xs text-purple-700 dark:text-purple-300 font-semibold flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
                     </svg>
                     {{ __('Verschachtelte Blöcke') }} ({{ $block->children->count() }})
                 </div>
-                <button onclick="showAddChildModal({{ $block->id }})" class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors">
+                <button onclick="showAddChildModal({{ $block->id }})" class="px-3 py-1 bg-primary-600 text-white rounded text-xs hover:bg-primary-700 transition-colors">
                     {{ __('+ Block hinzufügen') }}
                 </button>
             </div>

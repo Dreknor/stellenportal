@@ -102,7 +102,7 @@
                             <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                                 <div class="flex items-center space-x-3">
                                     <div class="flex-shrink-0">
-                                        <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 flex items-center justify-center text-sm font-semibold">
+                                        <div class="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-200 flex items-center justify-center text-sm font-semibold">
                                             {{ $user->initials() }}
                                         </div>
                                     </div>

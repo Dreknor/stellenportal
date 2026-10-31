@@ -12,7 +12,7 @@
         <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $page->title }}</h1>
         <div class="flex gap-2">
             @can('admin edit pages')
-                <a href="{{ route('cms.pages.edit', $page) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                <a href="{{ route('cms.pages.edit', $page) }}" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
                     {{ __('Bearbeiten') }}
                 </a>
             @endcan

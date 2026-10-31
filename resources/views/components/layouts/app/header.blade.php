@@ -1,25 +1,20 @@
 <!-- Header -->
-<header class="bg-white dark:bg-gray-800 shadow-sm z-20 border-b border-gray-200 dark:border-gray-700">
+<header class="bg-white dark:bg-gray-800 z-20 border-b border-sand-200 dark:border-gray-700">
     <div class="flex items-center justify-between h-16 px-4">
         <!-- Left side: Logo and toggle -->
         <div class="flex items-center">
-            <button @click="toggleSidebar"
-                class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
+            <button type="button" @click="toggleSidebar" :aria-expanded="sidebarOpen.toString()" aria-label="Navigation ein-/ausblenden"
+                class="w-11 h-11 inline-flex items-center justify-center rounded-lg text-gray-600 hover:bg-sand-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
 
-            <div class="ml-4">
-                <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="{{ config('app.name') }}" class="h-10">
-            </div>
-
-            <h1 class="ml-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
-                <a href="{{ url('/') }}" title="{{ config('app.name') }} - Home">
-                    {{ config('app.name') }}
-                </a>
-            </h1>
+            <a href="{{ url('/') }}" class="ml-3 flex items-center gap-3" title="{{ config('app.name') }} - Startseite">
+                <img src="{{ asset('img/Stellenportal-Logo.png') }}" alt="" class="h-9 w-auto">
+                <span class="text-lg font-bold text-gray-900 dark:text-gray-100 hidden sm:inline">{{ config('app.name') }}</span>
+            </a>
 
         </div>
 
@@ -27,10 +22,10 @@
         <div class="flex items-center space-x-4">
             <!-- Profile -->
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="flex items-center focus:outline-none">
-                    <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                <button type="button" @click="open = !open" :aria-expanded="open.toString()" class="flex items-center gap-1 rounded-lg p-1 hover:bg-sand-100 dark:hover:bg-gray-700">
+                    <span class="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full">
                         <span
-                            class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
+                            class="flex h-full w-full items-center justify-center rounded-full bg-primary-800 text-white text-sm font-bold">
                             {{ Auth::user()->initials() }}
                         </span>
                     </span>
@@ -42,7 +37,7 @@
                 </button>
 
                 <div x-show="open" @click.away="open = false" :class="{ 'block': open, 'hidden': !open }"
-                    class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700">
+                    class="hidden absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-xl shadow-lg py-1 z-50 border border-sand-200 dark:border-gray-700">
                     <a href="{{ route('settings.profile.edit') }}"
                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <div class="flex items-center">
@@ -53,7 +48,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Settings
+                            Einstellungen
                         </div>
                     </a>
                     <div class="border-t border-gray-200 dark:border-gray-700"></div>
@@ -67,7 +62,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-                                Logout
+                                Abmelden
                             </div>
                         </button>
                     </form>

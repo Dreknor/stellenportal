@@ -8,8 +8,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <a href="#overview" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
             <div class="flex items-center mb-3">
-                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
-                    <x-icon name="fas-circle-info" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div class="bg-primary-100 dark:bg-primary-900 p-3 rounded-lg">
+                    <x-icon name="fas-circle-info" class="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
             </div>
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Überblick') }}</h3>
@@ -28,8 +28,8 @@
 
         <a href="#organizations" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
             <div class="flex items-center mb-3">
-                <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
-                    <x-icon name="fas-building" class="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div class="bg-primary-100 dark:bg-primary-900 p-3 rounded-lg">
+                    <x-icon name="fas-building" class="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
             </div>
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ __('Trägerverwaltung') }}</h3>
@@ -82,7 +82,7 @@
     <!-- Überblick Section -->
     <div id="overview" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-            <x-icon name="fas-circle-info" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+            <x-icon name="fas-circle-info" class="h-6 w-6 mr-2 text-primary-600 dark:text-primary-400" />
             {{ __('Überblick über das Stellenportal') }}
         </h2>
 
@@ -96,7 +96,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 flex items-center mb-2">
-                        <x-icon name="fas-building" class="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
+                        <x-icon name="fas-building" class="h-5 w-5 mr-2 text-primary-600 dark:text-primary-400" />
                         {{ __('Trägerverwaltung') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -148,7 +148,7 @@
             <!-- Schritt 1 -->
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 font-bold">
                         1
                     </div>
                 </div>
@@ -163,7 +163,7 @@
             <!-- Schritt 2 -->
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 font-bold">
                         2
                     </div>
                 </div>
@@ -178,7 +178,7 @@
             <!-- Schritt 3 -->
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 font-bold">
                         3
                     </div>
                 </div>
@@ -193,7 +193,7 @@
             <!-- Schritt 4 -->
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 font-bold">
                         4
                     </div>
                 </div>
@@ -208,7 +208,7 @@
             <!-- Schritt 5 -->
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold">
+                    <div class="flex items-center justify-center h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 font-bold">
                         5
                     </div>
                 </div>
@@ -225,7 +225,7 @@
     <!-- Organisationen Section -->
     <div id="organizations" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-            <x-icon name="fas-building" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+            <x-icon name="fas-building" class="h-6 w-6 mr-2 text-primary-600 dark:text-primary-400" />
             {{ __('Trägerverwaltung') }}
         </h2>
 
@@ -295,9 +295,9 @@
             <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6 mb-3">{{ __('Zwei Ebenen der Guthabenverwaltung') }}</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div class="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-lg border border-primary-200 dark:border-primary-800">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 flex items-center mb-2">
-                        <x-icon name="fas-building" class="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
+                        <x-icon name="fas-building" class="h-5 w-5 mr-2 text-primary-600 dark:text-primary-400" />
                         {{ __('Träger-Guthaben') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -343,7 +343,7 @@
                 {{ __('Als Träger können Sie Credits zentral kaufen und dann flexibel an Ihre Einrichtungen verteilen:') }}
             </p>
 
-            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+            <div class="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-lg border border-primary-200 dark:border-primary-800 mb-4">
                 <ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>{{ __('Gehen Sie zur Träger-Detailansicht → Reiter "Guthaben"') }}</li>
                     <li>{{ __('Klicken Sie auf "An Einrichtung übertragen"') }}</li>
@@ -352,7 +352,7 @@
                     <li>{{ __('Optional: Fügen Sie eine Notiz hinzu (z.B. "Budget Q1 2025")') }}</li>
                     <li>{{ __('Bestätigen Sie die Übertragung') }}</li>
                 </ol>
-                <p class="mt-3 text-sm text-blue-800 dark:text-blue-200 flex items-start">
+                <p class="mt-3 text-sm text-primary-800 dark:text-primary-200 flex items-start">
                     <x-icon name="fas-info-circle" class="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
                     <span>{{ __('Die Übertragung erfolgt sofort und wird in der Transaktionshistorie beider Seiten aufgezeichnet.') }}</span>
                 </p>
@@ -414,7 +414,7 @@
             <div class="space-y-4">
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
-                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">1</span>
+                        <span class="bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">1</span>
                         {{ __('Zentrale Verwaltung') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -424,7 +424,7 @@
 
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
-                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">2</span>
+                        <span class="bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">2</span>
                         {{ __('Dezentrale Verwaltung') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -434,7 +434,7 @@
 
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
-                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">3</span>
+                        <span class="bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">3</span>
                         {{ __('Hybrid-Modell') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -444,7 +444,7 @@
 
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
-                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">4</span>
+                        <span class="bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full h-6 w-6 flex items-center justify-center mr-2 text-sm">4</span>
                         {{ __('Rückübertragung bei Projektende') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -834,7 +834,7 @@
     @if(config('mail.support_email'))
     <div id="contact" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-            <x-icon name="fas-envelope" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+            <x-icon name="fas-envelope" class="h-6 w-6 mr-2 text-primary-600 dark:text-primary-400" />
             {{ __('Kontakt & Support') }}
         </h2>
 
@@ -890,7 +890,7 @@
                            name="name"
                            value="{{ old('name', auth()->user()->name ?? '') }}"
                            required
-                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-primary-500 @error('name') border-red-500 @enderror">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -906,7 +906,7 @@
                            name="email"
                            value="{{ old('email', auth()->user()->email ?? '') }}"
                            required
-                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('email') border-red-500 @enderror">
+                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-primary-500 @error('email') border-red-500 @enderror">
                     @error('email')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -924,7 +924,7 @@
                        value="{{ old('subject') }}"
                        required
                        placeholder="{{ __('z.B. Frage zur Trägerverwaltung') }}"
-                       class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('subject') border-red-500 @enderror">
+                       class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-primary-500 @error('subject') border-red-500 @enderror">
                 @error('subject')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
@@ -940,7 +940,7 @@
                           rows="6"
                           required
                           placeholder="{{ __('Bitte beschreiben Sie Ihr Anliegen so detailliert wie möglich...') }}"
-                          class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-blue-500 @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
+                          class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-primary-500 @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
                 @error('message')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
@@ -955,7 +955,7 @@
                     <span class="text-red-500">*</span> {{ __('Pflichtfelder') }}
                 </p>
                 <button type="submit"
-                        class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
                     <x-icon name="fas-paper-plane" class="h-4 w-4 mr-2" />
                     {{ __('Nachricht senden') }}
                 </button>
@@ -968,7 +968,7 @@
             </p>
             <p class="mt-2">
                 <a href="mailto:{{ config('mail.support_email') }}"
-                   class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                   class="text-primary-600 dark:text-primary-400 hover:underline font-medium">
                     {{ config('mail.support_email') }}
                 </a>
             </p>

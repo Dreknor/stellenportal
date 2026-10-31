@@ -29,7 +29,7 @@
 
             <div class="text-center mt-8 pt-6 border-t border-gray-200">
                 <a href="{{ route('login') }}"
-                   class="text-blue-600 hover:text-blue-700 hover:underline font-semibold">{{ __('Zurück zur Anmeldung') }}</a>
+                   class="text-primary-600 hover:text-primary-700 hover:underline font-semibold">{{ __('Zurück zur Anmeldung') }}</a>
             </div>
         </div>
     </div>

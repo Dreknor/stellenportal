@@ -17,7 +17,7 @@
         <nav class="-mb-px flex space-x-8">
             @foreach($locations as $key => $label)
                 <a href="{{ route('cms.menus.index', ['location' => $key]) }}"
-                   class="@if($location === $key) border-blue-500 text-blue-600 dark:text-blue-400 @else border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 @endif whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                   class="@if($location === $key) border-primary-500 text-primary-600 dark:text-primary-400 @else border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 @endif whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                     {{ $label }}
                 </a>
             @endforeach
@@ -138,14 +138,14 @@
                     <!-- Active -->
                     <div class="flex items-center">
                         <input type="checkbox" name="is_active" id="is_active" value="1" checked
-                               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                               class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                         <label for="is_active" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
                             {{ __('Aktiv') }}
                         </label>
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                    <button type="submit" class="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
                         {{ __('Hinzufügen') }}
                     </button>
                 </div>

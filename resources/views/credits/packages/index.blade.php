@@ -7,7 +7,7 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-900">Guthaben-Pakete verwalten</h2>
-                        <a href="{{ route('credits.packages.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                        <a href="{{ route('credits.packages.create') }}" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
                             Neues Paket erstellen
                         </a>
                     </div>
@@ -24,7 +24,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                             </svg>
                             <p class="text-gray-600 mb-4">Noch keine Guthaben-Pakete vorhanden</p>
-                            <a href="{{ route('credits.packages.create') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                            <a href="{{ route('credits.packages.create') }}" class="text-primary-600 hover:text-primary-800 font-semibold">
                                 Erstes Paket erstellen →
                             </a>
                         </div>
@@ -45,7 +45,7 @@
                                                 </span>
                                             @endif
                                             @if($package->for_cooperative_members)
-                                                <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded bg-primary-100 text-primary-800">
                                                     Genossenschaft
                                                 </span>
                                             @endif
@@ -57,7 +57,7 @@
                                     @endif
 
                                     <div class="mb-4">
-                                        <div class="text-3xl font-bold text-blue-600 mb-1">
+                                        <div class="text-3xl font-bold text-primary-600 mb-1">
                                             {{ number_format($package->credits, 0, ',', '.') }}
                                         </div>
                                         <div class="text-sm text-gray-500">Guthaben</div>
@@ -88,7 +88,7 @@
                                     </div>
 
                                     <div class="flex space-x-2">
-                                        <a href="{{ route('credits.packages.edit', $package) }}" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-3 rounded transition text-sm font-semibold">
+                                        <a href="{{ route('credits.packages.edit', $package) }}" class="flex-1 bg-primary-600 hover:bg-primary-700 text-white text-center py-2 px-3 rounded transition text-sm font-semibold">
                                             Bearbeiten
                                         </a>
                                         <form action="{{ route('credits.packages.destroy', $package) }}" method="POST" class="flex-1" onsubmit="return confirm('Sind Sie sicher, dass Sie dieses Paket löschen möchten?');">
