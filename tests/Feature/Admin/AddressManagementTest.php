@@ -207,3 +207,14 @@ test('successful geocoding resets a previous failure reason', function () {
         ->and($address->geocoding_failed_at)->toBeNull()
         ->and((float) $address->latitude)->toBe(51.1);
 });
+
+test('saving an address without changed address fields keeps existing coordinates', function () {
+    $address = $this->facility->address()->create(['street' => 'B', 'number' => '2', 'zip_code' => '04109', 'city' => 'Leipzig']);
+    $address->forceFill(['latitude' => '50.5', 'longitude' => '12.5'])->saveQuietly();
+
+    $address->update(['state' => 'Sachsen']);
+
+    $address->refresh();
+    expect((float) $address->latitude)->toBe(50.5)
+        ->and((float) $address->longitude)->toBe(12.5);
+});

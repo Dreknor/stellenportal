@@ -200,11 +200,18 @@ class GeocodingServiceTest extends TestCase
     {
         $this->configureService();
         Log::spy();
-        Http::fake(fn () => throw new ConnectionException('cURL error 28: timeout for https://geocode.test/search?q=x&api_key=secret-key-123'));
+        $requests = 0;
+        Http::fake(function () use (&$requests) {
+            $requests++;
+
+            throw new ConnectionException('cURL error 28: timeout for https://geocode.test/search?q=x&api_key=secret-key-123');
+        });
 
         $result = $this->service->geocodeWithResult($this->makeAddress());
 
         $this->assertSame(GeocodingFailureReason::ConnectionFailed, $result->reason);
+        // Verbindungsfehler bricht ab, statt jede Variante erneut bis zum Timeout zu probieren
+        $this->assertSame(1, $requests);
         Log::shouldHaveReceived('error')->withArgs(fn (string $message) => ! str_contains($message, 'secret-key-123'));
         Log::shouldNotHaveReceived('debug', fn (string $message) => str_contains($message, 'secret-key-123'));
     }

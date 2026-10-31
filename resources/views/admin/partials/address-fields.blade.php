@@ -54,6 +54,10 @@
             @push('scripts')
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
+                        if (typeof L === 'undefined') {
+                            return;
+                        }
+
                         const position = [{{ (float) $address->latitude }}, {{ (float) $address->longitude }}];
                         const map = L.map('addressMap').setView(position, 15);
 

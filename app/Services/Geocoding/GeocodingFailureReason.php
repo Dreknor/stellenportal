@@ -35,10 +35,11 @@ enum GeocodingFailureReason: string
 
     /**
      * Bei diesen Gründen ist es zwecklos, weitere Adressvarianten zu probieren,
-     * weil jede Anfrage mit derselben Ursache scheitern würde.
+     * weil jede Anfrage mit derselben Ursache scheitern würde (bei Verbindungsfehlern
+     * würde jede weitere Variante erneut bis zum Timeout blockieren).
      */
     public function abortsRemainingVariants(): bool
     {
-        return in_array($this, [self::NotConfigured, self::InvalidApiKey, self::RateLimited], true);
+        return in_array($this, [self::NotConfigured, self::InvalidApiKey, self::RateLimited, self::ConnectionFailed], true);
     }
 }

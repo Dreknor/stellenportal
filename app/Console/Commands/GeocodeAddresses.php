@@ -91,6 +91,11 @@ class GeocodeAddresses extends Command
                 }
             } catch (\Exception $e) {
                 $this->error("✗ Fehler bei der Geocodierung von: {$label} – {$e->getMessage()}");
+
+                // Grund auch hier speichern, damit Mail und Adresskarte ihn anzeigen
+                $address->geocoding_error = 'Unerwarteter Fehler: ' . $e->getMessage();
+                $address->geocoding_failed_at = now();
+                $address->saveQuietly();
                 $failedAddresses[] = $address;
 
                 Log::error('Geocoding-Fehler', [

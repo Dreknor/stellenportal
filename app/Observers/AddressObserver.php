@@ -35,6 +35,12 @@ class AddressObserver
      */
     public function updating(\App\Models\Address $address): void
     {
+        // Nur neu geocodieren, wenn sich die Adresse selbst geändert hat – sonst würden
+        // z. B. manuell übernommene Koordinaten überschrieben und unnötig API-Anfragen gestellt
+        if (! $address->isDirty(['street', 'number', 'zip_code', 'city'])) {
+            return;
+        }
+
         try {
             $this->geocodingService->applyResult($address, $this->geocodingService->geocodeWithResult($address));
         } catch (\Exception $e) {
