@@ -15,12 +15,8 @@ class AddressObserver
     public function creating(\App\Models\Address $address): void
     {
         try {
-            $result = $this->geocodingService->geocode($address);
-
-            if ($result) {
-                $address->latitude  = $result['lat'];
-                $address->longitude = $result['lon'];
-            }
+            // Koordinaten bzw. Fehlergrund werden mit dem Speichern persistiert
+            $this->geocodingService->applyResult($address, $this->geocodingService->geocodeWithResult($address));
         } catch (\Exception $e) {
             Log::error('Geocoding beim Erstellen fehlgeschlagen: ' . $e->getMessage());
         }
@@ -40,12 +36,7 @@ class AddressObserver
     public function updating(\App\Models\Address $address): void
     {
         try {
-            $result = $this->geocodingService->geocode($address);
-
-            if ($result) {
-                $address->latitude  = $result['lat'];
-                $address->longitude = $result['lon'];
-            }
+            $this->geocodingService->applyResult($address, $this->geocodingService->geocodeWithResult($address));
         } catch (\Exception $e) {
             Log::error('Geocoding beim Aktualisieren fehlgeschlagen: ' . $e->getMessage());
         }

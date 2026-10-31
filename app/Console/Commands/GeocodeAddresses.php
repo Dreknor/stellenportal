@@ -66,27 +66,27 @@ class GeocodeAddresses extends Command
             );
 
             try {
-                $result = $this->geocodingService->geocode($address);
+                $result = $this->geocodingService->geocodeWithResult($address);
 
-                if ($result) {
-                    // saveQuietly() umgeht alle Observer/Events, verhindert so
-                    // doppeltes Geocoding durch den AddressObserver
-                    $address->latitude  = $result['lat'];
-                    $address->longitude = $result['lon'];
-                    $address->saveQuietly();
+                // saveQuietly() umgeht alle Observer/Events, verhindert so
+                // doppeltes Geocoding durch den AddressObserver
+                $this->geocodingService->applyResult($address, $result);
+                $address->saveQuietly();
 
+                if ($result->successful()) {
                     // Kartenbild manuell generieren, da der Observer umgangen wurde
                     $this->geocodingService->generateMapImage($address);
 
                     $this->info("✓ Koordinaten gefunden für: {$label}");
                     $successCount++;
                 } else {
-                    $this->warn("✗ Keine Koordinaten gefunden für: {$label}");
+                    $this->warn("✗ Keine Koordinaten gefunden für: {$label} – {$result->message()}");
                     $failedAddresses[] = $address;
 
-                    Log::warning('Geocoding fehlgeschlagen: Keine Ergebnisse', [
+                    Log::warning('Geocoding fehlgeschlagen', [
                         'address_id' => $address->id,
                         'address'    => $label,
+                        'reason'     => $result->reason?->value,
                     ]);
                 }
             } catch (\Exception $e) {

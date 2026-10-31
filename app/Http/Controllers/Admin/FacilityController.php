@@ -39,6 +39,9 @@ class FacilityController extends Controller
 
         $address->latitude = $organizationAddress->latitude;
         $address->longitude = $organizationAddress->longitude;
+        // Übernommene Koordinaten ersetzen einen früheren Geocoding-Fehler
+        $address->geocoding_error = null;
+        $address->geocoding_failed_at = null;
         // saveQuietly, damit der AddressObserver die übernommenen Koordinaten nicht neu geocodiert
         $address->saveQuietly();
         $geocoding->generateMapImage($address);

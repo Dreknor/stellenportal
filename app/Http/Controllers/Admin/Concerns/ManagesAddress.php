@@ -48,15 +48,14 @@ trait ManagesAddress
             return back()->with('error', 'Es ist keine Adresse hinterlegt.');
         }
 
-        $result = $geocoding->geocode($address);
+        $result = $geocoding->geocodeWithResult($address);
+        $geocoding->applyResult($address, $result);
+        $address->saveQuietly();
 
-        if (! $result) {
-            return back()->with('error', 'Für diese Adresse konnten keine Koordinaten ermittelt werden.');
+        if (! $result->successful()) {
+            return back()->with('error', 'Für diese Adresse konnten keine Koordinaten ermittelt werden: '.$result->message());
         }
 
-        $address->latitude = $result['lat'];
-        $address->longitude = $result['lon'];
-        $address->saveQuietly();
         $geocoding->generateMapImage($address);
 
         return back()->with('success', 'Koordinaten erfolgreich ermittelt.');

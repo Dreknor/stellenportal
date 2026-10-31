@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Models\Address;
+use App\Services\Geocoding\GeocodingException;
+use App\Services\Geocoding\GeocodingFailureReason;
+use App\Services\Geocoding\GeocodingResult;
 use DantSu\OpenStreetMapStaticAPI\LatLng;
 use DantSu\OpenStreetMapStaticAPI\Markers;
 use DantSu\OpenStreetMapStaticAPI\OpenStreetMap;
-use GuzzleHttp\Client;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GeocodingService
@@ -15,31 +19,99 @@ class GeocodingService
      * Versucht, Koordinaten für eine Adresse zu ermitteln.
      * Probiert bei Misserfolg automatisch mehrere Adressvarianten (Fallbacks).
      *
+     * Den Fehlergrund liefert geocodeWithResult().
+     *
      * @return array{lat: string, lon: string}|null
      */
     public function geocode(Address $address): ?array
     {
-        $variants = $this->buildAddressVariants($address);
+        return $this->geocodeWithResult($address)->coordinates();
+    }
 
-        foreach ($variants as $variant) {
-            $result = $this->fetchCoordinates(
-                $variant['street'],
-                $variant['city'],
-                $variant['zip'],
-                $variant['label']
-            );
+    /**
+     * Wie geocode(), liefert aber zusätzlich den Fehlergrund und alle probierten Varianten.
+     */
+    public function geocodeWithResult(Address $address): GeocodingResult
+    {
+        if (blank($address->zip_code) && blank($address->city)) {
+            return $this->failed($address, GeocodingFailureReason::IncompleteAddress, []);
+        }
+
+        $attempts = [];
+
+        foreach ($this->buildAddressVariants($address) as $variant) {
+            try {
+                $result = $this->fetchCoordinates(
+                    $variant['street'],
+                    $variant['city'],
+                    $variant['zip'],
+                    $variant['label']
+                );
+            } catch (GeocodingException $e) {
+                $attempts[] = ['label' => $variant['label'], 'reason' => $e->reason, 'detail' => $e->detail];
+
+                if ($e->reason->abortsRemainingVariants()) {
+                    return $this->failed($address, $e->reason, $attempts);
+                }
+
+                continue;
+            }
 
             if ($result !== null) {
-                return $result;
+                $attempts[] = ['label' => $variant['label'], 'reason' => null, 'detail' => null];
+
+                return GeocodingResult::success($result['lat'], $result['lon'], $attempts);
+            }
+
+            $attempts[] = ['label' => $variant['label'], 'reason' => GeocodingFailureReason::NoResults, 'detail' => null];
+        }
+
+        // Ein technischer Fehler wiegt schwerer als "keine Treffer", da er einen Treffer verdeckt haben könnte.
+        $reason = GeocodingFailureReason::NoResults;
+        foreach ($attempts as $attempt) {
+            if ($attempt['reason'] !== GeocodingFailureReason::NoResults) {
+                $reason = $attempt['reason'];
+                break;
             }
         }
 
-        Log::warning('Geocoding: Alle Adressvarianten erschöpft – keine Koordinaten gefunden.', [
+        return $this->failed($address, $reason, $attempts);
+    }
+
+    /**
+     * Übernimmt das Ergebnis in die Adresse (ohne zu speichern):
+     * bei Erfolg die Koordinaten (Fehler wird zurückgesetzt), sonst den Fehlergrund.
+     */
+    public function applyResult(Address $address, GeocodingResult $result): void
+    {
+        if ($result->successful()) {
+            // forceFill: Koordinaten als String übernehmen, um Präzisionsverlust zu vermeiden
+            $address->forceFill([
+                'latitude'            => $result->latitude,
+                'longitude'           => $result->longitude,
+                'geocoding_error'     => null,
+                'geocoding_failed_at' => null,
+            ]);
+
+            return;
+        }
+
+        $address->geocoding_error = $result->message();
+        $address->geocoding_failed_at = now();
+    }
+
+    /**
+     * @param  array<int, array{label: string, reason: GeocodingFailureReason|null, detail: string|null}>  $attempts
+     */
+    protected function failed(Address $address, GeocodingFailureReason $reason, array $attempts): GeocodingResult
+    {
+        Log::warning('Geocoding: Keine Koordinaten gefunden.', [
             'address_id' => $address->id,
             'city'       => $address->city,
+            'reason'     => $reason->value,
         ]);
 
-        return null;
+        return GeocodingResult::failure($reason, $attempts);
     }
 
     /**
@@ -122,12 +194,18 @@ class GeocodingService
     /**
      * Führt den eigentlichen HTTP-Request an den Geocodierungs-Dienst durch.
      *
-     * @return array{lat: string, lon: string}|null
+     * @return array{lat: string, lon: string}|null null, wenn der Dienst keine Treffer liefert
+     *
+     * @throws GeocodingException wenn die Anfrage technisch scheitert
      */
     protected function fetchCoordinates(string $street, string $city, string $zip, string $variantLabel): ?array
     {
-        $baseUrl = config('geocode.geocode_url');
-        $key     = config('geocode.geocode_key');
+        $baseUrl = (string) config('geocode.geocode_url');
+        $key     = (string) config('geocode.geocode_key');
+
+        if ($baseUrl === '' || $key === '') {
+            throw new GeocodingException(GeocodingFailureReason::NotConfigured);
+        }
 
         $parts = array_filter([
             str_replace(' ', '+', trim($street)),
@@ -136,33 +214,63 @@ class GeocodingService
         ]);
 
         $query = implode('+', $parts);
-        $url   = $baseUrl . urlencode($query) . '&api_key=' . $key;
+        $url   = $baseUrl . urlencode($query) . '&api_key=';
 
-        Log::debug("Geocoding [{$variantLabel}]: {$url}");
+        // API-Schlüssel niemals loggen
+        Log::debug("Geocoding [{$variantLabel}]: {$url}***");
 
         try {
-            $client   = new Client();
-            $response = $client->get($url);
-            $data     = json_decode($response->getBody(), true);
+            $response = Http::timeout(10)->get($url . $key);
+        } catch (ConnectionException $e) {
+            Log::error("Geocoding [{$variantLabel}]: Verbindungsfehler – " . $this->maskKey($e->getMessage(), $key));
 
-            if (!empty($data) && isset($data[0]['lat'], $data[0]['lon'])) {
-                Log::debug("Geocoding [{$variantLabel}]: Koordinaten gefunden.", [
-                    'lat' => $data[0]['lat'],
-                    'lon' => $data[0]['lon'],
-                ]);
-
-                return [
-                    'lat' => $data[0]['lat'],
-                    'lon' => $data[0]['lon'],
-                ];
-            }
-
-            Log::debug("Geocoding [{$variantLabel}]: Keine Ergebnisse.");
-        } catch (\Exception $e) {
-            Log::error("Geocoding [{$variantLabel}]: HTTP-Fehler – " . $e->getMessage());
+            throw new GeocodingException(GeocodingFailureReason::ConnectionFailed, previous: $e);
         }
 
+        if ($response->failed()) {
+            $status = $response->status();
+            $reason = match (true) {
+                in_array($status, [401, 403], true) => GeocodingFailureReason::InvalidApiKey,
+                $status === 429                     => GeocodingFailureReason::RateLimited,
+                default                             => GeocodingFailureReason::ServiceError,
+            };
+
+            Log::error("Geocoding [{$variantLabel}]: HTTP-Fehler {$status}");
+
+            throw new GeocodingException($reason, "HTTP {$status}");
+        }
+
+        $data = json_decode($response->body(), true);
+
+        if (! is_array($data)) {
+            Log::error("Geocoding [{$variantLabel}]: Ungültige Antwort (kein JSON-Array).");
+
+            throw new GeocodingException(GeocodingFailureReason::InvalidResponse);
+        }
+
+        if (isset($data[0]['lat'], $data[0]['lon'])) {
+            Log::debug("Geocoding [{$variantLabel}]: Koordinaten gefunden.", [
+                'lat' => $data[0]['lat'],
+                'lon' => $data[0]['lon'],
+            ]);
+
+            return [
+                'lat' => (string) $data[0]['lat'],
+                'lon' => (string) $data[0]['lon'],
+            ];
+        }
+
+        Log::debug("Geocoding [{$variantLabel}]: Keine Ergebnisse.");
+
         return null;
+    }
+
+    /**
+     * Entfernt den API-Schlüssel aus Texten (z. B. Exception-Meldungen, die die URL enthalten).
+     */
+    protected function maskKey(string $text, string $key): string
+    {
+        return $key === '' ? $text : str_replace([$key, urlencode($key)], '***', $text);
     }
 
     /**
