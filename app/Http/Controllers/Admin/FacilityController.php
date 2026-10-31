@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Http\Controllers\Admin\Concerns\ManagesAddress;
 use App\Models\Organization;
 use App\Services\GeocodingService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -17,6 +18,32 @@ class FacilityController extends Controller
     public function geocode(Facility $facility, GeocodingService $geocoding)
     {
         return $this->runGeocoding($facility, $geocoding);
+    }
+
+    /**
+     * Übernimmt die Koordinaten der Organisation für die Adresse der Einrichtung.
+     */
+    public function copyOrganizationCoordinates(Facility $facility, GeocodingService $geocoding): RedirectResponse
+    {
+        $address = $facility->address()->first();
+
+        if (! $address) {
+            return back()->with('error', 'Bitte legen Sie zuerst eine Adresse für die Einrichtung an.');
+        }
+
+        $organizationAddress = $facility->organization()->first()?->address()->first();
+
+        if (! $organizationAddress || ! $organizationAddress->latitude || ! $organizationAddress->longitude) {
+            return back()->with('error', 'Für die Organisation sind keine Koordinaten hinterlegt.');
+        }
+
+        $address->latitude = $organizationAddress->latitude;
+        $address->longitude = $organizationAddress->longitude;
+        // saveQuietly, damit der AddressObserver die übernommenen Koordinaten nicht neu geocodiert
+        $address->saveQuietly();
+        $geocoding->generateMapImage($address);
+
+        return back()->with('success', 'Koordinaten der Organisation erfolgreich übernommen.');
     }
 
     public function index(Request $request)
@@ -47,7 +74,7 @@ class FacilityController extends Controller
     public function show(Facility $facility)
     {
         $facility->load([
-            'organization',
+            'organization.address',
             'users',
             'address',
             'jobPostings',

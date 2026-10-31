@@ -67,6 +67,9 @@
                 'permission' => 'admin edit facilities',
                 'geocodeRoute' => route('admin.facilities.geocode', $facility),
                 'editRoute' => route('admin.facilities.edit', $facility),
+                'copyCoordinatesRoute' => $facility->organization?->address?->latitude && $facility->organization?->address?->longitude
+                    ? route('admin.facilities.copy-organization-coordinates', $facility)
+                    : null,
             ])
 
             <!-- Users -->

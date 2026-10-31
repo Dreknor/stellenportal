@@ -45,5 +45,26 @@
                 {{ __('nicht vorhanden') }}
             @endif
         </p>
+
+        @if($address->latitude && $address->longitude)
+            <div id="addressMap" class="mt-4 h-64 rounded-lg border border-gray-200 dark:border-gray-600"
+                 role="img" aria-label="{{ __('Karte mit hinterlegtem Standort') }}"></div>
+
+            @push('scripts')
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const position = [{{ (float) $address->latitude }}, {{ (float) $address->longitude }}];
+                        const map = L.map('addressMap').setView(position, 15);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+
+                        L.marker(position).addTo(map);
+                    });
+                </script>
+            @endpush
+        @endif
     @endif
 </div>

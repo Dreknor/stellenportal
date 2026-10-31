@@ -27,6 +27,15 @@
         <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Keine Adresse hinterlegt.') }}</p>
     @endif
     @can($permission)
+        @if(! empty($copyCoordinatesRoute))
+            <form method="POST" action="{{ $copyCoordinatesRoute }}" class="mt-3"
+                  onsubmit="return confirm('{{ __('Sollen die Koordinaten der Organisation für diese Einrichtung übernommen werden? Vorhandene Koordinaten werden überschrieben.') }}');">
+                @csrf
+                <x-button type="secondary" size="sm" native-type="submit">
+                    {{ __('Koordinaten der Organisation übernehmen') }}
+                </x-button>
+            </form>
+        @endif
         <div class="mt-3">
             <x-button type="secondary" size="sm" tag="a" :href="$editRoute">{{ __('Adresse bearbeiten') }}</x-button>
         </div>

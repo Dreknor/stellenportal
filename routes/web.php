@@ -189,6 +189,9 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
         Route::post('facilities/{facility}/geocode', [\App\Http\Controllers\Admin\FacilityController::class, 'geocode'])
             ->middleware('permission:admin edit facilities')
             ->name('facilities.geocode');
+        Route::post('facilities/{facility}/copy-organization-coordinates', [\App\Http\Controllers\Admin\FacilityController::class, 'copyOrganizationCoordinates'])
+            ->middleware('permission:admin edit facilities')
+            ->name('facilities.copy-organization-coordinates');
 
         // Admin Facility Management
         Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class)

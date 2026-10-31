@@ -8,6 +8,8 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    $this->withoutVite();
+
     $geocoding = Mockery::mock(GeocodingService::class);
     $geocoding->shouldReceive('geocode')->andReturn(['lat' => '51.1', 'lon' => '13.2']);
     $geocoding->shouldReceive('generateMapImage');
@@ -71,4 +73,80 @@ test('regular user cannot geocode', function () {
     $this->actingAs(User::factory()->create())
         ->post(route('admin.organizations.geocode', $this->organization))
         ->assertForbidden();
+});
+
+test('admin can copy organization coordinates to facility', function () {
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+    $this->organization->address()->update(['latitude' => '50.5', 'longitude' => '12.5']);
+    $this->facility->address()->create(['street' => 'B', 'number' => '2', 'zip_code' => '04109', 'city' => 'Leipzig']);
+    $this->facility->address()->update(['latitude' => null, 'longitude' => null]);
+
+    $this->actingAs($this->admin)
+        ->post(route('admin.facilities.copy-organization-coordinates', $this->facility))
+        ->assertSessionHas('success');
+
+    $address = $this->facility->fresh()->address;
+    expect((float) $address->latitude)->toBe(50.5)
+        ->and((float) $address->longitude)->toBe(12.5);
+});
+
+test('copying coordinates fails when organization has no coordinates', function () {
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+    $this->organization->address()->update(['latitude' => null, 'longitude' => null]);
+    $this->facility->address()->create(['street' => 'B', 'number' => '2', 'zip_code' => '04109', 'city' => 'Leipzig']);
+
+    $this->actingAs($this->admin)
+        ->post(route('admin.facilities.copy-organization-coordinates', $this->facility))
+        ->assertSessionHas('error');
+
+    expect((float) $this->facility->fresh()->address->latitude)->toBe(51.1);
+});
+
+test('copying coordinates fails when facility has no address', function () {
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+
+    $this->actingAs($this->admin)
+        ->post(route('admin.facilities.copy-organization-coordinates', $this->facility))
+        ->assertSessionHas('error', 'Bitte legen Sie zuerst eine Adresse für die Einrichtung an.');
+
+    expect($this->facility->fresh()->address)->toBeNull();
+});
+
+test('regular user cannot copy organization coordinates', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('admin.facilities.copy-organization-coordinates', $this->facility))
+        ->assertForbidden();
+});
+
+test('facility show page offers copying only when organization has coordinates', function () {
+    $this->actingAs($this->admin)
+        ->get(route('admin.facilities.show', $this->facility))
+        ->assertOk()
+        ->assertDontSee('Koordinaten der Organisation übernehmen');
+
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.facilities.show', $this->facility))
+        ->assertOk()
+        ->assertSee('Koordinaten der Organisation übernehmen');
+});
+
+test('edit pages show a map when coordinates exist', function () {
+    $this->actingAs($this->admin)
+        ->get(route('admin.facilities.edit', $this->facility))
+        ->assertOk()
+        ->assertDontSee('id="addressMap"', false);
+
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+    $this->facility->address()->create(['street' => 'B', 'number' => '2', 'zip_code' => '04109', 'city' => 'Leipzig']);
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.organizations.edit', $this->organization))
+        ->assertOk()
+        ->assertSee('id="addressMap"', false);
+    $this->actingAs($this->admin)
+        ->get(route('admin.facilities.edit', $this->facility))
+        ->assertOk()
+        ->assertSee('id="addressMap"', false);
 });
