@@ -6,6 +6,7 @@ use App\Models\JobPosting;
 use App\Models\SearchQuery;
 use App\Services\JobPostingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class PublicJobPostingController extends Controller
@@ -40,8 +41,12 @@ class PublicJobPostingController extends Controller
                 $searchPerformed = true;
                 $searchData['query'] = $search;
 
-                // Split search string into individual terms
-                $searchTerms = array_filter(array_map('trim', explode(' ', $search)));
+                // Split search string into individual terms (bounded to keep the query cheap)
+                $searchTerms = array_slice(
+                    array_filter(array_map('trim', explode(' ', mb_substr((string) $search, 0, 200)))),
+                    0,
+                    5
+                );
 
                 // Each search term must match at least one field (AND logic between terms)
                 foreach ($searchTerms as $term) {
@@ -148,6 +153,8 @@ class PublicJobPostingController extends Controller
      */
     public function show(JobPosting $jobPosting)
     {
+        $this->abortUnlessPublic($jobPosting);
+
         $jobPosting->load(['facility.address', 'facility.organization']);
 
         // Check if job posting is expired or inactive
@@ -161,6 +168,8 @@ class PublicJobPostingController extends Controller
      */
     public function exportPdf(JobPosting $jobPosting)
     {
+        $this->abortUnlessPublic($jobPosting);
+
         $jobPosting->load(['facility.address', 'facility.organization']);
 
         // Check if job posting is expired or inactive
@@ -177,5 +186,16 @@ class PublicJobPostingController extends Controller
         $filename = 'stellenangebot-' . $jobPosting->slug . '.pdf';
 
         return $pdf->download($filename);
+    }
+
+    /**
+     * Drafts and paused postings are only visible to users who may manage them
+     */
+    private function abortUnlessPublic(JobPosting $jobPosting): void
+    {
+        if (in_array($jobPosting->status, [JobPosting::STATUS_DRAFT, JobPosting::STATUS_PAUSED], true)
+            && !Gate::allows('view', $jobPosting)) {
+            abort(404);
+        }
     }
 }

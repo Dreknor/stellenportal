@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\HtmlSanitizer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,21 @@ class ContentBlock extends Model
         'settings' => 'array',
         'is_visible' => 'boolean',
     ];
+
+    /**
+     * Block types whose content is rendered as raw HTML.
+     */
+    public const HTML_TYPES = ['html', 'row', 'columns'];
+
+    protected static function booted(): void
+    {
+        static::saving(function (ContentBlock $block) {
+            if (in_array($block->type, self::HTML_TYPES, true)
+                && ($block->isDirty('content') || $block->isDirty('type'))) {
+                $block->content = HtmlSanitizer::clean($block->content);
+            }
+        });
+    }
 
     /**
      * Get the page that owns the content block.

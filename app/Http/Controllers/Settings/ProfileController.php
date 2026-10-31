@@ -34,7 +34,15 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique(User::class)->ignore($user->id),
             ],
+            // Changing the login email requires the current password
+            'current_password' => [
+                Rule::requiredIf(fn () => strtolower((string) $request->input('email')) !== strtolower($user->email)),
+                'nullable',
+                'current_password',
+            ],
         ]);
+
+        unset($validated['current_password']);
 
         $user->fill($validated);
 
@@ -49,6 +57,10 @@ class ProfileController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
+
         $user = $request->user();
 
         Auth::logout();

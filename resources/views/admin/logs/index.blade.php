@@ -136,6 +136,7 @@
                 {{ __('Export (JSON)') }}
             </x-button>
 
+            @can('admin delete logs')
             <button type="button"
                     onclick="if(confirm('{{ __('Sind Sie sicher, dass Sie alte Log-Einträge löschen möchten?') }}')) { document.getElementById('clear-form').submit(); }"
                     class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800 rounded-md transition-colors">
@@ -151,6 +152,7 @@
                 @method('DELETE')
                 <input type="hidden" name="days" value="30">
             </form>
+            @endcan
         </div>
     </div>
 

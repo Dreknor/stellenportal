@@ -11,8 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(callback: function (Middleware $middleware) {
-        $middleware->append(middleware: App\Http\Middleware\PasswordExpired::class);
+        // PasswordExpired needs the session and is therefore attached per route group in routes/web.php
         $middleware->append(middleware: App\Http\Middleware\SecurityHeaders::class);
+        $middleware->web(append: [App\Http\Middleware\PreventImpersonationActions::class]);
 
         // Register Spatie Permission Middleware
         $middleware->alias([

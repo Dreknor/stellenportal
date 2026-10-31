@@ -40,7 +40,7 @@
         <div class="h-40 md:h-56 flex items-center justify-center bg-gradient-to-r from-green-200 to-green-400 dark:from-gray-800 dark:to-gray-700 bg-green-100 dark:bg-green-900 p-3 ">
             <div class="text-center p-4">
                 <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-2xl font-bold mx-auto">
-                    {!! $initials ?: '&nbsp;' !!}
+                    @if($initials){{ $initials }}@else&nbsp;@endif
                 </div>
                 <h2 class="mt-3 text-gray-800 dark:text-gray-100 text-lg font-semibold">{{ $facility->name }}</h2>
             </div>

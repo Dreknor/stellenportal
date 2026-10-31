@@ -96,3 +96,17 @@ test('deletion is logged correctly', function () {
         }));
 });
 
+
+test('unverified users assigned to an organization are not deleted', function () {
+    $user = User::factory()->unverified()->create([
+        'created_at' => now()->subDays(10),
+    ]);
+    $organization = \App\Models\Organization::create(['name' => 'Testschule']);
+    $user->organizations()->attach($organization->id);
+
+    $this->artisan('users:delete-unverified --days=7')
+        ->expectsOutput('Keine nicht verifizierten Benutzerkonten zum Löschen gefunden.')
+        ->assertExitCode(0);
+
+    expect(User::find($user->id))->not->toBeNull();
+});

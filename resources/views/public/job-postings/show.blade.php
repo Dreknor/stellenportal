@@ -124,7 +124,7 @@
         ];
     }
     @endphp
-    <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
 
     {{-- Separate Organization structured data for better Google visibility --}}
     @php
@@ -218,7 +218,7 @@
             }
         }
     @endphp
-    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
     @endpush
 
     @php
@@ -303,7 +303,7 @@
                 <div class="absolute inset-0 flex items-center justify-center">
                     <div class="text-center">
                         <div class="w-24 h-24 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-3xl font-bold mx-auto mb-4">
-                            {!! $initials ?: '&nbsp;' !!}
+                            @if($initials){{ $initials }}@else&nbsp;@endif
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ $jobPosting->facility->name }}</h2>
                         @if($jobPosting->facility->address)
@@ -467,7 +467,7 @@
                         @else
                             <div class="flex-shrink-0">
                                 <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-lg font-bold border-2 border-gray-200 dark:border-gray-600" aria-hidden="true">
-                                    {!! $initials ?: '&nbsp;' !!}
+                                    @if($initials){{ $initials }}@else&nbsp;@endif
                                 </div>
                             </div>
                         @endif

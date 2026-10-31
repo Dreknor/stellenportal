@@ -77,15 +77,15 @@ class FacilityUserController extends Controller
             }
         }
 
-        // Generate a random password
-        $password = Str::random(12);
+        // Random password nobody knows; the user sets an own one via the emailed link
+        $password = Str::random(40);
 
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($password),
-            'change_password' => true, // User must change password on first login
+            'change_password' => false,
         ]);
 
         // Attach user to facility
@@ -94,8 +94,8 @@ class FacilityUserController extends Controller
         // Send email verification notification
         $user->sendEmailVerificationNotification();
 
-        // Send email with login credentials
-        Mail::to($user->email)->queue(new UserCreatedForFacilityMail($user, $facility, $password));
+        // Send email with a link to set the password
+        Mail::to($user->email)->queue(new UserCreatedForFacilityMail($user, $facility, $user->passwordSetUrl()));
 
         return redirect()->route('facilities.users.index', $facility)
             ->with('success', 'Benutzer erfolgreich erstellt und Zugangsdaten per E-Mail versendet.');
@@ -116,6 +116,10 @@ class FacilityUserController extends Controller
         if (!$facility->organization->canUseFeatures()) {
             return redirect()->route('facilities.index')
                 ->with('error', 'Die Organisation dieser Einrichtung muss erst vom Administrator genehmigt werden.');
+        }
+
+        if (!$facility->users()->whereKey($user->id)->exists()) {
+            abort(404);
         }
 
         // Detach user from facility

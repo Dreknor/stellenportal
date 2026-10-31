@@ -207,6 +207,13 @@ class JobPostingController extends Controller
             'contact_person' => 'nullable|string|max:255',
         ]);
 
+        // The employment type decides about credit exemptions and is fixed once published
+        if ($jobPosting->status !== JobPosting::STATUS_DRAFT && $validated['employment_type'] !== $jobPosting->employment_type) {
+            return back()->withInput()->withErrors([
+                'employment_type' => 'Die Beschäftigungsart kann nach der Veröffentlichung nicht mehr geändert werden.',
+            ]);
+        }
+
         $jobPosting->update($validated);
 
         return redirect()->route('job-postings.show', $jobPosting)

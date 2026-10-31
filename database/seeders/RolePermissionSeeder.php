@@ -63,6 +63,7 @@ class RolePermissionSeeder extends Seeder
             // Admin: Audit Logs
             'admin view logs',
             'admin export logs',
+            'admin delete logs',
 
             // Admin: System Settings
             'admin view settings',

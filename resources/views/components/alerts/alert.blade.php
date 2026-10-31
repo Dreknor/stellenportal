@@ -54,10 +54,11 @@
 
     $classes = $colorClasses[$type] ?? $colorClasses['success'];
 
-    // Determine message: Use slot content if provided, otherwise fallback to session
+    // Determine message: Use slot content if provided, otherwise fallback to session.
+    // Session messages may contain user data (names) and are therefore escaped.
     $message = trim($slot ?? '');
-    if (empty($message)) {
-        $message = session($type);
+    if (empty($message) && is_string(session($type))) {
+        $message = e(session($type));
     }
 @endphp
 

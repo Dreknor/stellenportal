@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Support\HtmlSanitizer;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -53,6 +54,13 @@ class Page extends Model implements Auditable
     protected static function boot()
     {
         parent::boot();
+
+        // Page content is rendered unescaped, so strip scripts and event handlers
+        static::saving(function ($page) {
+            if ($page->isDirty('content')) {
+                $page->content = HtmlSanitizer::clean($page->content);
+            }
+        });
 
         // Auto-generate slug from title if not provided
         static::creating(function ($page) {

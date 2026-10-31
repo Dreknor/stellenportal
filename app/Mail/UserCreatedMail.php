@@ -5,13 +5,14 @@ namespace App\Mail;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreatedMail extends Mailable
+class UserCreatedMail extends Mailable implements ShouldBeEncrypted
 {
     use Queueable, SerializesModels;
 
@@ -21,7 +22,7 @@ class UserCreatedMail extends Mailable
     public function __construct(
         public User $user,
         public Organization $organization,
-        public string $password
+        public string $passwordSetUrl
     ) {
         //
     }

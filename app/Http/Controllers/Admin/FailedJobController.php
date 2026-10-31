@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -89,29 +90,13 @@ class FailedJobController extends Controller
         if (!$job) abort(404);
 
         try {
-            $payload = json_decode($job->payload, true);
-            if (isset($payload['data']['command'])) {
-                // Laravel serialized job
-                $command = unserialize($payload['data']['command']);
-                if (is_object($command) && method_exists($command, 'handle')) {
-                    dispatch($command);
-                }
-            } else {
-                // Try to re-dispatch raw job using queue system: push raw payload back to default connection
-                $connection = $job->connection ?? config('queue.default');
-                $queue = $job->queue ?? null;
-                DB::table('failed_jobs')->where('id', $id)->delete();
-                app('queue')->connection($connection)->pushRaw($job->payload, $queue);
-                return redirect()->back()->with('success', trans('Admin: Job erneut in die Queue gestellt'));
-            }
+            // Use Laravel's own retry (handles encrypted jobs, no manual unserialize)
+            Artisan::call('queue:retry', ['id' => [$job->uuid]]);
 
-            // If successful, remove failed job
-            DB::table('failed_jobs')->where('id', $id)->delete();
-
-            return redirect()->back()->with('success', 'Job erfolgreich erneut gestartet');
+            return redirect()->back()->with('success', 'Job erneut in die Queue gestellt');
         } catch (\Throwable $e) {
             Log::error('Fehler beim erneuten Starten eines fehlgeschlagenen Jobs', ['id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Fehler beim erneuten Starten des Jobs: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Fehler beim erneuten Starten des Jobs. Details stehen im Log.');
         }
     }
 

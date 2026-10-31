@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -45,6 +46,15 @@ class AppServiceProvider extends ServiceProvider
 
         // Register LogEntry Observer for critical log notifications
         LogEntry::observe(LogEntryObserver::class);
+
+        // laravel-log-to-db writes through its own DBLog model, so LogEntry events never fire
+        // for real log records. Forward them to the observer via the LogEntry model.
+        \danielme85\LaravelLogToDB\Models\DBLog::created(function ($log) {
+            $entry = LogEntry::find($log->id);
+            if ($entry) {
+                app(LogEntryObserver::class)->created($entry);
+            }
+        });
 
         // Register Page Observer for image cleanup
         \App\Models\Page::observe(\App\Observers\PageObserver::class);
@@ -128,6 +138,13 @@ class AppServiceProvider extends ServiceProvider
     {
         // Login, Register, Passwort-Reset – kombinierter Schutz gegen
         // Brute-Force und E-Mail-Enumeration/Flooding.
+        // Stricter password rules in production (uncompromised() checks the HIBP range API)
+        Password::defaults(function () {
+            return $this->app->isProduction()
+                ? Password::min(12)->uncompromised()
+                : Password::min(8);
+        });
+
         RateLimiter::for('auth', function (Request $request) {
             $email = (string) $request->input('email', '');
             return [
@@ -150,6 +167,15 @@ class AppServiceProvider extends ServiceProvider
         // PDF-Export (DomPDF ist CPU-/RAM-intensiv → DoS-Schutz).
         RateLimiter::for('pdf', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
+        });
+
+        // Öffentliche Suche (LIKE-Abfragen) und Ortsvorschläge (kostenpflichtige Geocoding-API)
+        RateLimiter::for('search', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
+
+        RateLimiter::for('geocode', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
         });
     }
 }
