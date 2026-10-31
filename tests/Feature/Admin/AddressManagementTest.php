@@ -3,15 +3,18 @@
 use App\Models\Facility;
 use App\Models\Organization;
 use App\Models\User;
+use App\Services\Geocoding\GeocodingFailureReason;
+use App\Services\Geocoding\GeocodingResult;
 use App\Services\GeocodingService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
-    $geocoding = Mockery::mock(GeocodingService::class);
-    $geocoding->shouldReceive('geocode')->andReturn(['lat' => '51.1', 'lon' => '13.2']);
-    $geocoding->shouldReceive('generateMapImage');
-    $this->app->instance(GeocodingService::class, $geocoding);
+    // Partial-Mock: applyResult() läuft echt, nur der HTTP-nahe Teil wird ersetzt
+    $this->geocoding = Mockery::mock(GeocodingService::class)->makePartial();
+    $this->geocoding->shouldReceive('geocodeWithResult')->andReturn(GeocodingResult::success('51.1', '13.2'))->byDefault();
+    $this->geocoding->shouldReceive('generateMapImage');
+    $this->app->instance(GeocodingService::class, $this->geocoding);
 
     foreach (['admin edit organizations', 'admin edit facilities', 'admin view organizations', 'admin view facilities', 'admin delete organizations', 'admin delete facilities'] as $p) {
         Permission::firstOrCreate(['name' => $p]);
@@ -71,4 +74,56 @@ test('regular user cannot geocode', function () {
     $this->actingAs(User::factory()->create())
         ->post(route('admin.organizations.geocode', $this->organization))
         ->assertForbidden();
+});
+
+test('failed geocoding shows the reason in flash message and on the address card', function () {
+    $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+    $this->geocoding->shouldReceive('geocodeWithResult')
+        ->andReturn(GeocodingResult::failure(GeocodingFailureReason::InvalidApiKey, [
+            ['label' => 'Original', 'reason' => GeocodingFailureReason::InvalidApiKey, 'detail' => 'HTTP 401'],
+        ]));
+
+    $this->actingAs($this->admin)->post(route('admin.organizations.geocode', $this->organization))
+        ->assertSessionHas('error', fn (string $message) => str_contains($message, 'API-Schlüssel ist ungültig'));
+
+    $address = $this->organization->fresh()->address;
+    expect($address->geocoding_error)->toContain('API-Schlüssel ist ungültig')
+        ->and($address->geocoding_error)->toContain('HTTP 401')
+        ->and($address->geocoding_failed_at)->not->toBeNull();
+
+    $this->actingAs($this->admin)->get(route('admin.organizations.show', $this->organization))
+        ->assertSee('Letzte Adresssuche fehlgeschlagen')
+        ->assertSee('API-Schlüssel ist ungültig');
+});
+
+test('automatic geocoding on save persists the failure reason', function () {
+    $this->geocoding->shouldReceive('geocodeWithResult')
+        ->andReturn(GeocodingResult::failure(GeocodingFailureReason::NoResults, [
+            ['label' => 'Original', 'reason' => GeocodingFailureReason::NoResults, 'detail' => null],
+        ]));
+
+    $this->actingAs($this->admin)->put(route('admin.organizations.update', $this->organization), [
+        'name' => 'Org',
+        'street' => 'Gibtsnichtweg',
+        'number' => '1',
+        'zip_code' => '01067',
+        'city' => 'Dresden',
+    ])->assertRedirect();
+
+    $address = $this->organization->fresh()->address;
+    expect($address->latitude)->toBeNull()
+        ->and($address->geocoding_error)->toContain('keine Treffer');
+});
+
+test('successful geocoding resets a previous failure reason', function () {
+    $address = $this->organization->address()->create(['street' => 'A', 'number' => '1', 'zip_code' => '01067', 'city' => 'Dresden']);
+    $address->forceFill(['geocoding_error' => 'Alter Fehler', 'geocoding_failed_at' => now()])->saveQuietly();
+
+    $this->actingAs($this->admin)->post(route('admin.organizations.geocode', $this->organization))
+        ->assertSessionHas('success');
+
+    $address->refresh();
+    expect($address->geocoding_error)->toBeNull()
+        ->and($address->geocoding_failed_at)->toBeNull()
+        ->and((float) $address->latitude)->toBe(51.1);
 });

@@ -28,6 +28,13 @@ class Address extends Model implements Auditable, HasMedia
         'addressable_type',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'geocoding_failed_at' => 'datetime',
+        ];
+    }
+
     public function addressable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();

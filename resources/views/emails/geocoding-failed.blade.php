@@ -28,6 +28,7 @@
                         <th style="padding: 8px 10px; text-align: left; border: 1px solid #f5c6cb;">Straße / Nr.</th>
                         <th style="padding: 8px 10px; text-align: left; border: 1px solid #f5c6cb;">PLZ / Ort</th>
                         <th style="padding: 8px 10px; text-align: left; border: 1px solid #f5c6cb;">Zugehörigkeit</th>
+                        <th style="padding: 8px 10px; text-align: left; border: 1px solid #f5c6cb;">Grund</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +48,9 @@
                                 @else
                                     –
                                 @endif
+                            </td>
+                            <td style="padding: 8px 10px; border: 1px solid #ddd;">
+                                {{ $address->geocoding_error ?? 'Unbekannt' }}
                             </td>
                         </tr>
                     @endforeach
