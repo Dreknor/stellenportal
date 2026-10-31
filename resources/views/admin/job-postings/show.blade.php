@@ -69,7 +69,7 @@
                     <span class="px-3 py-1 rounded-full text-sm font-semibold bg-{{ $jobPosting->getStatusColor() }}-100 text-{{ $jobPosting->getStatusColor() }}-800 dark:bg-{{ $jobPosting->getStatusColor() }}-900/30 dark:text-{{ $jobPosting->getStatusColor() }}-300">
                         {{ $jobPosting->getStatusLabel() }}
                     </span>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
                         {{ $jobPosting->getEmploymentTypeLabel() }}
                     </span>
                 </div>
@@ -117,8 +117,8 @@
                             <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Aufrufe') }}</p>
                             <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ number_format($stats['views']) }}</p>
                         </div>
-                        <div class="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3">
-                            <x-fas-eye class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        <div class="bg-primary-100 dark:bg-primary-900/30 rounded-full p-3">
+                            <x-fas-eye class="w-6 h-6 text-primary-600 dark:text-primary-400" />
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -292,7 +292,7 @@
                     <div>
                         <dt class="text-gray-500 dark:text-gray-400">{{ __('Einrichtung') }}</dt>
                         <dd class="text-gray-900 dark:text-gray-100 font-medium">
-                            <a href="{{ route('admin.facilities.show', $jobPosting->facility) }}" class="text-blue-600 hover:underline">
+                            <a href="{{ route('admin.facilities.show', $jobPosting->facility) }}" class="text-primary-600 hover:underline">
                                 {{ $jobPosting->facility->name }}
                             </a>
                         </dd>
@@ -300,7 +300,7 @@
                     <div>
                         <dt class="text-gray-500 dark:text-gray-400">{{ __('Organisation') }}</dt>
                         <dd class="text-gray-900 dark:text-gray-100 font-medium">
-                            <a href="{{ route('admin.organizations.show', $jobPosting->facility->organization) }}" class="text-blue-600 hover:underline">
+                            <a href="{{ route('admin.organizations.show', $jobPosting->facility->organization) }}" class="text-primary-600 hover:underline">
                                 {{ $jobPosting->facility->organization->name }}
                             </a>
                         </dd>
@@ -321,7 +321,7 @@
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">{{ __('Erstellt von') }}</dt>
                             <dd class="text-gray-900 dark:text-gray-100 font-medium">
-                                <a href="{{ route('admin.users.show', $jobPosting->creator) }}" class="text-blue-600 hover:underline">
+                                <a href="{{ route('admin.users.show', $jobPosting->creator) }}" class="text-primary-600 hover:underline">
                                     {{ $jobPosting->creator->name }}
                                 </a>
                             </dd>

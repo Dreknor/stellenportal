@@ -49,7 +49,7 @@
 
     <div class="p-6">
         <div class="mb-3">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200">
                 <x-fas-building class="w-4 h-4 mr-1" />
                 {{ $facility->organization->name }}
             </span>
@@ -63,7 +63,7 @@
             <div class="{{ $hasMap ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : '' }}">
                 <div class="mt-4 text-gray-600 dark:text-gray-400 space-y-1">
                     @if($facility->email)
-                        <p><strong>{{ __('E-Mail:') }}</strong> <a href="mailto:{{ $facility->email }}" class="text-blue-600 hover:underline">{{ $facility->email }}</a></p>
+                        <p><strong>{{ __('E-Mail:') }}</strong> <a href="mailto:{{ $facility->email }}" class="text-primary-600 hover:underline">{{ $facility->email }}</a></p>
                     @endif
 
                     @if($facility->phone)
@@ -81,7 +81,7 @@
                     <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <p class="flex items-center justify-between">
                             <span class="font-semibold text-gray-700 dark:text-gray-300">{{ __('Guthaben:') }}</span>
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>

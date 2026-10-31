@@ -60,7 +60,7 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $link['title'] }}</p>
                                     <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer"
-                                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                       class="text-xs text-primary-600 dark:text-primary-400 hover:underline">
                                         {{ $link['url'] }}
                                     </a>
                                 </div>

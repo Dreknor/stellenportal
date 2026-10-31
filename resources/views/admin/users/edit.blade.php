@@ -29,7 +29,7 @@
                             {{ __('Vorname') }} <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="first_name" id="first_name" value="{{ old('first_name', $user->first_name) }}" required
-                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('first_name') border-red-500 @enderror">
+                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('first_name') border-red-500 @enderror">
                         @error('first_name')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
@@ -40,7 +40,7 @@
                             {{ __('Nachname') }} <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="last_name" id="last_name" value="{{ old('last_name', $user->last_name) }}" required
-                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('last_name') border-red-500 @enderror">
+                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('last_name') border-red-500 @enderror">
                         @error('last_name')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
@@ -52,7 +52,7 @@
                         {{ __('E-Mail-Adresse') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('email') border-red-500 @enderror">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('email') border-red-500 @enderror">
                     @error('email')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -70,7 +70,7 @@
                             {{ __('Neues Passwort') }}
                         </label>
                         <input type="password" name="password" id="password" autocomplete="new-password"
-                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('password') border-red-500 @enderror">
+                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('password') border-red-500 @enderror">
                         @error('password')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
@@ -81,14 +81,14 @@
                             {{ __('Passwort bestätigen') }}
                         </label>
                         <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="new-password"
-                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     </div>
                 </div>
 
                 <div class="mt-4">
                     <label class="flex items-center">
                         <input type="checkbox" name="change_password" value="1" {{ old('change_password', $user->change_password) ? 'checked' : '' }}
-                               class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                               class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ __('Benutzer muss das Passwort beim nächsten Login ändern') }}</span>
                     </label>
                 </div>
@@ -103,7 +103,7 @@
                         <label class="flex items-center">
                             <input type="checkbox" name="roles[]" value="{{ $role->name }}"
                                    {{ in_array($role->name, old('roles', $user->roles->pluck('name')->toArray())) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
                         </label>
                     @endforeach
@@ -123,7 +123,7 @@
                         <label class="flex items-center">
                             <input type="checkbox" name="organizations[]" value="{{ $organization->id }}"
                                    {{ in_array($organization->id, old('organizations', $user->organizations->pluck('id')->toArray())) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $organization->name }}</span>
                         </label>
                     @empty
@@ -145,7 +145,7 @@
                         <label class="flex items-center">
                             <input type="checkbox" name="facilities[]" value="{{ $facility->id }}"
                                    {{ in_array($facility->id, old('facilities', $user->facilities->pluck('id')->toArray())) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                   class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
                                 {{ $facility->name }}
                                 <span class="text-xs text-gray-500 dark:text-gray-400">({{ $facility->organization->name }})</span>

@@ -33,7 +33,7 @@
 
             <div class="text-center mt-6">
                 <a href="{{ route('login') }}"
-                   class="text-blue-600 dark:text-blue-400 hover:underline font-medium">{{ __('Zurück zur Anmeldung') }}</a>
+                   class="text-primary-600 dark:text-primary-400 hover:underline font-medium">{{ __('Zurück zur Anmeldung') }}</a>
             </div>
         </div>
     </div>

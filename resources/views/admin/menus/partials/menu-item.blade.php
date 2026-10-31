@@ -9,7 +9,7 @@
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 @if($item->page_id)
-                    <span class="text-blue-600 dark:text-blue-400">{{ __('Seite') }}: {{ $item->page->title ?? __('Gelöscht') }}</span>
+                    <span class="text-primary-600 dark:text-primary-400">{{ __('Seite') }}: {{ $item->page->title ?? __('Gelöscht') }}</span>
                 @else
                     <span class="text-purple-600 dark:text-purple-400">{{ __('URL') }}: {{ $item->url }}</span>
                 @endif

@@ -10,8 +10,8 @@
                         </a>
                     </div>
 
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <p class="text-sm text-blue-800">
+                    <div class="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-primary-800">
                             <strong>Hinweis:</strong> Berechtigungsnamen sollten klein geschrieben sein und Leerzeichen enthalten.
                             Beispiele: "view users", "create posts", "manage settings"
                         </p>

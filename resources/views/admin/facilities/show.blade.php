@@ -32,7 +32,7 @@
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Organisation') }}</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                            <a href="{{ route('admin.organizations.show', $facility->organization) }}" class="text-blue-600 hover:underline">
+                            <a href="{{ route('admin.organizations.show', $facility->organization) }}" class="text-primary-600 hover:underline">
                                 {{ $facility->organization->name }}
                             </a>
                         </dd>
@@ -49,7 +49,7 @@
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Website') }}</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                             @if($facility->website)
-                                <a href="{{ $facility->website }}" target="_blank" class="text-blue-600 hover:underline">{{ $facility->website }}</a>
+                                <a href="{{ $facility->website }}" target="_blank" class="text-primary-600 hover:underline">{{ $facility->website }}</a>
                             @else
                                 -
                             @endif
@@ -114,7 +114,7 @@
             <!-- Credit Balance -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{{ __('Guthaben') }}</h2>
-                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">
                     {{ $facility->creditBalance->balance ?? 0 }}
                 </div>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('Credits verfügbar') }}</p>

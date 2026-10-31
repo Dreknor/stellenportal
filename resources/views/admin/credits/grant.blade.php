@@ -20,7 +20,7 @@
                 <div>
                     <label for="target_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Zieltyp') }}</label>
                     <select name="target_type" id="target_type" required
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                             onchange="updateTargetOptions()">
                         <option value="">{{ __('Bitte wählen') }}</option>
                         <option value="organization" {{ old('target_type') === 'organization' ? 'selected' : '' }}>{{ __('Organisation') }}</option>
@@ -34,7 +34,7 @@
                 <div id="organization-select" style="display: none;">
                     <label for="organization_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Organisation') }}</label>
                     <select name="organization_id" id="organization_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Bitte wählen') }}</option>
                         @foreach($organizations as $organization)
                             <option value="{{ $organization->id }}" {{ old('target_id') == $organization->id ? 'selected' : '' }}>
@@ -47,7 +47,7 @@
                 <div id="facility-select" style="display: none;">
                     <label for="facility_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Einrichtung') }}</label>
                     <select name="facility_id" id="facility_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Bitte wählen') }}</option>
                         @foreach($facilities as $facility)
                             <option value="{{ $facility->id }}" {{ old('target_id') == $facility->id ? 'selected' : '' }}>
@@ -66,7 +66,7 @@
                 <div>
                     <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Anzahl Credits') }}</label>
                     <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1"
-                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     @error('amount')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
@@ -75,7 +75,7 @@
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Beschreibung') }}</label>
                     <textarea name="description" id="description" rows="3"
-                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                               placeholder="{{ __('Optional: Grund für die Gutschrift...') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

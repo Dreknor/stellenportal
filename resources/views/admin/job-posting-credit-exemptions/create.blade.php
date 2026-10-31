@@ -23,7 +23,7 @@
                         {{ __('Beschäftigungsart') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="employment_type" name="employment_type" required
-                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Bitte wählen...') }}</option>
                         @foreach($employmentTypes as $value => $label)
                             <option value="{{ $value }}" {{ old('employment_type') == $value ? 'selected' : '' }}>
@@ -42,7 +42,7 @@
                         {{ __('Gilt für') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="applies_to" name="applies_to" required
-                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Bitte wählen...') }}</option>
                         @foreach($appliesTo as $value => $label)
                             <option value="{{ $value }}" {{ old('applies_to') == $value ? 'selected' : '' }}>
@@ -59,7 +59,7 @@
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
                         <input id="is_active" name="is_active" type="checkbox" value="1" {{ old('is_active', true) ? 'checked' : '' }}
-                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
+                               class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700">
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="is_active" class="font-medium text-gray-700 dark:text-gray-300">
@@ -77,7 +77,7 @@
                         {{ __('Beschreibung') }}
                     </label>
                     <textarea id="description" name="description" rows="3"
-                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                               placeholder="{{ __('Optionale Beschreibung für interne Notizen...') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

@@ -46,7 +46,7 @@
 
 {{-- Quote Block Preview --}}
 @if($block->type === 'quote')
-    <div class="border-l-4 border-blue-500 pl-4 italic text-gray-700 dark:text-gray-300">
+    <div class="border-l-4 border-primary-500 pl-4 italic text-gray-700 dark:text-gray-300">
         <p>{{ Str::limit($block->content, 150) }}</p>
         @if(isset($block->settings['author']))
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">— {{ $block->settings['author'] }}</p>
@@ -59,7 +59,7 @@
     <div class="flex items-center gap-3">
         @php
             $buttonClasses = [
-                'primary' => 'bg-blue-600 text-white',
+                'primary' => 'bg-primary-600 text-white',
                 'secondary' => 'bg-gray-500 text-white',
                 'success' => 'bg-green-600 text-white',
                 'danger' => 'bg-red-600 text-white',
@@ -101,7 +101,7 @@
 
 {{-- Row Block Preview --}}
 @if($block->type === 'row')
-    <div class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-purple-200 dark:border-purple-700">
+    <div class="bg-gradient-to-r from-purple-50 to-primary-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-purple-200 dark:border-purple-700">
         <div class="flex items-center gap-2 mb-2">
             <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"></path>
@@ -129,12 +129,12 @@
 
 {{-- Columns Block Preview --}}
 @if($block->type === 'columns')
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-blue-200 dark:border-blue-700">
+    <div class="bg-gradient-to-r from-primary-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-primary-200 dark:border-primary-700">
         <div class="flex items-center gap-2 mb-2">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h4m0-16v16m0-16h6m-6 16h6m0-16h4a1 1 0 011 1v14a1 1 0 01-1 1h-4m0-16v16"></path>
             </svg>
-            <span class="font-semibold text-blue-800 dark:text-blue-200">Spalten-Layout</span>
+            <span class="font-semibold text-primary-800 dark:text-primary-200">Spalten-Layout</span>
         </div>
         <div class="text-sm text-gray-700 dark:text-gray-300 mb-3">
             <p><strong>Anzahl:</strong> {{ $block->settings['columns'] ?? '2' }} Spalten</p>
@@ -160,7 +160,7 @@
         @if(isset($block->settings['icon']))
             {{-- Icon innerhalb der Card --}}
             <div class="flex justify-center mb-3">
-                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-800">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-800">
                     <i class="fas {{ $block->settings['icon'] }} text-2xl text-white"></i>
                 </div>
             </div>
@@ -172,7 +172,7 @@
             <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ Str::limit($block->content, 100) }}</p>
         @endif
         @if(isset($block->settings['button_text']))
-            <span class="inline-block px-3 py-1.5 bg-blue-600 text-white text-xs rounded">{{ $block->settings['button_text'] }}</span>
+            <span class="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded">{{ $block->settings['button_text'] }}</span>
         @endif
         <div class="mt-2 text-xs text-gray-500">
             Stil: {{ ucfirst($block->settings['style'] ?? 'default') }}
@@ -197,7 +197,7 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ Str::limit($block->content, 80) }}</p>
                     @endif
                     @if(isset($block->settings['button_text']))
-                        <span class="inline-block px-3 py-1.5 bg-blue-600 text-white text-xs rounded">{{ $block->settings['button_text'] }}</span>
+                        <span class="inline-block px-3 py-1.5 bg-primary-600 text-white text-xs rounded">{{ $block->settings['button_text'] }}</span>
                     @endif
                 </div>
                 <div class="px-4 pb-2 text-xs text-gray-500">

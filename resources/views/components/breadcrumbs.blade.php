@@ -11,7 +11,7 @@
 <div class="mb-6 flex items-center text-sm">
     @if($showDashboard)
         <a href="{{ route('dashboard') }}"
-           class="text-blue-600 dark:text-blue-400 hover:underline">{{ __('Dashboard') }}</a>
+           class="text-primary-600 dark:text-primary-400 hover:underline">{{ __('Dashboard') }}</a>
 
         @if(count($items) > 0)
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-2 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -35,7 +35,7 @@
             @endphp
 
             @if(isset($url) && $url)
-                <a href="{{ $url }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ __($label) }}</a>
+                <a href="{{ $url }}" class="text-primary-600 dark:text-primary-400 hover:underline">{{ __($label) }}</a>
             @else
                 {{-- If it's the last item (current page) render as plain text style --}}
                 <span class="text-gray-500 dark:text-gray-400">{{ __($label) }}</span>

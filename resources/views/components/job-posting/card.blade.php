@@ -79,7 +79,7 @@
 
                 <div class="flex items-center gap-3 mb-2">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        <a href="{{ route('job-postings.show', $jobPosting) }}" class="hover:text-blue-600 dark:hover:text-blue-400">
+                        <a href="{{ route('job-postings.show', $jobPosting) }}" class="hover:text-primary-600 dark:hover:text-primary-400">
                             {{ $jobPosting->title }}
                         </a>
                     </h3>

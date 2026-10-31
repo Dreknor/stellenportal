@@ -32,7 +32,7 @@
             @can('admin create pages')
                 <form method="POST" action="{{ route('cms.pages.duplicate', $page) }}" class="inline">
                     @csrf
-                    <button type="submit" class="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all">
+                    <button type="submit" class="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-primary-500 hover:from-cyan-600 hover:to-primary-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all">
                         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                         </svg>
@@ -78,9 +78,9 @@
             @method('PUT')
 
             <!-- Allgemeine Informationen -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b-2 border-gray-200 dark:border-gray-600">
+            <div class="bg-gradient-to-r from-primary-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b-2 border-gray-200 dark:border-gray-600">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 mr-2 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     {{ __('Allgemeine Informationen') }}
@@ -94,7 +94,7 @@
                         {{ __('Titel') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" required
-                           class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all @error('title') border-red-500 @enderror">
+                           class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all @error('title') border-red-500 @enderror">
                     @error('title')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -111,7 +111,7 @@
                         {{ __('Slug (URL)') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required
-                           class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all @error('slug') border-red-500 @enderror">
+                           class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all @error('slug') border-red-500 @enderror">
                     <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                         {{ __('Die URL unter der diese Seite erreichbar ist') }}
                     </p>
@@ -131,7 +131,7 @@
                         {{ __('Inhalt') }}
                     </label>
                     <textarea name="content" id="content" rows="15"
-                              class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all @error('content') border-red-500 @enderror">{{ old('content', $page->content) }}</textarea>
+                              class="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all @error('content') border-red-500 @enderror">{{ old('content', $page->content) }}</textarea>
                     @error('content')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -183,7 +183,7 @@
             </div>
 
             <!-- Seiten-Einstellungen (Layout & Design) -->
-            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-y-2 border-gray-200 dark:border-gray-600">
+            <div class="bg-gradient-to-r from-indigo-50 to-primary-50 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-y-2 border-gray-200 dark:border-gray-600">
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
@@ -275,7 +275,7 @@
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                     <div class="flex items-center">
                         <input type="checkbox" name="is_published" id="is_published" value="1" {{ old('is_published', $page->is_published) ? 'checked' : '' }}
-                               class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                               class="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                         <label for="is_published" class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
                             {{ __('Seite ist veröffentlicht') }}
                         </label>
@@ -298,7 +298,7 @@
                     {{ __('Abbrechen') }}
                 </a>
                 <button type="submit"
-                        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
                     {{ __('Änderungen speichern') }}
                 </button>
             </div>
@@ -315,7 +315,7 @@
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div class="flex items-center">
-                <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-2 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
                 <span>{{ __('Erstellt von') }}: <strong>{{ $page->creator->name ?? __('Unbekannt') }}</strong></span>

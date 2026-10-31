@@ -33,7 +33,7 @@
                     {{ __('Neues Logo hochladen') }}
                 </label>
                 <input type="file" name="logo" id="logo" accept="image/*"
-                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                        @change="previewLogo">
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Erlaubte Formate: JPG, PNG, SVG. Maximale Größe: 2MB') }}</p>
                 @error('logo')
@@ -50,7 +50,7 @@
                     {{ __('Inhalt') }}
                 </label>
                 <textarea name="content" id="content" rows="5"
-                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                           placeholder="{{ __('z.B. Copyright-Text, Adresse, etc.') }}">{{ old('content', $footerSetting->content) }}</textarea>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Sie können HTML verwenden.') }}</p>
                 @error('content')
@@ -68,12 +68,12 @@
                     <div class="flex gap-4 mb-3">
                         <div class="flex-1">
                             <input type="text" :name="'links[' + index + '][title]'" x-model="link.title"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    placeholder="{{ __('Link-Titel') }}">
                         </div>
                         <div class="flex-1">
                             <input type="url" :name="'links[' + index + '][url]'" x-model="link.url"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    placeholder="{{ __('https://example.com') }}">
                         </div>
                         <div>
@@ -101,11 +101,11 @@
                         </label>
                         <div class="flex gap-2">
                             <input type="color" id="background_color_picker" value="{{ old('background_color', $footerSetting->background_color ?? '#ffffff') }}"
-                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    oninput="document.getElementById('background_color').value = this.value; document.getElementById('background_color_text').value = this.value;">
                             <input type="text" name="background_color" id="background_color" value="{{ old('background_color', $footerSetting->background_color ?? '#ffffff') }}" style="display:none;">
                             <input type="text" id="background_color_text" value="{{ old('background_color', $footerSetting->background_color ?? '#ffffff') }}"
-                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    placeholder="#ffffff"
                                    oninput="document.getElementById('background_color').value = this.value; document.getElementById('background_color_picker').value = this.value;">
                         </div>
@@ -121,11 +121,11 @@
                         </label>
                         <div class="flex gap-2">
                             <input type="color" id="text_color_picker" value="{{ old('text_color', $footerSetting->text_color ?? '#6b7280') }}"
-                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    oninput="document.getElementById('text_color').value = this.value; document.getElementById('text_color_text').value = this.value;">
                             <input type="text" name="text_color" id="text_color" value="{{ old('text_color', $footerSetting->text_color ?? '#6b7280') }}" style="display:none;">
                             <input type="text" id="text_color_text" value="{{ old('text_color', $footerSetting->text_color ?? '#6b7280') }}"
-                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    placeholder="#6b7280"
                                    oninput="document.getElementById('text_color').value = this.value; document.getElementById('text_color_picker').value = this.value;">
                         </div>
@@ -141,11 +141,11 @@
                         </label>
                         <div class="flex gap-2">
                             <input type="color" id="link_color_picker" value="{{ old('link_color', $footerSetting->link_color ?? '#2563eb') }}"
-                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="h-10 w-20 rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    oninput="document.getElementById('link_color').value = this.value; document.getElementById('link_color_text').value = this.value;">
                             <input type="text" name="link_color" id="link_color" value="{{ old('link_color', $footerSetting->link_color ?? '#2563eb') }}" style="display:none;">
                             <input type="text" id="link_color_text" value="{{ old('link_color', $footerSetting->link_color ?? '#2563eb') }}"
-                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   class="flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                                    placeholder="#2563eb"
                                    oninput="document.getElementById('link_color').value = this.value; document.getElementById('link_color_picker').value = this.value;">
                         </div>
@@ -160,7 +160,7 @@
             <div class="mb-6">
                 <label class="flex items-center">
                     <input type="checkbox" name="is_active" value="1" {{ old('is_active', $footerSetting->is_active) ? 'checked' : '' }}
-                           class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ __('Als aktive Footer-Einstellung setzen') }}</span>
                 </label>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Nur eine Footer-Einstellung kann gleichzeitig aktiv sein.') }}</p>

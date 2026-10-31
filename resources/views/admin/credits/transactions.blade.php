@@ -18,7 +18,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Typ') }}</label>
-                    <select name="type" id="type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="type" id="type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle Typen') }}</option>
                         <option value="purchase" {{ request('type') === 'purchase' ? 'selected' : '' }}>{{ __('Kauf') }}</option>
                         <option value="grant" {{ request('type') === 'grant' ? 'selected' : '' }}>{{ __('Gewährt') }}</option>
@@ -28,7 +28,7 @@
                 </div>
                 <div>
                     <label for="transactionable_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Entität') }}</label>
-                    <select name="transactionable_type" id="transactionable_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <select name="transactionable_type" id="transactionable_type" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">{{ __('Alle') }}</option>
                         <option value="Organization" {{ request('transactionable_type') === 'Organization' ? 'selected' : '' }}>{{ __('Organisation') }}</option>
                         <option value="Facility" {{ request('transactionable_type') === 'Facility' ? 'selected' : '' }}>{{ __('Einrichtung') }}</option>
@@ -37,12 +37,12 @@
                 <div>
                     <label for="date_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Von') }}</label>
                     <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
                 <div>
                     <label for="date_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Bis') }}</label>
                     <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}"
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                 </div>
             </div>
             <div class="flex gap-2">
@@ -79,7 +79,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($transaction->type === 'purchase')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
                                         {{ __('Kauf') }}
                                     </span>
                                 @elseif($transaction->type === 'grant')

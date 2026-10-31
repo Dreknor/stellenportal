@@ -11,7 +11,7 @@
                     <div>
                         <form method="GET" action="{{ route('admin.interaction-analytics.index') }}" class="flex items-center gap-2">
                             <label for="period" class="text-sm font-medium text-gray-700">Zeitraum:</label>
-                            <select name="period" id="period" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <select name="period" id="period" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 <option value="7" {{ $period == 7 ? 'selected' : '' }}>Letzte 7 Tage</option>
                                 <option value="30" {{ $period == 30 ? 'selected' : '' }}>Letzte 30 Tage</option>
                                 <option value="90" {{ $period == 90 ? 'selected' : '' }}>Letzte 90 Tage</option>
@@ -31,8 +31,8 @@
                             <p class="text-sm text-gray-500">Aufrufe</p>
                             <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['views'], 0, ',', '.') }}</p>
                         </div>
-                        <div class="bg-blue-100 rounded-full p-3">
-                            <x-fas-eye class="w-6 h-6 text-blue-600" />
+                        <div class="bg-primary-100 rounded-full p-3">
+                            <x-fas-eye class="w-6 h-6 text-primary-600" />
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 mt-2">
@@ -116,7 +116,7 @@
                         <h2 class="text-xl font-bold text-gray-900">Täglicher Verlauf</h2>
                         <p class="mt-1 text-sm text-gray-600">Interaktionen pro Tag</p>
                         <div class="flex items-center gap-4 mt-3 text-xs">
-                            <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded bg-blue-500"></span> Aufrufe</span>
+                            <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded bg-primary-500"></span> Aufrufe</span>
                             <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded bg-green-500"></span> Bewerbungen</span>
                             <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded bg-red-500"></span> Downloads</span>
                         </div>
@@ -132,7 +132,7 @@
                                         {{-- Stacked bar --}}
                                         <div class="w-full flex flex-col-reverse" style="height: {{ ($day['total'] / $maxTotal) * 100 }}%">
                                             @if($day['views'] > 0)
-                                                <div class="w-full bg-blue-500 hover:bg-blue-600 transition"
+                                                <div class="w-full bg-primary-500 hover:bg-primary-600 transition"
                                                      style="height: {{ ($day['views'] / $day['total']) * 100 }}%"></div>
                                             @endif
                                             @if($day['apply_clicks'] > 0)
@@ -202,7 +202,7 @@
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
                                         <td class="px-6 py-4">
-                                            <a href="{{ route('admin.job-postings.show', $posting->slug) }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
+                                            <a href="{{ route('admin.job-postings.show', $posting->slug) }}" class="text-sm font-medium text-primary-600 hover:text-primary-800 hover:underline">
                                                 {{ \Illuminate\Support\Str::limit($posting->title, 50) }}
                                             </a>
                                         </td>
@@ -306,7 +306,7 @@
                                             @endif
                                             <div>
                                                 @if($interaction->jobPosting)
-                                                    <a href="{{ route('admin.job-postings.show', $interaction->jobPosting->slug) }}" class="text-sm font-medium text-blue-600 hover:underline">
+                                                    <a href="{{ route('admin.job-postings.show', $interaction->jobPosting->slug) }}" class="text-sm font-medium text-primary-600 hover:underline">
                                                         {{ \Illuminate\Support\Str::limit($interaction->jobPosting->title, 40) }}
                                                     </a>
                                                 @else

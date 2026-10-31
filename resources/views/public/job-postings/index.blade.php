@@ -15,7 +15,7 @@
                     'description' => Str::limit(strip_tags($job->description), 200),
                     'datePosted' => $job->published_at->toIso8601String(),
                     'validThrough' => ($job->expires_at ?? $job->published_at->addMonths(3))->toIso8601String(),
-                    'employmentType' => strtoupper(str_replace('_', '_', $job->employment_type)),
+                    'employmentType' => $job->getSchemaEmploymentType(),
                     'hiringOrganization' => [
                         '@type' => 'Organization',
                         'name' => $job->facility->name,
@@ -136,163 +136,166 @@
     <script type="application/ld+json">{!! json_encode($collectionPageSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
     @endpush
 
-    <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">{{ __('Stellenangebote') }}</h1>
-        <p class="text-gray-600 dark:text-gray-400">{{ __('Finden Sie Ihre nächste berufliche Herausforderung') }}</p>
-    </div>
+    @php
+        $employmentTypes = [
+            '' => __('Alle'),
+            'full_time' => __('Vollzeit'),
+            'part_time' => __('Teilzeit'),
+            'mini_job' => __('Minijob'),
+            'internship' => __('Praktikum'),
+            'apprenticeship' => __('Ausbildung'),
+            'volunteer' => __('Ehrenamt'),
+        ];
+        $inputClasses = 'w-full h-12 rounded-lg border-0 bg-sand-50 dark:bg-gray-700 text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary-500';
+    @endphp
 
-    <!-- Search and Filter -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8" role="search" aria-label="Stellenangebote durchsuchen">
-        <form method="GET" action="{{ route('public.jobs.index') }}">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div class="md:col-span-2">
-                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Suchbegriff') }}</label>
-                    <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="{{ __('Stichwort, Berufsgruppe, Einrichtung...') }}"
-                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-                           aria-describedby="search-help">
-                    <p id="search-help" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname.') }}</p>
-                </div>
+    <x-slot:hero>
+        <section class="bg-primary-800 text-white" aria-labelledby="jobs-heading">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-12 sm:pt-14 sm:pb-16">
+                <p class="text-xs sm:text-sm font-bold tracking-widest uppercase text-primary-200 mb-3">{{ __('Jobs an evangelischen Schulen und Einrichtungen in Sachsen') }}</p>
+                <h1 id="jobs-heading" class="text-3xl sm:text-5xl font-extrabold leading-tight mb-3">{{ __('Stellenangebote') }}</h1>
+                <p class="text-base sm:text-lg text-primary-100 max-w-2xl mb-8">{{ __('Lehrkräfte, Schulbegleitung, Pädagogik und Verwaltung – finden Sie Ihre nächste berufliche Herausforderung.') }}</p>
 
-                {{-- Ort-Autocomplete mit Alpine.js --}}
-                <div x-data="locationSearch(@js(request('location', '')), @js(request('lat', '')), @js(request('lon', '')))"
-                     class="relative">
-                    <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Ort / PLZ') }}</label>
-                    <div class="relative">
-                        <input type="text"
-                               id="location"
-                               name="location"
-                               x-model="displayText"
-                               @input.debounce.400ms="fetchSuggestions"
-                               @keydown.escape="close"
-                               @keydown.arrow-down.prevent="navigateDown"
-                               @keydown.arrow-up.prevent="navigateUp"
-                               @keydown.enter.prevent="selectActive"
-                               @blur="onBlur"
-                               placeholder="{{ __('z.B. Dresden oder 01067') }}"
-                               autocomplete="off"
-                               class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 pr-8">
-                        {{-- Lade-Indikator --}}
-                        <span x-show="loading" class="absolute right-2 top-2.5 text-gray-400" aria-hidden="true">
-                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                <form method="GET" action="{{ route('public.jobs.index') }}" role="search" aria-label="Stellenangebote durchsuchen">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-2xl shadow-black/20 grid grid-cols-1 md:grid-cols-12 gap-2">
+                        <div class="md:col-span-4 relative">
+                            <label for="search" class="sr-only">{{ __('Suchbegriff') }}</label>
+                            <svg class="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                        </span>
-                    </div>
-
-                    {{-- Vorschläge-Dropdown --}}
-                    <ul x-show="open && suggestions.length > 0"
-                        x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="opacity-0 -translate-y-1"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-72 overflow-y-auto"
-                        role="listbox"
-                        aria-label="{{ __('Ortsvorschläge') }}">
-                        <template x-for="(s, i) in suggestions" :key="i">
-                            <li @mousedown.prevent="select(s)"
-                                @mouseenter="activeIndex = i"
-                                :class="activeIndex === i
-                                    ? 'bg-blue-50 dark:bg-blue-900/30'
-                                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'"
-                                class="px-4 py-2.5 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
-                                role="option"
-                                :aria-selected="activeIndex === i">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                    <div class="min-w-0">
-                                        <span class="block text-sm font-medium text-gray-800 dark:text-gray-100 truncate" x-text="s.short_name"></span>
-                                        <span class="block text-xs text-gray-400 dark:text-gray-500 truncate" x-text="s.display_name"></span>
-                                    </div>
-                                </div>
-                            </li>
-                        </template>
-                    </ul>
-
-                    {{-- Voraufgelöste Koordinaten (werden nur gefüllt, wenn Nutzer einen Vorschlag auswählt) --}}
-                    <input type="hidden" name="lat" x-model="lat">
-                    <input type="hidden" name="lon" x-model="lon">
-                </div>
-
-                <div>
-                    <label for="radius" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Umkreis (km)') }}</label>
-                    <select id="radius" name="radius" class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
-                        <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>10 km</option>
-                        <option value="25" {{ request('radius') == '25' ? 'selected' : '' }}>25 km</option>
-                        <option value="50" {{ request('radius', '50') == '50' ? 'selected' : '' }}>50 km</option>
-                        <option value="100" {{ request('radius') == '100' ? 'selected' : '' }}>100 km</option>
-                        <option value="200" {{ request('radius') == '200' ? 'selected' : '' }}>200 km</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label for="employment_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('Beschäftigungsart') }}</label>
-                    <select id="employment_type" name="employment_type" class="w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
-                        <option value="">{{ __('Alle') }}</option>
-                        <option value="full_time" {{ request('employment_type') === 'full_time' ? 'selected' : '' }}>{{ __('Vollzeit') }}</option>
-                        <option value="part_time" {{ request('employment_type') === 'part_time' ? 'selected' : '' }}>{{ __('Teilzeit') }}</option>
-                        <option value="mini_job" {{ request('employment_type') === 'mini_job' ? 'selected' : '' }}>{{ __('Minijob') }}</option>
-                        <option value="internship" {{ request('employment_type') === 'internship' ? 'selected' : '' }}>{{ __('Praktikum') }}</option>
-                        <option value="apprenticeship" {{ request('employment_type') === 'apprenticeship' ? 'selected' : '' }}>{{ __('Ausbildung') }}</option>
-                        <option value="volunteer" {{ request('employment_type') === 'volunteer' ? 'selected' : '' }}>{{ __('Ehrenamt') }}</option>
-                    </select>
-                </div>
-
-                <div class="flex items-end gap-2 md:col-span-1 lg:col-span-3">
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center" aria-label="Stellenangebote suchen">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        {{ __('Suchen') }}
-                    </button>
-                    @if(request()->hasAny(['search', 'location', 'employment_type']))
-                        <a href="{{ route('public.jobs.index') }}" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-md transition-colors" aria-label="Suchfilter zurücksetzen">
-                            {{ __('Zurücksetzen') }}
-                        </a>
-                    @endif
-                </div>
-            </div>
-
-            @if(isset($searchLocation) && isset($searchCoordinates))
-                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md" role="status" aria-live="polite">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <div>
-                            <p class="text-sm text-blue-800 dark:text-blue-300">
-                                <strong>{{ __('Umkreissuche aktiv:') }}</strong> {{ request('radius', 50) }} km um {{ $searchCoordinates['display_name'] ?? $searchLocation }}
-                            </p>
+                            <input type="search" id="search" name="search" value="{{ request('search') }}" placeholder="{{ __('Beruf, Fach oder Einrichtung') }}"
+                                   class="{{ $inputClasses }} pl-11" aria-describedby="search-help">
+                            <p id="search-help" class="sr-only">{{ __('Durchsucht Titel, Beschreibung, Anforderungen, Benefits und Einrichtungsname.') }}</p>
                         </div>
+
+                        {{-- Ort-Autocomplete mit Alpine.js --}}
+                        <div x-data="locationSearch(@js(request('location', '')), @js(request('lat', '')), @js(request('lon', '')))"
+                             class="md:col-span-4 relative">
+                            <label for="location" class="sr-only">{{ __('Ort oder PLZ') }}</label>
+                            <svg class="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <input type="text"
+                                   id="location"
+                                   name="location"
+                                   x-model="displayText"
+                                   @input.debounce.400ms="fetchSuggestions"
+                                   @keydown.escape="close"
+                                   @keydown.arrow-down.prevent="navigateDown"
+                                   @keydown.arrow-up.prevent="navigateUp"
+                                   @keydown.enter="if (open && activeIndex >= 0) { $event.preventDefault(); selectActive(); }"
+                                   @blur="onBlur"
+                                   placeholder="{{ __('Ort oder PLZ, z. B. Dresden') }}"
+                                   autocomplete="off"
+                                   role="combobox"
+                                   aria-autocomplete="list"
+                                   aria-controls="location-suggestions"
+                                   :aria-expanded="open && suggestions.length > 0"
+                                   class="{{ $inputClasses }} pl-11 pr-9">
+                            {{-- Lade-Indikator --}}
+                            <span x-show="loading" class="absolute right-3 top-3.5 text-gray-400" aria-hidden="true">
+                                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                            </span>
+
+                            {{-- Vorschläge-Dropdown --}}
+                            <ul x-show="open && suggestions.length > 0"
+                                id="location-suggestions"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="opacity-0 -translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-sand-200 dark:border-gray-600 rounded-xl shadow-lg max-h-72 overflow-y-auto text-gray-800"
+                                role="listbox"
+                                aria-label="{{ __('Ortsvorschläge') }}"
+                                style="display: none;">
+                                <template x-for="(s, i) in suggestions" :key="i">
+                                    <li @mousedown.prevent="select(s)"
+                                        @mouseenter="activeIndex = i"
+                                        :class="activeIndex === i
+                                            ? 'bg-primary-50 dark:bg-primary-900/30'
+                                            : 'hover:bg-sand-50 dark:hover:bg-gray-700'"
+                                        class="px-4 py-2.5 cursor-pointer border-b border-sand-100 dark:border-gray-700 last:border-0"
+                                        role="option"
+                                        :aria-selected="activeIndex === i">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            <div class="min-w-0">
+                                                <span class="block text-sm font-medium text-gray-800 dark:text-gray-100 truncate" x-text="s.short_name"></span>
+                                                <span class="block text-xs text-gray-500 dark:text-gray-400 truncate" x-text="s.display_name"></span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+
+                            {{-- Voraufgelöste Koordinaten (werden nur gefüllt, wenn Nutzer einen Vorschlag auswählt) --}}
+                            <input type="hidden" name="lat" x-model="lat">
+                            <input type="hidden" name="lon" x-model="lon">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="radius" class="sr-only">{{ __('Umkreis (km)') }}</label>
+                            <select id="radius" name="radius" class="{{ $inputClasses }} px-3">
+                                @foreach([10, 25, 50, 100, 200] as $km)
+                                    <option value="{{ $km }}" @selected((string) request('radius', '50') === (string) $km)>+{{ $km }} km</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button type="submit" class="md:col-span-2 h-12 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-base font-bold px-5 transition-colors">
+                            {{ __('Stellen finden') }}
+                        </button>
                     </div>
-                </div>
-            @endif
-        </form>
-    </div>
+
+                    <fieldset class="mt-5">
+                        <legend class="sr-only">{{ __('Beschäftigungsart') }}</legend>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($employmentTypes as $value => $label)
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="employment_type" value="{{ $value }}" class="peer sr-only"
+                                           @checked((string) request('employment_type', '') === (string) $value)
+                                           onchange="this.form.submit()">
+                                    <span class="inline-flex items-center min-h-10 px-4 rounded-full text-sm font-medium border border-white/40 text-white hover:bg-white/10 peer-checked:bg-white peer-checked:text-primary-800 peer-checked:border-white peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-primary-300 transition-colors">
+                                        {{ $label }}
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </x-slot:hero>
 
     <!-- Results Count -->
-    <div class="mb-6" role="status" aria-live="polite">
-        <p class="text-gray-600 dark:text-gray-400">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5" role="status" aria-live="polite">
+        <p class="text-base text-gray-700 dark:text-gray-300">
             @if(request()->hasAny(['search', 'location', 'employment_type']))
-                <strong>{{ $jobPostings->total() }}</strong> {{ __('Stellenangebote gefunden') }}
+                <strong class="text-gray-900 dark:text-gray-100">{{ $jobPostings->total() }}</strong> {{ __('Stellenangebote gefunden') }}
             @else
-                <strong>{{ $jobPostings->total() }}</strong> {{ __('aktive Stellenangebote') }}
+                <strong class="text-gray-900 dark:text-gray-100">{{ $jobPostings->total() }}</strong> {{ __('aktive Stellenangebote') }}
+            @endif
+            @if(isset($searchLocation) && isset($searchCoordinates))
+                <span class="text-gray-600 dark:text-gray-400">· {{ __('im Umkreis von') }} {{ request('radius', 50) }} km {{ __('um') }} {{ $searchCoordinates['display_name'] ?? $searchLocation }}</span>
             @endif
         </p>
+        @if(request()->hasAny(['search', 'location', 'employment_type']))
+            <a href="{{ route('public.jobs.index') }}" class="text-sm font-semibold text-primary-700 dark:text-primary-300 hover:underline">
+                {{ __('Alle Filter zurücksetzen') }}
+            </a>
+        @endif
     </div>
 
     <!-- Job Postings List -->
-    <div class="space-y-6">
+    <div class="space-y-3">
         @forelse($jobPostings as $jobPosting)
             @php
-                // Get header image from facility
-                $headerImage = $jobPosting->facility->getFirstMediaUrl('header_image') ?: $jobPosting->facility->getFirstMediaUrl('header') ?: $jobPosting->facility->getFirstMediaUrl('cover') ?: $jobPosting->facility->getFirstMediaUrl('logo');
-
                 // Compute initials for placeholder (max 2 letters)
                 $initials = '';
                 $nameParts = preg_split('/\s+/', trim((string) $jobPosting->facility->name));
@@ -303,145 +306,100 @@
                     }
                 }
 
-                // Check if address has a map
-                $hasMap = $jobPosting->facility->address && $jobPosting->facility->address->getFirstMedia('map');
-                $mapUrl = $hasMap ? $jobPosting->facility->address->getFirstMediaUrl('map') : null;
+                // Logo bevorzugt für das kleine Icon, Header-Bild als Fallback
+                $facilityLogo = $jobPosting->facility->getFirstMediaUrl('logo') ?: $jobPosting->facility->getFirstMediaUrl('header_image');
+                $isNew = $jobPosting->published_at->gt(now()->subDays(7));
+                $validThrough = $jobPosting->expires_at ?? $jobPosting->published_at->copy()->addMonths(3);
             @endphp
 
-            <article class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+            <article class="group relative bg-white dark:bg-gray-800 rounded-2xl border border-sand-200 dark:border-gray-700 p-4 sm:p-5 flex gap-4 sm:gap-5 hover:border-primary-500 hover:shadow-lg hover:shadow-primary-900/5 transition"
                      itemscope itemtype="https://schema.org/JobPosting">
-                <!-- Header Image Banner -->
-                @if($headerImage)
-                    <div class="h-32 bg-cover bg-center relative" style="background-image: url('{{ $headerImage }}')" role="img" aria-label="Bild der Einrichtung {{ $jobPosting->facility->name }}">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4">
-                            <div class="flex items-center text-white">
-                                <svg class="w-4 h-4 mr-2 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                <span class="text-sm font-medium">{{ $jobPosting->facility->name }}</span>
-                            </div>
+                <div class="flex-shrink-0">
+                    @if($facilityLogo)
+                        <img src="{{ $facilityLogo }}" alt="{{ $jobPosting->facility->name }} Logo" loading="lazy"
+                             class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-sand-200 dark:border-gray-600 bg-white">
+                    @else
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 flex items-center justify-center text-base sm:text-lg font-extrabold" aria-hidden="true">
+                            @if($initials){{ $initials }}@else&nbsp;@endif
                         </div>
-                    </div>
-                @else
-                    <div class="h-32 bg-gradient-to-r from-green-200 to-green-400 dark:from-gray-800 dark:to-gray-700 relative">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-16 h-16 rounded-full bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-xl font-bold">
-                                @if($initials){{ $initials }}@else&nbsp;@endif
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4">
-                            <div class="flex items-center text-gray-800 dark:text-gray-100">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                <span class="text-sm font-medium">{{ $jobPosting->facility->name }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
-                <div class="p-6">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <!-- Facility Image and Info -->
-                            <div class="flex items-start gap-3 mb-3">
-                                @php
-                                    // Logo bevorzugt für das kleine Icon, Header-Bild als Fallback
-                                    $facilityLogo = $jobPosting->facility->getFirstMediaUrl('logo') ?: $jobPosting->facility->getFirstMediaUrl('header_image');
-                                @endphp
-                                @if($facilityLogo)
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ $facilityLogo }}" alt="{{ $jobPosting->facility->name }} Logo" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
-                                    </div>
-                                @else
-                                    <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 flex items-center justify-center text-sm font-bold border-2 border-gray-200 dark:border-gray-600" aria-hidden="true">
-                                            @if($initials){{ $initials }}@else&nbsp;@endif
-                                        </div>
-                                    </div>
-                                @endif
-                                <div class="flex-1 min-w-0" itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300" itemprop="name">{{ $jobPosting->facility->name }}</span>
-                                    </div>
-                                    @if($jobPosting->facility->address)
-                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            </svg>
-                                            <span>{{ $jobPosting->facility->address->city }}</span>
-                                            @if($jobPosting->facility->address->zip_code)
-                                                , {{ $jobPosting->facility->address->zip_code }}
-                                            @endif
-                                        </div>
-                                        <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                                                <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
-                                                <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
-                                                <meta itemprop="addressRegion" content="{{ $jobPosting->facility->address->getStateOrDefault() }}">
-                                                <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
-                                                <meta itemprop="addressCountry" content="DE">
-                                            </div>
-                                            @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
-                                            <div itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                                                <meta itemprop="latitude" content="{{ $jobPosting->facility->address->latitude }}">
-                                                <meta itemprop="longitude" content="{{ $jobPosting->facility->address->longitude }}">
-                                            </div>
-                                            @endif
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3" itemprop="title">
-                                <a href="{{ route('public.jobs.show', $jobPosting) }}" class="hover:text-blue-600 dark:hover:text-blue-400" aria-label="Details zur Stelle {{ $jobPosting->title }}">
-                                    {{ $jobPosting->title }}
-                                </a>
-                            </h2>
-
-                            <div class="flex flex-wrap gap-3 mb-4">
-                                <span class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" itemprop="employmentType">
-                                    {{ $jobPosting->getEmploymentTypeLabel() }}
-                                </span>
-                                @if($jobPosting->job_category)
-                                    <span class="px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                        {{ $jobPosting->job_category }}
-                                    </span>
-                                @endif
-                            </div>
-
-                            <p class="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4" itemprop="description">
-                                {{ Str::limit(strip_tags($jobPosting->description), 250) }}
-                            </p>
-
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                <time datetime="{{ $jobPosting->published_at->toIso8601String() }}" itemprop="datePosted">
-                                    {{ __('Veröffentlicht am') }} {{ $jobPosting->published_at->format('d.m.Y') }}
-                                </time>
-                            </div>
-
-                            <meta itemprop="validThrough" content="{{ $jobPosting->published_at->addMonths(3)->toIso8601String() }}">
-                        </div>
-
-                        <div class="ml-6">
-                            <a href="{{ route('public.jobs.show', $jobPosting) }}"
-                               class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors"
-                               aria-label="Details zur Stelle {{ $jobPosting->title }} ansehen">
-                                {{ __('Details') }}
+                <div class="flex-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+                        <h2 class="text-lg font-bold leading-snug text-gray-900 dark:text-gray-100" itemprop="title">
+                            <a href="{{ route('public.jobs.show', $jobPosting) }}" class="group-hover:text-primary-700 dark:group-hover:text-primary-300 after:absolute after:inset-0 after:rounded-2xl" itemprop="url">
+                                {{ $jobPosting->title }}
                             </a>
-                        </div>
+                        </h2>
+                        @if($isNew)
+                            <span class="text-xs font-bold bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200 rounded-md px-2 py-0.5">{{ __('Neu') }}</span>
+                        @endif
                     </div>
+
+                    <div class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3" itemprop="hiringOrganization" itemscope itemtype="https://schema.org/Organization">
+                        <span itemprop="name">{{ $jobPosting->facility->name }}</span>
+                        @if($facilityLogo)
+                            <meta itemprop="logo" content="{{ $facilityLogo }}">
+                        @endif
+                        @if($jobPosting->facility->address)
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $jobPosting->facility->address->zip_code }} {{ $jobPosting->facility->address->city }}</span>
+                        @endif
+                    </div>
+
+                    @if($jobPosting->facility->address)
+                        <div itemprop="jobLocation" itemscope itemtype="https://schema.org/Place" hidden>
+                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                                <meta itemprop="streetAddress" content="{{ $jobPosting->facility->address->street }} {{ $jobPosting->facility->address->number }}">
+                                <meta itemprop="addressLocality" content="{{ $jobPosting->facility->address->city }}">
+                                <meta itemprop="addressRegion" content="{{ $jobPosting->facility->address->getStateOrDefault() }}">
+                                <meta itemprop="postalCode" content="{{ $jobPosting->facility->address->zip_code }}">
+                                <meta itemprop="addressCountry" content="DE">
+                            </div>
+                            @if($jobPosting->facility->address->latitude && $jobPosting->facility->address->longitude)
+                                <div itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                                    <meta itemprop="latitude" content="{{ $jobPosting->facility->address->latitude }}">
+                                    <meta itemprop="longitude" content="{{ $jobPosting->facility->address->longitude }}">
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3" itemprop="description">
+                        {{ Str::limit(strip_tags($jobPosting->description), 220) }}
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 bg-sand-100 dark:bg-gray-700 rounded-md px-2.5 py-1" >
+                            <meta itemprop="employmentType" content="{{ $jobPosting->getSchemaEmploymentType() }}">
+                            {{ $jobPosting->getEmploymentTypeLabel() }}
+                        </span>
+                        @if($jobPosting->job_category)
+                            <span class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 bg-sand-100 dark:bg-gray-700 rounded-md px-2.5 py-1">
+                                {{ $jobPosting->job_category }}
+                            </span>
+                        @endif
+                        <time class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-auto" datetime="{{ $jobPosting->published_at->toIso8601String() }}" itemprop="datePosted">
+                            {{ __('Veröffentlicht am') }} {{ $jobPosting->published_at->format('d.m.Y') }}
+                        </time>
+                    </div>
+
+                    <meta itemprop="validThrough" content="{{ $validThrough->toIso8601String() }}">
                 </div>
             </article>
         @empty
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center" role="status">
-                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <p class="text-gray-500 dark:text-gray-400 text-lg">{{ __('Keine Stellenangebote gefunden.') }}</p>
-                <p class="text-gray-400 dark:text-gray-500 mt-2">{{ __('Versuchen Sie eine andere Suche.') }}</p>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-sand-200 dark:border-gray-700 p-10 sm:p-14 text-center" role="status">
+                <div class="w-14 h-14 mx-auto rounded-full bg-primary-50 dark:bg-gray-700 flex items-center justify-center mb-4">
+                    <svg class="w-7 h-7 text-primary-700 dark:text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('Keine Stellenangebote gefunden.') }}</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-1">{{ __('Versuchen Sie eine andere Suche oder vergrößern Sie den Umkreis.') }}</p>
+                @if(request()->hasAny(['search', 'location', 'employment_type']))
+                    <a href="{{ route('public.jobs.index') }}" class="inline-block mt-5 px-5 py-2.5 rounded-lg border border-primary-200 text-primary-800 dark:text-primary-200 dark:border-gray-600 font-semibold hover:bg-primary-50 dark:hover:bg-gray-700">{{ __('Alle Stellen anzeigen') }}</a>
+                @endif
             </div>
         @endforelse
     </div>
@@ -449,9 +407,23 @@
     <!-- Pagination -->
     @if($jobPostings->hasPages())
         <nav class="mt-8" aria-label="Seitennummerierung">
-            {{ $jobPostings->links() }}
+            {{ $jobPostings->withQueryString()->links() }}
         </nav>
     @endif
+
+    <!-- Call to action for employers -->
+    <section class="mt-12 bg-white dark:bg-gray-800 border border-sand-200 dark:border-gray-700 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5" aria-labelledby="employer-cta-heading">
+        <div>
+            <h2 id="employer-cta-heading" class="text-xl sm:text-2xl font-extrabold text-primary-800 dark:text-primary-200 mb-1">{{ __('Sie suchen Personal für Ihre Einrichtung?') }}</h2>
+            <p class="text-gray-600 dark:text-gray-400">{{ __('Stellenanzeige anlegen, mit Credits veröffentlichen – drei Monate sichtbar.') }}</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            @if (Route::has('register'))
+                <a href="{{ route('register') }}" class="px-5 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold">{{ __('Jetzt registrieren') }}</a>
+            @endif
+            <a href="{{ route('public.pricing') }}" class="px-5 py-3 rounded-lg border border-primary-200 dark:border-gray-600 text-primary-800 dark:text-primary-200 font-semibold hover:bg-primary-50 dark:hover:bg-gray-700">{{ __('Preise ansehen') }}</a>
+        </div>
+    </section>
 
     @push('scripts')
     <script>

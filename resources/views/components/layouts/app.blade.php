@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
@@ -47,13 +47,17 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
+
     <!-- FontAwesome (local) -->
     <link rel="stylesheet" href="{{ asset('fonts/fontawesome/css/fontawesome-basic.css') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased" x-data="{
+<body class="bg-sand-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased" x-data="{
     sidebarOpen: localStorage.getItem('sidebarOpen') === null ? window.innerWidth >= 1024 : localStorage.getItem('sidebarOpen') === 'true',
     toggleSidebar() {
         this.sidebarOpen = !this.sidebarOpen;
@@ -82,14 +86,8 @@
             <x-layouts.app.sidebar />
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-auto content-transition bg-gray-100 dark:bg-gray-900"
-                  style="background-image: var(--bg-image, url('{{ asset('img/HG-blau-soft.jpg') }}')); background-size: cover; background-position: center; background-attachment: fixed;">
-                <style>
-                    .dark main {
-                        --bg-image: url('{{ asset('img/bg-dark.png') }}');
-                    }
-                </style>
-                <div class="p-6">
+            <main class="flex-1 overflow-auto content-transition bg-sand-50 dark:bg-gray-900">
+                <div class="p-4 sm:p-6 lg:p-8 max-w-screen-2xl">
                     @session('status')
                         <x-alerts.alert type="status"/>
                     @endsession
