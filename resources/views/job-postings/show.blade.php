@@ -514,7 +514,7 @@
 
                     <div class="flex justify-between">
                         <span class="text-gray-600 dark:text-gray-400">{{ __('Erstellt von') }}</span>
-                        <span class="text-gray-800 dark:text-gray-200">{{ $jobPosting->creator->name }}</span>
+                        <span class="text-gray-800 dark:text-gray-200">{{ $jobPosting->creator->name ?? __('Unbekannt') }}</span>
                     </div>
 
                     <div class="flex justify-between">

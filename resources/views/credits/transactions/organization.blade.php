@@ -97,7 +97,7 @@
                                                 {{ number_format($transaction->balance_after, 0, ',', '.') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $transaction->user->first_name }} {{ $transaction->user->last_name }}
+                                                {{ $transaction->user ? $transaction->user->first_name . ' ' . $transaction->user->last_name : '-' }}
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-500">
                                                 @if($transaction->creditPackage)

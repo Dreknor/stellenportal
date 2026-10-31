@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
@@ -70,6 +72,8 @@ class UserController extends Controller
             'send_welcome_email' => ['boolean'],
         ]);
 
+        $this->authorizeRoleChange($validated['roles'] ?? [], []);
+
         // Store the plain password before hashing
         $plainPassword = $validated['password'];
 
@@ -81,7 +85,7 @@ class UserController extends Controller
             'change_password' => false,
         ]);
 
-        if (isset($validated['roles'])) {
+        if (!empty($validated['roles'])) {
             $user->assignRole($validated['roles']);
         }
 
@@ -117,6 +121,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        $this->authorizeManage($user);
+
         $roles = Role::all();
         $organizations = \App\Models\Organization::orderBy('name')->get();
         $facilities = \App\Models\Facility::with('organization')->orderBy('name')->get();
@@ -126,6 +132,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        $this->authorizeManage($user);
+
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -139,6 +147,10 @@ class UserController extends Controller
             'facilities.*' => ['exists:facilities,id'],
             'change_password' => ['boolean'],
         ]);
+
+        if (isset($validated['roles'])) {
+            $this->authorizeRoleChange($validated['roles'], $user->getRoleNames()->all());
+        }
 
         $user->first_name = $validated['first_name'];
         $user->last_name = $validated['last_name'];
@@ -180,9 +192,68 @@ class UserController extends Controller
             return back()->with('error', 'Sie können Ihr eigenes Konto nicht löschen.');
         }
 
+        $this->authorizeManage($user);
+
         $user->delete();
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Benutzer erfolgreich gelöscht.');
+    }
+
+    /**
+     * Ein Admin darf nur Konten bearbeiten oder löschen, deren Rechte er selbst
+     * vollständig besitzt (verhindert Übernahme höher berechtigter Konten).
+     */
+    private function authorizeManage(User $target): void
+    {
+        $actor = auth()->user();
+
+        if ($actor->hasRole('Super Admin')) {
+            return;
+        }
+
+        if ($target->hasRole('Super Admin') || !$this->hasAllPermissionsOf($actor, $target->getAllPermissions()->pluck('name')->all())) {
+            abort(403, 'Sie haben keine Berechtigung, dieses Konto zu verwalten.');
+        }
+    }
+
+    /**
+     * Rollenänderungen erfordern das Recht "assign roles". Neu vergebene Rollen
+     * dürfen keine Rechte enthalten, die der handelnde Admin selbst nicht hat.
+     *
+     * @param array<int, string> $roleNames
+     * @param array<int, string> $currentRoleNames
+     */
+    private function authorizeRoleChange(array $roleNames, array $currentRoleNames): void
+    {
+        $addedRoles = array_diff($roleNames, $currentRoleNames);
+
+        if (empty($addedRoles) && empty(array_diff($currentRoleNames, $roleNames))) {
+            return;
+        }
+
+        Gate::authorize('assign', Role::class);
+
+        $actor = auth()->user();
+
+        if ($actor->hasRole('Super Admin')) {
+            return;
+        }
+
+        foreach (Role::with('permissions')->whereIn('name', $addedRoles)->get() as $role) {
+            if ($role->name === 'Super Admin' || !$this->hasAllPermissionsOf($actor, $role->permissions->pluck('name')->all())) {
+                throw ValidationException::withMessages([
+                    'roles' => "Die Rolle \"{$role->name}\" enthält Rechte, die Sie selbst nicht besitzen.",
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @param array<int, string> $permissionNames
+     */
+    private function hasAllPermissionsOf(User $actor, array $permissionNames): bool
+    {
+        return empty(array_diff($permissionNames, $actor->getAllPermissions()->pluck('name')->all()));
     }
 }

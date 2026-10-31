@@ -19,6 +19,11 @@ class OrganizationUserController extends Controller
      */
     public function index(Organization $organization)
     {
+        if (!$this->userBelongsToOrganization($organization)) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Kein Zugriff auf diese Organisation.');
+        }
+
         if (!$organization->canUseFeatures()) {
             return redirect()->route('organizations.index')
                 ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
@@ -33,6 +38,11 @@ class OrganizationUserController extends Controller
      */
     public function store(Request $request, Organization $organization)
     {
+        if (!$this->userBelongsToOrganization($organization)) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Kein Zugriff auf diese Organisation.');
+        }
+
         if (!$organization->canUseFeatures()) {
             return redirect()->route('organizations.index')
                 ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
@@ -82,11 +92,6 @@ class OrganizationUserController extends Controller
 
         // Send email with login credentials
         Mail::to($user->email)->queue(new UserCreatedMail($user, $organization, $password));
-        if (!$organization->canUseFeatures()) {
-            return redirect()->route('organizations.index')
-                ->with('error', 'Diese Organisation muss erst vom Administrator genehmigt werden.');
-        }
-
 
         return redirect()->route('organizations.users.index', $organization)
             ->with('success', 'Benutzer erfolgreich erstellt und Zugangsdaten per E-Mail versendet.');
@@ -97,10 +102,29 @@ class OrganizationUserController extends Controller
      */
     public function destroy(Organization $organization, User $user)
     {
+        if (!$this->userBelongsToOrganization($organization)) {
+            return redirect()->route('organizations.index')
+                ->with('error', 'Kein Zugriff auf diese Organisation.');
+        }
+
+        if (!$organization->users()->whereKey($user->id)->exists()) {
+            abort(404);
+        }
+
+        if ($organization->users()->count() <= 1) {
+            return redirect()->route('organizations.users.index', $organization)
+                ->with('error', 'Das letzte Mitglied kann nicht aus der Organisation entfernt werden.');
+        }
+
         // Detach user from organization
         $user->organizations()->detach($organization->id);
 
         return redirect()->route('organizations.users.index', $organization)
             ->with('success', 'Benutzer wurde von der Organisation entfernt.');
+    }
+
+    private function userBelongsToOrganization(Organization $organization): bool
+    {
+        return auth()->user()->organizations()->whereKey($organization->id)->exists();
     }
 }

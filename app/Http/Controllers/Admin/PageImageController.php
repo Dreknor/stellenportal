@@ -34,7 +34,7 @@ class PageImageController extends Controller
 
         $file = $request->file('image');
         $originalFilename = $file->getClientOriginalName();
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid() . '.' . $file->guessExtension();
         $path = $file->storeAs('pages/' . $page->id, $filename, 'public');
 
         $image = $page->images()->create([

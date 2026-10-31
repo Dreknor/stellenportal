@@ -90,14 +90,12 @@ class OrganizationController extends Controller
 
         // Handle header image upload
         if ($request->hasFile('header_image')) {
-            $organization->addMediaFromRequest('header_image')
-                ->toMediaCollection('header_image');
+            $this->storeUploadedImage($organization, $request, 'header_image');
         }
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $organization->addMediaFromRequest('logo')
-                ->toMediaCollection('logo');
+            $this->storeUploadedImage($organization, $request, 'logo');
         }
 
         return redirect()->route('admin.organizations.show', $organization)

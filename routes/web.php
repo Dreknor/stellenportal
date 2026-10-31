@@ -147,15 +147,10 @@ Route::middleware(['auth', 'verified', PasswordExpiredAlias::class])->group(func
 
         // Admin User Management
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)
-            ->middleware([
-                'index' => 'permission:admin view users',
-                'create' => 'permission:admin create users',
-                'store' => 'permission:admin create users',
-                'show' => 'permission:admin view users',
-                'edit' => 'permission:admin edit users',
-                'update' => 'permission:admin edit users',
-                'destroy' => 'permission:admin delete users',
-            ]);
+            ->middlewareFor(['index', 'show'], 'permission:admin view users')
+            ->middlewareFor(['create', 'store'], 'permission:admin create users')
+            ->middlewareFor(['edit', 'update'], 'permission:admin edit users')
+            ->middlewareFor('destroy', 'permission:admin delete users');
 
         // User Impersonation
         Route::post('users/{user}/impersonate', [\App\Http\Controllers\Admin\ImpersonateController::class, 'start'])
