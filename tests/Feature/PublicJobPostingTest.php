@@ -73,4 +73,30 @@ class PublicJobPostingTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Software Developer');
     }
+
+    public function test_radius_search_accepts_radius_from_query_string(): void
+    {
+        JobPosting::factory()->active()->create();
+
+        $response = $this->get(route('public.jobs.index', [
+            'location' => 'Dresden',
+            'lat' => '51.05',
+            'lon' => '13.74',
+            'radius' => '25',
+        ]));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_radius_search_falls_back_to_default_for_invalid_radius(): void
+    {
+        $response = $this->get(route('public.jobs.index', [
+            'location' => 'Dresden',
+            'lat' => '51.05',
+            'lon' => '13.74',
+            'radius' => 'abc',
+        ]));
+
+        $response->assertStatus(200);
+    }
 }
