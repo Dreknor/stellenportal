@@ -74,7 +74,10 @@ class PublicJobPostingController extends Controller
         // Location-based search with radius
         if ($request->filled('location')) {
             $location = $request->location;
-            $radius = $request->get('radius', 50); // Default 50km
+            // Query-Parameter kommen immer als String an → in float umwandeln und begrenzen
+            $radiusInput = $request->input('radius');
+            $radius = is_numeric($radiusInput) ? (float) $radiusInput : 50.0; // Default 50km
+            $radius = max(1.0, min($radius, 500.0));
             $searchPerformed = true;
             $searchData['location'] = $location;
             $searchData['radius'] = $radius;
